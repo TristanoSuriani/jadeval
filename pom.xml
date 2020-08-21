@@ -14,10 +14,11 @@
     </properties>
 
     <scm>
-        <connection>scm:git:git://ggithub.com/dexecutor/dependent-tasks-executor.git</connection>
-        <developerConnection>scm:git:git@github.com:dexecutor/dexecutor.git</developerConnection>
-        <url>https://github.com/dexecutor/dependent-tasks-executor</url>
-    </scm>
+        <connection>scm:git:git://github.com/TristanoSuriani/jadeval.git</connection>
+        <developerConnection>scm:git:git@github.com:TristanoSuriani/jadeval.git</developerConnection>
+        <url>https://github.com/TristanoSuriani/jadeval</url>
+      <tag>HEAD</tag>
+  </scm>
 
     <profiles>
         <!-- GPG Signature on release -->
@@ -32,6 +33,12 @@
             <build>
                 <plugins>
                     <plugin>
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
                         <version>1.6</version>
