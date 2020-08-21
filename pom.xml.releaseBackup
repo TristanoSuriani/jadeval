@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>nl.suriani</groupId>
     <artifactId>jadeval</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.2.0-SNAPSHOT</version>
     <name>Jadeval</name>
     <description>Just A DEcision and VAlidation Library</description>
 
@@ -18,29 +17,8 @@
         <connection>scm:git:git://github.com/TristanoSuriani/jadeval.git</connection>
         <developerConnection>scm:git:git@github.com:TristanoSuriani/jadeval.git</developerConnection>
         <url>https://github.com/TristanoSuriani/jadeval</url>
-        <tag>HEAD</tag>
-    </scm>
-
-    <url>https://github.com/TristanoSuriani/jadeval</url>
-
-    <licenses>
-        <license>
-            <name>The MIT License</name>
-            <url>https://github.com/TristanoSuriani/jadeval/blob/master/LICENSE.md</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <id>tristano</id>
-            <name>Tristano Suriani</name>
-            <roles>
-                <role>developer</role>
-            </roles>
-            <timezone>+1</timezone>
-        </developer>
-    </developers>
+      <tag>HEAD</tag>
+  </scm>
 
     <profiles>
         <!-- GPG Signature on release -->
