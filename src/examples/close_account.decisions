@@ -1,0 +1,5 @@
+when age >= 18
+    and canBeClosed is true
+    and amount > 0
+    then CLOSE_ACCOUNT
+    and SEND_CONFIRMATION_LETTER
