@@ -57,7 +57,6 @@ public class Facts {
 	 */
 	public Optional<FactValue> getValue(String factName) {
 		return facts.stream()
-				.filter(factContainer -> factContainer.getFactName().equals(factName))
 				.filter(factContainer -> factContainer.getFactValue() instanceof EmptyValue)
 				.map(FactContainer::getFactValue)
 				.findFirst();

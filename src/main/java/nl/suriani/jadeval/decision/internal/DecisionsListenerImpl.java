@@ -1,6 +1,7 @@
 package nl.suriani.jadeval.decision.internal;
 
 import nl.suriani.jadeval.decision.internal.value.BooleanValue;
+import nl.suriani.jadeval.decision.internal.value.EmptyValue;
 import nl.suriani.jadeval.decision.internal.value.TextValue;
 import nl.suriani.jadeval.decision.DecisionsBaseListener;
 import nl.suriani.jadeval.decision.DecisionsParser;
@@ -53,6 +54,7 @@ public class DecisionsListenerImpl extends DecisionsBaseListener {
 
 		NumericValue expectedValue = new NumericValue(BigDecimal.valueOf(Double.parseDouble(ctx.getChild(2).getText())));
 		boolean result = facts.getValue(factName)
+				.filter(factValue -> !(factValue instanceof EmptyValue))
 				.map(factValue -> (NumericValue) factValue)
 				.map(factValue -> conditionResolver.resolve(factValue, expectedValue, equalitySymbol))
 				.orElse(false);
@@ -67,6 +69,7 @@ public class DecisionsListenerImpl extends DecisionsBaseListener {
 
 		BooleanValue expectedValue = new BooleanValue(Boolean.valueOf(ctx.getChild(2).getText()));
 		boolean result = facts.getValue(factName)
+				.filter(factValue -> !(factValue instanceof EmptyValue))
 				.map(factValue -> (BooleanValue) factValue)
 				.map(factValue -> conditionResolver.resolve(factValue, expectedValue, equalitySymbol))
 				.orElse(false);
@@ -81,6 +84,7 @@ public class DecisionsListenerImpl extends DecisionsBaseListener {
 
 		TextValue expectedValue = new TextValue(ctx.getChild(2).getText());
 		boolean result = facts.getValue(factName)
+				.filter(factValue -> !(factValue instanceof EmptyValue))
 				.map(factValue -> (TextValue) factValue)
 				.map(factValue -> conditionResolver.resolve(factValue, expectedValue, equalitySymbol))
 				.orElse(false);
