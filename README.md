@@ -137,7 +137,7 @@ Check [CloseAccountExample.java](src/examples/nl/suriani/jadeval/examplesCloseAc
 ````java
 public class CloseAccountExample {
     public static void main(String[] args) {
-        DecisionsRunner decisionsRunner = new DecisionsRunner();
+        Decisions decisions = new Decisions();
         Person person = new Person();
         person.setAge(19);
         person.setFirstname("Piet");
@@ -148,7 +148,7 @@ public class CloseAccountExample {
         account.setAmount(BigDecimal.valueOf(1234.56));
         account.setCanBeClosed(true);
     
-        DecisionsResultsTable decisionsResultsTable = decisionsRunner.run(Facts.fromObjects(account, account.getOwner()), new File("src/examples/nl/suriani/jadeval/examplesclose_account.decisions"));
+        DecisionsResultsTable decisionsResultsTable = decisions.apply(Facts.fromObjects(account, account.getOwner()), new File("src/examples/nl/suriani/jadeval/examplesclose_account.decisions"));
         decisionsResultsTable.getEvents().stream()
                 .filter(event -> event.equalsIgnoreCase("CLOSE_ACCOUNT"))
                 .findFirst()

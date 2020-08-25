@@ -1,6 +1,6 @@
 package nl.suriani.jadeval.examples;
 
-import nl.suriani.jadeval.decision.DecisionsRunner;
+import nl.suriani.jadeval.decision.Decisions;
 import nl.suriani.jadeval.decision.Facts;
 import nl.suriani.jadeval.decision.DecisionsResultsTable;
 
@@ -14,8 +14,8 @@ class BanUserExample {
 		factsMap.put("numberOfWarnings", 3);
 		factsMap.put("timesReported", 5);
 
-		DecisionsRunner decisionsRunner = new DecisionsRunner();
-		DecisionsResultsTable decisionsResultsTable = decisionsRunner.run(Facts.fromObjectMap(factsMap),
+		Decisions decisions = new Decisions();
+		DecisionsResultsTable decisionsResultsTable = decisions.apply(Facts.fromObjectMap(factsMap),
 				"\"Ban user if warned at least 3 times and reported more than 2 times\"",
 				"when status is REPORTED and numberOfWarnings >= 3 and timesReported >= 2 ",
 				"then BAN_USER");

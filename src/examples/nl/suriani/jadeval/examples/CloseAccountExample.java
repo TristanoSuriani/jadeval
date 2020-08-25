@@ -2,7 +2,7 @@ package nl.suriani.jadeval.examples;
 
 import nl.suriani.jadeval.decision.Facts;
 import nl.suriani.jadeval.decision.DecisionsResultsTable;
-import nl.suriani.jadeval.decision.DecisionsRunner;
+import nl.suriani.jadeval.decision.Decisions;
 import nl.suriani.jadeval.decision.annotations.Fact;
 
 import java.io.File;
@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 
 class CloseAccountExample {
 	public static void main(String[] args) {
-		DecisionsRunner decisionsRunner = new DecisionsRunner();
+		Decisions decisions = new Decisions();
 		Person person = new Person();
 		person.setAge(19);
 		person.setFirstname("Piet");
@@ -21,7 +21,7 @@ class CloseAccountExample {
 		account.setAmount(BigDecimal.valueOf(1234.56));
 		account.setCanBeClosed(true);
 
-		DecisionsResultsTable decisionsResultsTable = decisionsRunner.run(Facts.fromObjects(account, account.getOwner()), new File("src/examples/close_account.decisions"));
+		DecisionsResultsTable decisionsResultsTable = decisions.apply(Facts.fromObjects(account, account.getOwner()), new File("src/examples/close_account.decisions"));
 		decisionsResultsTable.getEvents().stream()
 				.filter(event -> event.equalsIgnoreCase("CLOSE_ACCOUNT"))
 				.findFirst()

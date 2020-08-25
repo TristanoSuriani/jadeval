@@ -19,8 +19,8 @@ import java.util.logging.Logger;
 /**
  * Runner for sets of decisions
  */
-public class DecisionsRunner {
-	private final static Logger logger = Logger.getLogger(DecisionsRunner.class.getName());
+public class Decisions {
+	private final static Logger logger = Logger.getLogger(Decisions.class.getName());
 	private final static CharStreamRetriever charStreamRetriever = new CharStreamRetriever();
 
 	/**
@@ -29,8 +29,8 @@ public class DecisionsRunner {
 	 * @param file, not null
 	 * @return results table
 	 */
-	public DecisionsResultsTable run(Facts facts, File file) {
-		return run(facts, charStreamRetriever.get(file));
+	public DecisionsResultsTable apply(Facts facts, File file) {
+		return apply(facts, charStreamRetriever.get(file));
 	}
 
 	/**
@@ -39,8 +39,8 @@ public class DecisionsRunner {
 	 * @param inputStream, not null
 	 * @return results table
 	 */
-	public DecisionsResultsTable run(Facts facts, InputStream inputStream) {
-		return run(facts, charStreamRetriever.get(inputStream));
+	public DecisionsResultsTable apply(Facts facts, InputStream inputStream) {
+		return apply(facts, charStreamRetriever.get(inputStream));
 	}
 
 	/**
@@ -49,8 +49,8 @@ public class DecisionsRunner {
 	 * @param decisionStatements, not null
 	 * @return results table
 	 */
-	public DecisionsResultsTable run(Facts facts, List<String> decisionStatements) {
-		return run(facts, charStreamRetriever.get(decisionStatements));
+	public DecisionsResultsTable apply(Facts facts, List<String> decisionStatements) {
+		return apply(facts, charStreamRetriever.get(decisionStatements));
 	}
 
 	/**
@@ -59,11 +59,11 @@ public class DecisionsRunner {
 	 * @param decisionStatements, not null
 	 * @return results table
 	 */
-	public DecisionsResultsTable run(Facts facts, String... decisionStatements) {
-		return run(facts, charStreamRetriever.get(decisionStatements));
+	public DecisionsResultsTable apply(Facts facts, String... decisionStatements) {
+		return apply(facts, charStreamRetriever.get(decisionStatements));
 	}
 
-	private DecisionsResultsTable run(Facts facts, CharStream input) {
+	private DecisionsResultsTable apply(Facts facts, CharStream input) {
 		try {
 			DecisionsLexer javaLexer = new DecisionsLexer(input);
 			CommonTokenStream tokens = new CommonTokenStream(javaLexer);

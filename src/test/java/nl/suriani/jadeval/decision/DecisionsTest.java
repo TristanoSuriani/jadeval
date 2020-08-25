@@ -16,9 +16,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DecisionsRunnerTest {
+class DecisionsTest {
 
-	private DecisionsRunner runner;
+	private Decisions runner;
 
 	@Fact
 	private double amount;
@@ -34,7 +34,7 @@ class DecisionsRunnerTest {
 
 	@BeforeEach
 	void setUp() {
-		runner = new DecisionsRunner();
+		runner = new Decisions();
 		amount = 0.1;
 		disconnected = true;
 		connected = true;
@@ -56,7 +56,7 @@ class DecisionsRunnerTest {
 				and SEND_10_EUROS_COUPON
 		* */
 		Facts facts = new Facts(Arrays.asList(factContainer1, factContainer2));
-		DecisionsResultsTable resultsTable = runner.run(facts, new File(fileName));
+		DecisionsResultsTable resultsTable = runner.apply(facts, new File(fileName));
 
 		List<String> events = resultsTable.getEvents();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
@@ -78,7 +78,7 @@ class DecisionsRunnerTest {
 		 */
 		Facts facts = Facts.fromObjects(this);
 
-		DecisionsResultsTable resultsTable = runner.run(facts, new File(fileName));
+		DecisionsResultsTable resultsTable = runner.apply(facts, new File(fileName));
 
 		List<String> events = resultsTable.getEvents();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
@@ -103,7 +103,7 @@ class DecisionsRunnerTest {
 		FactContainer<BooleanValue> factContainer2 = new FactContainer<>("life_expectance", new TextValue("short"));
 		FactContainer<NumericValue> factContainer3 = new FactContainer<NumericValue>("numberOfPartners", new NumericValue(1));
 		Facts facts = new Facts(Arrays.asList(factContainer1, factContainer2, factContainer3));
-		DecisionsResultsTable resultsTable = runner.run(facts, new File(fileName));
+		DecisionsResultsTable resultsTable = runner.apply(facts, new File(fileName));
 
 		List<String> events = resultsTable.getEvents();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
@@ -115,7 +115,7 @@ class DecisionsRunnerTest {
 	@Test
 	void runFromString() {
 		Facts facts = Facts.fromObjects(this);
-		DecisionsResultsTable resultsTable = runner.run(facts, "\"description.\"\n\n\n\n\nwhen connected is true and credit > 1234.56 then CONGRATULATE /*multilinecommentBut123132RQRQInline!!!~\\*/and SEND_10_EUROS_COUPON//Comment!@#@%!");
+		DecisionsResultsTable resultsTable = runner.apply(facts, "\"description.\"\n\n\n\n\nwhen connected is true and credit > 1234.56 then CONGRATULATE /*multilinecommentBut123132RQRQInline!!!~\\*/and SEND_10_EUROS_COUPON//Comment!@#@%!");
 
 		List<String> events = resultsTable.getEvents();
 		assertEquals(1, resultsTable.getResults().size());
@@ -127,7 +127,7 @@ class DecisionsRunnerTest {
 	@Test
 	void runFromStrings() {
 		Facts facts = Facts.fromObjects(this);
-		DecisionsResultsTable resultsTable = runner.run(facts, "\"description.\"\n\n\n\n\nwhen connected is true and credit > 1234.56 then CONGRATULATE /*multilinecommentBut123132RQRQInline!!!~\\*/and SEND_10_EUROS_COUPON//Comment!@#@%!",
+		DecisionsResultsTable resultsTable = runner.apply(facts, "\"description.\"\n\n\n\n\nwhen connected is true and credit > 1234.56 then CONGRATULATE /*multilinecommentBut123132RQRQInline!!!~\\*/and SEND_10_EUROS_COUPON//Comment!@#@%!",
 				"when alive == true and not dead then EVENT_NAME");
 
 		List<String> events = resultsTable.getEvents();
