@@ -7,7 +7,7 @@ import org.antlr.v4.gui.TestRig;
  */
 class GrunLauncher {
 	// *************** Configurations **********************************
-	private static final String FOLDER_TEST_FILE = "/Users/tristanosuriani/workspace/IdeaProjects/jadeval/src/main/antlr4/nl/suriani/jadeval/decision/";
+	private static final String FOLDER_TEST_FILE = "/Users/tristanosuriani/workspace/IdeaProjects/jadeval/src/test/resources/";
 	private static final String NAME_TEST_FILE = "decisions.txt";
 	private static final String GRAMMAR_CLASS_NAME = "nl.suriani.jadeval.decision.Decisions";
 	private static final String OPTIONS = "-gui";
