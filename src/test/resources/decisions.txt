@@ -1,3 +1,7 @@
+set $maximum_amount to 3
+set $log to true
+set $greeting to hello
+
 "This rule has a description"
 when connected is false
     and credit > 1234.56                // This is a comment

@@ -2,6 +2,7 @@ package nl.suriani.jadeval.decision.internal;
 
 import nl.suriani.jadeval.decision.internal.value.BooleanValue;
 import nl.suriani.jadeval.decision.internal.value.EmptyValue;
+import nl.suriani.jadeval.decision.internal.value.FactValue;
 import nl.suriani.jadeval.decision.internal.value.TextValue;
 import nl.suriani.jadeval.decision.DecisionsBaseListener;
 import nl.suriani.jadeval.decision.DecisionsParser;
@@ -13,7 +14,10 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class DecisionsListenerImpl extends DecisionsBaseListener {
@@ -24,13 +28,35 @@ public class DecisionsListenerImpl extends DecisionsBaseListener {
 	private List<Boolean> currentResolvedConditions;
 	private List<String> currentEvents;
 	private String ruleDescription;
+	private Map<String, FactValue> constantsScope;
 
 
 	public DecisionsListenerImpl(Facts facts, ConditionResolver conditionResolver) {
 		this.facts = facts;
 		this.conditionResolver = conditionResolver;
 		this.decisionsResultsTable = new DecisionsResultsTable();
+		this.constantsScope = new HashMap<>();
 		initializeCurrentResultsAndEvents();
+	}
+
+	@Override
+	public void enterAssignment(DecisionsParser.AssignmentContext ctx) {
+		String constantName = ctx.children.get(1).getText();
+
+		if (!(constantsScopeLookup(constantName) instanceof EmptyValue)) {
+			throw new IllegalStateException("The constant " + constantName + "is already defined and cannot be redefined");
+		}
+
+		ParseTree valueContext = ctx.children.get(3);
+		if (valueContext instanceof DecisionsParser.NumericValueContext) {
+			constantsScopeUpdate(constantName, (DecisionsParser.NumericValueContext) valueContext);
+		} else if (valueContext instanceof DecisionsParser.BooleanValueContext) {
+			constantsScopeUpdate(constantName, (DecisionsParser.BooleanValueContext) valueContext);
+		} else if (valueContext instanceof DecisionsParser.TextValueContext) {
+			constantsScopeUpdate(constantName, (DecisionsParser.TextValueContext) valueContext);
+		}
+
+		super.enterAssignment(ctx);
 	}
 
 	@Override
@@ -116,6 +142,26 @@ public class DecisionsListenerImpl extends DecisionsBaseListener {
 		this.currentEvents = new ArrayList<>();
 		this.currentResolvedConditions = new ArrayList<>();
 		this.ruleDescription = "";
+	}
+
+	private FactValue constantsScopeLookup(String name) {
+		return Optional.ofNullable(constantsScope.get(name))
+				.orElse(new EmptyValue());
+	}
+
+	private void constantsScopeUpdate(String name, DecisionsParser.NumericValueContext numericValueContext) {
+		NumericValue numericValue = new NumericValue(Double.valueOf(numericValueContext.getText()));
+		constantsScope.put(name, numericValue);
+	}
+
+	private void constantsScopeUpdate(String name, DecisionsParser.BooleanValueContext booleanValueContext) {
+		BooleanValue booleanValue = new BooleanValue(Boolean.valueOf(booleanValueContext.getText()));
+		constantsScope.put(name, booleanValue);
+	}
+
+	private void constantsScopeUpdate(String name, DecisionsParser.TextValueContext textValueContext) {
+		TextValue textValue = new TextValue(textValueContext.getText());
+		constantsScope.put(name, textValue);
 	}
 
 	public DecisionsResultsTable getDecisionsResultsTable() {

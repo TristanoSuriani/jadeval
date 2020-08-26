@@ -1,7 +1,12 @@
 grammar Decisions;
 
-decisionTable           : decisionStatement+ ;
+decisionTable           : (decisionStatement | assignment)+ ;
+
 decisionStatement       : (ruleDescription)? WHEN conditionExpression THEN eventsAggregation ;
+assignment              : SET CONSTANT TO numericValue
+                        | SET CONSTANT TO booleanValue
+                        | SET CONSTANT TO textValue
+                        ;
 
 conditionExpression   : conditionExpression AND conditionExpression
             | numericEqualityCondition
@@ -61,8 +66,12 @@ GT          : '>' ;
 LTE         : '<=' ;
 LT          : '<' ;
 
+SET         : 'set' ;
+TO          : 'to' ;
+
 NUMBER      : [\-]?[0-9]+ ('.' [0-9]+)? ;
 BOOLEAN     : 'true' | 'false';
+CONSTANT    : '$' [a-zA-Z0-9_.]+ ;
 ID          : [a-zA-Z0-9_.]+ ;
 
 DOUBLE_QUOTES  : '"' ;
