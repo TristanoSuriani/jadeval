@@ -14,9 +14,11 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -79,13 +81,17 @@ public class DecisionsListenerImpl extends DecisionsBaseListener {
 		String equalitySymbol = ctx.getChild(1).getText();
 
 		NumericValue expectedValue = new NumericValue(BigDecimal.valueOf(Double.parseDouble(ctx.getChild(2).getText())));
-		boolean result = facts.getFact(factName)
-				.filter(factValue -> !(factValue instanceof EmptyValue))
+		boolean result = resolveNumericEquality(factName, equalitySymbol, expectedValue);
+
+		currentResolvedConditions.add(result);
+	}
+
+	private Boolean resolveNumericEquality(String factName, String equalitySymbol, NumericValue expectedValue) {
+		return facts.getFact(factName)
+				.filter(factValue -> factValue instanceof NumericValue)
 				.map(factValue -> (NumericValue) factValue)
 				.map(factValue -> conditionResolver.resolve(factValue, expectedValue, equalitySymbol))
 				.orElse(false);
-
-		currentResolvedConditions.add(result);
 	}
 
 	@Override
@@ -94,13 +100,17 @@ public class DecisionsListenerImpl extends DecisionsBaseListener {
 		String equalitySymbol = ctx.getChild(1).getText();
 
 		BooleanValue expectedValue = new BooleanValue(Boolean.valueOf(ctx.getChild(2).getText()));
-		boolean result = facts.getFact(factName)
-				.filter(factValue -> !(factValue instanceof EmptyValue))
+		boolean result = resolveBooleanEquality(factName, equalitySymbol, expectedValue);
+
+		currentResolvedConditions.add(result);
+	}
+
+	private Boolean resolveBooleanEquality(String factName, String equalitySymbol, BooleanValue expectedValue) {
+		return facts.getFact(factName)
+				.filter(factValue -> factValue instanceof BooleanValue)
 				.map(factValue -> (BooleanValue) factValue)
 				.map(factValue -> conditionResolver.resolve(factValue, expectedValue, equalitySymbol))
 				.orElse(false);
-
-		currentResolvedConditions.add(result);
 	}
 
 	@Override
@@ -109,13 +119,42 @@ public class DecisionsListenerImpl extends DecisionsBaseListener {
 		String equalitySymbol = ctx.getChild(1).getText();
 
 		TextValue expectedValue = new TextValue(ctx.getChild(2).getText());
-		boolean result = facts.getFact(factName)
-				.filter(factValue -> !(factValue instanceof EmptyValue))
+		boolean result = resolveTextEquality(factName, equalitySymbol, expectedValue);
+
+		currentResolvedConditions.add(result);
+	}
+
+	private Boolean resolveTextEquality(String factName, String equalitySymbol, TextValue expectedValue) {
+		return facts.getFact(factName)
+				.filter(factValue -> factValue instanceof TextValue)
 				.map(factValue -> (TextValue) factValue)
 				.map(factValue -> conditionResolver.resolve(factValue, expectedValue, equalitySymbol))
 				.orElse(false);
+	}
 
-		currentResolvedConditions.add(result);
+	@Override
+	public void enterConstantEqualityCondition(DecisionsParser.ConstantEqualityConditionContext ctx) {
+		String factName = ctx.getChild(0).getText();
+		String equalitySymbol = ctx.getChild(1).getText();
+		DecisionsParser.ConstantValueContext constantValueContext = (DecisionsParser.ConstantValueContext) ctx.getChild(2);
+
+		FactValue expectedValue = constantsScopeLookup(constantValueContext.getText());
+		if (expectedValue instanceof EmptyValue) {
+			throw new IllegalStateException(constantValueContext.getText() + " is undefined");
+		}
+
+		if ((expectedValue instanceof BooleanValue || expectedValue instanceof TextValue)
+			&& hasANumericOnlyEqualitySymbol(ctx)) {
+			throw new IllegalStateException("Symbol " + equalitySymbol + " not allowed with " + expectedValue.getClass().getName());
+		}
+
+		if (expectedValue instanceof NumericValue) {
+			currentResolvedConditions.add(resolveNumericEquality(factName, equalitySymbol, (NumericValue) expectedValue));
+		} else if (expectedValue instanceof BooleanValue) {
+			currentResolvedConditions.add(resolveBooleanEquality(factName, equalitySymbol, (BooleanValue) expectedValue));
+		} else if (expectedValue instanceof TextValue) {
+			currentResolvedConditions.add(resolveTextEquality(factName, equalitySymbol, (TextValue) expectedValue));
+		}
 	}
 
 	@Override
@@ -162,6 +201,11 @@ public class DecisionsListenerImpl extends DecisionsBaseListener {
 	private void constantsScopeUpdate(String name, DecisionsParser.TextValueContext textValueContext) {
 		TextValue textValue = new TextValue(textValueContext.getText());
 		constantsScope.put(name, textValue);
+	}
+
+	private boolean hasANumericOnlyEqualitySymbol(DecisionsParser.ConstantEqualityConditionContext ctx) {
+		return Arrays.asList(ctx.GT(), ctx.GTE(), ctx.LT(), ctx.LTE()).stream()
+				.anyMatch(Objects::nonNull);
 	}
 
 	public DecisionsResultsTable getDecisionsResultsTable() {

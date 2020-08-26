@@ -82,8 +82,8 @@ class DecisionsTest {
 		List<String> events = resultsTable.getEvents();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
 		assertEquals("This rule has a description too", resultsTable.getResults().get(2).getDescription());
-		assertEquals(2, events.size());
-		assertLinesMatch(events, Arrays.asList("LOG_NOT_DISCONNECTED", "LOG_CONNECTED"));
+		assertEquals(3, events.size());
+		assertLinesMatch(events, Arrays.asList("LOG_NOT_DISCONNECTED", "LOG_CONNECTED", "HOUSTON_GOT_PROBLEM"));
 	}
 
 	@Test

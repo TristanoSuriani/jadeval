@@ -12,6 +12,7 @@ conditionExpression   : conditionExpression AND conditionExpression
             | numericEqualityCondition
             | booleanEqualityCondition
             | textEqualityCondition
+            | constantEqualityCondition
             ;
 
 numericEqualityCondition    : factName IS numericValue
@@ -31,10 +32,19 @@ textEqualityCondition       : factName IS textValue
                             | factName ISNOT textValue
                             ;
 
+constantEqualityCondition     : factName IS constantValue
+                              | factName ISNOT constantValue
+                              | factName GTE constantValue
+                              | factName GT constantValue
+                              | factName LTE constantValue
+                              | factName LT constantValue
+                              ;
+
 factName    : ID ;
 value       : numericValue
             | booleanValue
             | textValue
+            | constantValue
             ;
 
 ruleDescriptionWord     : NUMBER
@@ -46,6 +56,7 @@ ruleDescriptionWord     : NUMBER
 
 numericValue : NUMBER ;
 booleanValue : BOOLEAN ;
+constantValue : CONSTANT ;
 textValue : ID ;
 
 eventsAggregation   : eventsAggregation AND eventsAggregation

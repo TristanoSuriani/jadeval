@@ -1,5 +1,5 @@
 set $maximum_amount to 3
-set $log to true
+set $connected to true
 set $greeting to hello
 
 "This rule has a description"
@@ -42,3 +42,5 @@ when debt is big
 
 "Ban user if warned at least 3 times and reported more than 2 times"
 when status is REPORTED and numberOfWarnings >= 3 and timesReported >= 2 then BAN_USER
+
+when connected is $connected then HOUSTON_GOT_PROBLEM
