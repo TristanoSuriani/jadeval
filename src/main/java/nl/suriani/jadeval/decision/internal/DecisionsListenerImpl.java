@@ -53,7 +53,7 @@ public class DecisionsListenerImpl extends DecisionsBaseListener {
 		String equalitySymbol = ctx.getChild(1).getText();
 
 		NumericValue expectedValue = new NumericValue(BigDecimal.valueOf(Double.parseDouble(ctx.getChild(2).getText())));
-		boolean result = facts.getValue(factName)
+		boolean result = facts.getFact(factName)
 				.filter(factValue -> !(factValue instanceof EmptyValue))
 				.map(factValue -> (NumericValue) factValue)
 				.map(factValue -> conditionResolver.resolve(factValue, expectedValue, equalitySymbol))
@@ -68,7 +68,7 @@ public class DecisionsListenerImpl extends DecisionsBaseListener {
 		String equalitySymbol = ctx.getChild(1).getText();
 
 		BooleanValue expectedValue = new BooleanValue(Boolean.valueOf(ctx.getChild(2).getText()));
-		boolean result = facts.getValue(factName)
+		boolean result = facts.getFact(factName)
 				.filter(factValue -> !(factValue instanceof EmptyValue))
 				.map(factValue -> (BooleanValue) factValue)
 				.map(factValue -> conditionResolver.resolve(factValue, expectedValue, equalitySymbol))
@@ -83,7 +83,7 @@ public class DecisionsListenerImpl extends DecisionsBaseListener {
 		String equalitySymbol = ctx.getChild(1).getText();
 
 		TextValue expectedValue = new TextValue(ctx.getChild(2).getText());
-		boolean result = facts.getValue(factName)
+		boolean result = facts.getFact(factName)
 				.filter(factValue -> !(factValue instanceof EmptyValue))
 				.map(factValue -> (TextValue) factValue)
 				.map(factValue -> conditionResolver.resolve(factValue, expectedValue, equalitySymbol))

@@ -4,7 +4,6 @@ import nl.suriani.jadeval.decision.internal.value.BooleanValue;
 import nl.suriani.jadeval.decision.internal.value.NumericValue;
 import nl.suriani.jadeval.decision.internal.value.TextValue;
 import nl.suriani.jadeval.decision.annotations.Fact;
-import nl.suriani.jadeval.decision.internal.FactContainer;
 import nl.suriani.jadeval.decision.internal.value.EmptyValue;
 import nl.suriani.jadeval.decision.internal.value.FactValue;
 
@@ -21,32 +20,33 @@ import java.util.stream.Collectors;
  * Container for collection of facts to be checked against the decision rules
  */
 public class Facts {
-	private List<FactContainer> facts;
+	private List<FactEntry> factEntry;
+
 
 	/**
-	 * @param facts A collection of FactContainer object
+	 * @param objectMap A map that contains a series of facts
 	 */
-	public Facts(List<FactContainer> facts) {
-		if (facts.stream()
-				.map(FactContainer::getFactName)
-				.distinct()
-				.count() < facts.size()) {
-			throw new IllegalArgumentException("Violation: found more than one fact with the same name");
-		}
-		this.facts = facts;
+	public Facts(Map<String, Object> objectMap) {
+		List<FactEntry> factEntries = getFactEntriesFromMap(objectMap);
+		this.factEntry = factEntries;
 	}
 
-	public Facts() {
-		facts = new ArrayList<>();
+	/**
+	 * @param objects An object that contains a series of facts annotated with Fact
+	 */
+	public Facts(Object... objects) {
+		List<FactEntry> factEntries = getFactEntriesFromAnnotatedObjects(objects);
+		checkThatFactsAreNotAmbiguous(factEntries);
+		this.factEntry = factEntries;
 	}
-
+	
 	/**
 	 * Checks if a fact with the given named exists in the current instance
 	 * @param factName The fact's name, not null.
 	 * @return result of the check
 	 */
 	public boolean contains(String factName) {
-		return facts.stream()
+		return factEntry.stream()
 				.anyMatch(fact -> fact.getFactName().equals(factName));
 	}
 
@@ -55,67 +55,59 @@ public class Facts {
 	 * @param factName The fact's name, not null.
 	 * @return fact value object
 	 */
-	public Optional<FactValue> getValue(String factName) {
-		return facts.stream()
-				.filter(factContainer -> factContainer.getFactValue() instanceof EmptyValue)
-				.map(FactContainer::getFactValue)
+	public Optional<FactValue> getFact(String factName) {
+		return factEntry.stream()
+				.filter(factEntry -> factEntry.getFactName().equals(factName))
+				.map(FactEntry::getFactValue)
 				.findFirst();
 	}
 
-	/**
-	 * Factory method to create a Facts object. All the fields in the given objects that are
-	 * annotated with @Fact are used to create the instance.
-	 * @param objects A list of objects from where the facts are extracted from the fields annoted with @Fact
-	 * @return facts
-	 */
-	public static Facts fromObjects(Object... objects) {
-		try {
-			List<FactContainer> factContainers = Arrays.stream(objects)
-					.flatMap(object -> getFactContainers(object).stream())
-					.collect(Collectors.toList());
-
-			return new Facts(factContainers);
-		} catch (Exception exception) {
-			throw new RuntimeException(exception);
+	private void checkThatFactsAreNotAmbiguous(List<FactEntry> facts) {
+		if (facts.stream()
+				.map(FactEntry::getFactName)
+				.distinct()
+				.count() < facts.size()) {
+			throw new IllegalArgumentException("Violation: found more than one fact with the same name");
 		}
 	}
-
-	/**
-	 * Factory method to create a Facts object. All the entries in the object map are used to create the instance.
-	 * @param objectMap A map which contains the facts to be collected
-	 * @return facts
-	 */
-	public static Facts fromObjectMap(Map<String, Object> objectMap) {
-		List<FactContainer> factContainers = objectMap.entrySet().stream()
-				.map(keyValuePair -> new FactContainer(keyValuePair.getKey(), getValue(keyValuePair.getValue())))
-				.filter(factContainer -> !(factContainer.getFactValue() instanceof EmptyValue))
+	
+	private List<FactEntry> getFactEntriesFromMap(Map<String, Object> objectMap) {
+		return objectMap.entrySet().stream()
+				.map(keyValuePair -> new FactEntry(keyValuePair.getKey(), getFact(keyValuePair.getValue())))
+				.filter(factEntry -> !(factEntry.getFactValue() instanceof EmptyValue))
 				.collect(Collectors.toList());
-
-		return new Facts(factContainers);
 	}
 
-	private static List<FactContainer> getFactContainers(Object object) {
-		List<FactContainer> currentFactContainers = Arrays.stream(object.getClass().getDeclaredFields())
+	private List<FactEntry> getFactEntriesFromAnnotatedObjects(Object... objects) {
+		List<FactEntry> factEntries = new ArrayList<>();
+		for (Object object: objects) {
+			factEntries.addAll(getFactEntriesFromAnnotatedObject(object));
+		}
+		return factEntries;
+	}
+
+	private List<FactEntry> getFactEntriesFromAnnotatedObject(Object object) {
+		List<FactEntry> currentFactEntries = Arrays.stream(object.getClass().getDeclaredFields())
 				.filter(field -> field.isAnnotationPresent(Fact.class))
-				.map(field -> new FactContainer(field.getName(), Facts.getValueFromfield(field, object)))
-				.filter(factContainer -> factContainer.getFactValue() != null)
+				.map(field -> new FactEntry(field.getName(), getValueFromfield(field, object)))
+				.filter(factEntry -> factEntry.getFactValue() != null)
 				.collect(Collectors.toList());
-		return currentFactContainers;
+		return currentFactEntries;
 	}
 
-	private static FactValue getValueFromfield(Field field, Object object) {
+	private FactValue getValueFromfield(Field field, Object object) {
 		try {
 			field.setAccessible(true);
 			Object value = field.get(object);
 			field.setAccessible(false);
 			
-			return getValue(value);
+			return getFact(value);
 		} catch (Exception exception) {
 			throw new RuntimeException(exception);
 		}
 	}
 	
-	private static FactValue getValue(Object value) {
+	private FactValue getFact(Object value) {
 		if (value instanceof String) {
 			return new TextValue((String) value);
 		}

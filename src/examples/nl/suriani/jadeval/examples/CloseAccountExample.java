@@ -21,7 +21,7 @@ class CloseAccountExample {
 		account.setAmount(BigDecimal.valueOf(1234.56));
 		account.setCanBeClosed(true);
 
-		DecisionsResultsTable decisionsResultsTable = decisions.apply(Facts.fromObjects(account, account.getOwner()), new File("src/examples/close_account.decisions"));
+		DecisionsResultsTable decisionsResultsTable = decisions.apply(new Facts(account, account.getOwner()), new File("src/examples/close_account.decisions"));
 		decisionsResultsTable.getEvents().stream()
 				.filter(event -> event.equalsIgnoreCase("CLOSE_ACCOUNT"))
 				.findFirst()

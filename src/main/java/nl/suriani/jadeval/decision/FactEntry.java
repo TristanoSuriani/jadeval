@@ -1,12 +1,12 @@
-package nl.suriani.jadeval.decision.internal;
+package nl.suriani.jadeval.decision;
 
 import nl.suriani.jadeval.decision.internal.value.FactValue;
 
-public class FactContainer<T> {
+public class FactEntry<T> {
 	private String factName;
 	private FactValue<T> factValue;
 
-	public FactContainer(String factName, FactValue factValue) {
+	FactEntry(String factName, FactValue factValue) {
 		this.factName = factName;
 		this.factValue = factValue;
 	}

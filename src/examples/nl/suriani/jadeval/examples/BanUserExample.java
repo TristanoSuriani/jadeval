@@ -15,7 +15,7 @@ class BanUserExample {
 		factsMap.put("timesReported", 5);
 
 		Decisions decisions = new Decisions();
-		DecisionsResultsTable decisionsResultsTable = decisions.apply(Facts.fromObjectMap(factsMap),
+		DecisionsResultsTable decisionsResultsTable = decisions.apply(new Facts(factsMap),
 				"\"Ban user if warned at least 3 times and reported more than 2 times\"",
 				"when status is REPORTED and numberOfWarnings >= 3 and timesReported >= 2 ",
 				"then BAN_USER");

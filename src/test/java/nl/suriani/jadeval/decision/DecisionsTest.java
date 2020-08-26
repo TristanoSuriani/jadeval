@@ -1,10 +1,6 @@
 package nl.suriani.jadeval.decision;
 
 import nl.suriani.jadeval.decision.annotations.Fact;
-import nl.suriani.jadeval.decision.internal.FactContainer;
-import nl.suriani.jadeval.decision.internal.value.BooleanValue;
-import nl.suriani.jadeval.decision.internal.value.NumericValue;
-import nl.suriani.jadeval.decision.internal.value.TextValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +8,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,8 +42,9 @@ class DecisionsTest {
 	@Test
 	void runFromFileName() {
 		String fileName = "src/test/resources/decisions.txt";
-		FactContainer<BooleanValue> factContainer1 = new FactContainer<>("connected", new BooleanValue(false));
-		FactContainer<NumericValue> factContainer2 = new FactContainer<NumericValue>("credit", new NumericValue(2000));
+		Map<String, Object> factsMap = new HashMap<>();
+		factsMap.put("connected", false);
+		factsMap.put("credit", 2000);
 
 		/*
 			Matching rule:
@@ -55,7 +54,7 @@ class DecisionsTest {
 				then CONGRATULATE
 				and SEND_10_EUROS_COUPON
 		* */
-		Facts facts = new Facts(Arrays.asList(factContainer1, factContainer2));
+		Facts facts = new Facts(factsMap);
 		DecisionsResultsTable resultsTable = runner.apply(facts, new File(fileName));
 
 		List<String> events = resultsTable.getEvents();
@@ -76,7 +75,7 @@ class DecisionsTest {
 				then LOG_NOT_DISCONNECTED
 				and LOG_CONNECTED
 		 */
-		Facts facts = Facts.fromObjects(this);
+		Facts facts = new Facts(this);
 
 		DecisionsResultsTable resultsTable = runner.apply(facts, new File(fileName));
 
@@ -99,10 +98,11 @@ class DecisionsTest {
 				then LOG_NOT_DISCONNECTED
 				and LOG_CONNECTED
 		 */
-		FactContainer<BooleanValue> factContainer1 = new FactContainer<>("debt", new TextValue("big"));
-		FactContainer<BooleanValue> factContainer2 = new FactContainer<>("life_expectance", new TextValue("short"));
-		FactContainer<NumericValue> factContainer3 = new FactContainer<NumericValue>("numberOfPartners", new NumericValue(1));
-		Facts facts = new Facts(Arrays.asList(factContainer1, factContainer2, factContainer3));
+		Map<String, Object> factsMap = new HashMap<>();
+		factsMap.put("debt", "big");
+		factsMap.put("life_expectance", "short");
+		factsMap.put("numberOfPartners", 1);
+		Facts facts = new Facts(factsMap);
 		DecisionsResultsTable resultsTable = runner.apply(facts, new File(fileName));
 
 		List<String> events = resultsTable.getEvents();
@@ -114,7 +114,7 @@ class DecisionsTest {
 
 	@Test
 	void runFromString() {
-		Facts facts = Facts.fromObjects(this);
+		Facts facts = new Facts(this);
 		DecisionsResultsTable resultsTable = runner.apply(facts, "\"description.\"\n\n\n\n\nwhen connected is true and credit > 1234.56 then CONGRATULATE /*multilinecommentBut123132RQRQInline!!!~\\*/and SEND_10_EUROS_COUPON//Comment!@#@%!");
 
 		List<String> events = resultsTable.getEvents();
@@ -126,9 +126,9 @@ class DecisionsTest {
 
 	@Test
 	void runFromStrings() {
-		Facts facts = Facts.fromObjects(this);
+		Facts facts = new Facts(this);
 		DecisionsResultsTable resultsTable = runner.apply(facts, "\"description.\"\n\n\n\n\nwhen connected is true and credit > 1234.56 then CONGRATULATE /*multilinecommentBut123132RQRQInline!!!~\\*/and SEND_10_EUROS_COUPON//Comment!@#@%!",
-				"when alive == true and not dead then EVENT_NAME");
+				"when alive == true and dead not true then EVENT_NAME");
 
 		List<String> events = resultsTable.getEvents();
 		assertEquals(2, resultsTable.getResults().size());
