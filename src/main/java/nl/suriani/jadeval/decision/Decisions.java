@@ -1,7 +1,6 @@
 package nl.suriani.jadeval.decision;
 
-import nl.suriani.jadeval.decision.internal.DecisionsListenerImpl;
-import nl.suriani.jadeval.decision.internal.condition.ConditionResolver;
+import nl.suriani.jadeval.common.internal.condition.ConditionResolver;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;

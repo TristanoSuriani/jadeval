@@ -3,7 +3,7 @@ package nl.suriani.jadeval.examples;
 import nl.suriani.jadeval.decision.Facts;
 import nl.suriani.jadeval.decision.DecisionsResultsTable;
 import nl.suriani.jadeval.decision.Decisions;
-import nl.suriani.jadeval.decision.annotations.Fact;
+import nl.suriani.jadeval.common.annotation.Fact;
 
 import java.io.File;
 import java.math.BigDecimal;

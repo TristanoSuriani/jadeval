@@ -1,7 +1,5 @@
 package nl.suriani.jadeval.decision;
 
-import nl.suriani.jadeval.decision.internal.DecisionsResultsRow;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,7 +26,7 @@ public final class DecisionsResultsTable {
 	 * Initialize the object with an exception.
 	 * @param exception, not null
 	 */
-	public DecisionsResultsTable(Exception exception) {
+	DecisionsResultsTable(Exception exception) {
 		this.results = new ArrayList<>();
 		this.exception = exception;
 	}
@@ -38,7 +36,7 @@ public final class DecisionsResultsTable {
 	 * @param result Result row to be added to the table
 	 * @return new instance of the object
 	 */
-	public DecisionsResultsTable add(DecisionsResultsRow result) {
+	DecisionsResultsTable add(DecisionsResultsRow result) {
 		List<DecisionsResultsRow> resultsCopy = new ArrayList<>(results);
 		resultsCopy.add(result);
 		return new DecisionsResultsTable(resultsCopy);

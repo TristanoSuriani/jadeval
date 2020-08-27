@@ -1,4 +1,4 @@
-package nl.suriani.jadeval.decision.annotations;
+package nl.suriani.jadeval.common.annotation;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

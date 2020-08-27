@@ -1,6 +1,6 @@
-package nl.suriani.jadeval.decision.internal.condition;
+package nl.suriani.jadeval.common.internal.condition;
 
-import nl.suriani.jadeval.decision.internal.value.NumericValue;
+import nl.suriani.jadeval.common.internal.value.NumericValue;
 
 public class GTECondition implements ResolvableCondition {
 	private NumericValue comparing;

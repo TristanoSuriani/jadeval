@@ -1,6 +1,6 @@
-package nl.suriani.jadeval.decision.internal.condition;
+package nl.suriani.jadeval.common.internal.condition;
 
-import nl.suriani.jadeval.decision.internal.value.FactValue;
+import nl.suriani.jadeval.common.internal.value.FactValue;
 
 public final class ISCondition<T extends FactValue> implements ResolvableCondition {
 	private final T comparing;

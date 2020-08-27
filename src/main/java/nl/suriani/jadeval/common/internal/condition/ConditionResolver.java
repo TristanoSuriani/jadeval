@@ -1,9 +1,9 @@
-package nl.suriani.jadeval.decision.internal.condition;
+package nl.suriani.jadeval.common.internal.condition;
 
-import nl.suriani.jadeval.decision.internal.value.BooleanValue;
-import nl.suriani.jadeval.decision.internal.value.NumericValue;
-import nl.suriani.jadeval.decision.internal.value.TextValue;
-import nl.suriani.jadeval.decision.internal.value.FactValue;
+import nl.suriani.jadeval.common.internal.value.BooleanValue;
+import nl.suriani.jadeval.common.internal.value.NumericValue;
+import nl.suriani.jadeval.common.internal.value.TextValue;
+import nl.suriani.jadeval.common.internal.value.FactValue;
 
 public class ConditionResolver {
 	public boolean resolve(BooleanValue comparing, BooleanValue comparison, String equalitySymbol) {

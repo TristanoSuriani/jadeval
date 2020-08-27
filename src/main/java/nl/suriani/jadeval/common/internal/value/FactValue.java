@@ -1,4 +1,4 @@
-package nl.suriani.jadeval.decision.internal.value;
+package nl.suriani.jadeval.common.internal.value;
 
 public abstract class FactValue<T> {
 	final T value;

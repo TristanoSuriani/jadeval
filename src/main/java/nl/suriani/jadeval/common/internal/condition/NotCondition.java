@@ -1,4 +1,4 @@
-package nl.suriani.jadeval.decision.internal.condition;
+package nl.suriani.jadeval.common.internal.condition;
 
 public class NotCondition implements ResolvableCondition {
 	private boolean comparing;

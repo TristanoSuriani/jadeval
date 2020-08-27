@@ -1,11 +1,11 @@
 package nl.suriani.jadeval.decision;
 
-import nl.suriani.jadeval.decision.internal.value.BooleanValue;
-import nl.suriani.jadeval.decision.internal.value.NumericValue;
-import nl.suriani.jadeval.decision.internal.value.TextValue;
-import nl.suriani.jadeval.decision.annotations.Fact;
-import nl.suriani.jadeval.decision.internal.value.EmptyValue;
-import nl.suriani.jadeval.decision.internal.value.FactValue;
+import nl.suriani.jadeval.common.annotation.Fact;
+import nl.suriani.jadeval.common.internal.value.BooleanValue;
+import nl.suriani.jadeval.common.internal.value.NumericValue;
+import nl.suriani.jadeval.common.internal.value.TextValue;
+import nl.suriani.jadeval.common.internal.value.EmptyValue;
+import nl.suriani.jadeval.common.internal.value.FactValue;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;

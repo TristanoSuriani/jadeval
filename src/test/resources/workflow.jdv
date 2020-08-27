@@ -1,0 +1,46 @@
+set $maximum_score to 3
+set $timeout_seconds to 60
+
+root states
+    waitingForPlayer1ToJoin
+
+intermediate states
+    waitingForPlayer1ToJoin, waitingForPlayer2ToJoin, bothPlayersJoined,
+    waitingForBothPlayersToChoose, waitingForPlayer1ToChoose, waitingForPlayer2ToChoose,
+    bothPlayersHaveChosen, player1HasScored, player2HasScored, nobodyHasScored,
+    player1HasWon, player2HasWon, player1IsDisconnected, player2IsDisconnected, sessionTimeout
+
+final states
+     player1HasWon, player2HasWon, player1IsDisconnected, player2IsDisconnected, sessionTimeout
+
+user events
+    PLAYER1_JOINS, PLAYER2_JOINS, PLAYER1_CHOOSES, PLAYER2_CHOOSES, PLAYER1_DISCONNECTS, PLAYER2_DISCONNECTS
+
+system events
+    PLAYER1_SCORES, PLAYER2_SCORES, NOBODY_SCORES, SYSTEM_TIMEOUT
+
+transitions
+    waitingForPlayer1ToJoin -> waitingForPlayer2ToJoin when user event is PLAYER1_JOINS
+    waitingForPlayer2ToJoin -> bothPlayersJoined when user event is PLAYER2_JOINS
+    bothPlayersJoined -> waitingForBothPlayersToChoose
+
+    waitingForBothPlayersToChoose -> waitingForPlayer2ToChoose when user event is PLAYER1_CHOOSES
+    waitingForBothPlayersToChoose -> waitingForPlayer2ToChoose when user event is PLAYER2_CHOOSES
+    waitingForPlayer1ToChoose -> bothPlayersHaveChosen when user event is PLAYER1_CHOOSES
+    waitingForPlayer2ToChoose -> bothPlayersHaveChosen when user event is PLAYER2_CHOOSES
+
+    bothPlayersHaveChosen -> player1HasScored when system event is PLAYER1_SCORES
+    bothPlayersHaveChosen -> player2HasScored when system event is PLAYER2_SCORES
+    bothPlayersHaveChosen -> nobodyHasScored when system event is NOBODY_SCORES
+
+    player1HasScored -> player1HasWon when player1Score >= $maximumScore
+                        otherwise -> waitingForBothPlayersToChoose
+
+    player2HasScored -> player2HasWon when player1Score >= $maximumScore
+                        otherwise -> waitingForBothPlayersToChoose
+
+    nobodyHasScored -> waitingForBothPlayersToChoose
+
+    any -> player1IsDisconnected when system event is PLAYER1_DISCONNECTS
+    any -> player2IsDisconnected when system event is PLAYER2_DISCONNECTS
+    any -> sessionTimeout when system event is SYSTEM_TIMEOUT

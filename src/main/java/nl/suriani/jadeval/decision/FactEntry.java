@@ -1,6 +1,6 @@
 package nl.suriani.jadeval.decision;
 
-import nl.suriani.jadeval.decision.internal.value.FactValue;
+import nl.suriani.jadeval.common.internal.value.FactValue;
 
 public class FactEntry<T> {
 	private String factName;

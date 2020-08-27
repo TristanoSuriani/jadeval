@@ -1,15 +1,11 @@
-package nl.suriani.jadeval.decision.internal;
+package nl.suriani.jadeval.decision;
 
-import nl.suriani.jadeval.decision.internal.value.BooleanValue;
-import nl.suriani.jadeval.decision.internal.value.EmptyValue;
-import nl.suriani.jadeval.decision.internal.value.FactValue;
-import nl.suriani.jadeval.decision.internal.value.TextValue;
-import nl.suriani.jadeval.decision.DecisionsBaseListener;
-import nl.suriani.jadeval.decision.DecisionsParser;
-import nl.suriani.jadeval.decision.DecisionsResultsTable;
-import nl.suriani.jadeval.decision.Facts;
-import nl.suriani.jadeval.decision.internal.condition.ConditionResolver;
-import nl.suriani.jadeval.decision.internal.value.NumericValue;
+import nl.suriani.jadeval.common.internal.value.BooleanValue;
+import nl.suriani.jadeval.common.internal.value.EmptyValue;
+import nl.suriani.jadeval.common.internal.value.FactValue;
+import nl.suriani.jadeval.common.internal.value.TextValue;
+import nl.suriani.jadeval.common.internal.condition.ConditionResolver;
+import nl.suriani.jadeval.common.internal.value.NumericValue;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.math.BigDecimal;
@@ -22,7 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class DecisionsListenerImpl extends DecisionsBaseListener {
+class DecisionsListenerImpl extends DecisionsBaseListener {
 	private final Facts facts;
 	private final ConditionResolver conditionResolver;
 

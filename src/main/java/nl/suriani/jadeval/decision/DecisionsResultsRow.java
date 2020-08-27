@@ -1,13 +1,13 @@
-package nl.suriani.jadeval.decision.internal;
+package nl.suriani.jadeval.decision;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class DecisionsResultsRow {
+final class DecisionsResultsRow {
 	private final String description;
 	private final List<String> events;
 
-	public DecisionsResultsRow(String description, List<String> events) {
+	DecisionsResultsRow(String description, List<String> events) {
 		this.description = description;
 		this.events = events;
 	}
