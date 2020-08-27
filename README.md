@@ -136,26 +136,30 @@ Check [CloseAccountExample.java](src/examples/nl/suriani/jadeval/examplesCloseAc
 
 ````java
 class CloseAccountExample {
-	public static void main(String[] args) {
-		Decisions decisions = new Decisions();
-		Person person = new Person();
-		person.setAge(19);
-		person.setFirstname("Piet");
-		person.setLastname("de Haan");
-
-		Account account = new Account();
-		account.setOwner(person);
-		account.setAmount(BigDecimal.valueOf(1234.56));
-		account.setCanBeClosed(true);
-
-		DecisionsResultsTable decisionsResultsTable = decisions.apply(new Facts(account, account.getOwner()), new File("src/examples/close_account.decisions"));
-		decisionsResultsTable.getEvents().stream()
-				.filter(event -> event.equalsIgnoreCase("CLOSE_ACCOUNT"))
-				.findFirst()
-				.ifPresent(System.out::println);
-
-		// It prints "CLOSE_ACCOUNT".
-	}    
+    public static void main(String[] args) {
+        Decisions decisions = new Decisions();
+        Person person = new Person();
+        person.setAge(19);
+        person.setFirstname("Piet");
+        person.setLastname("de Haan");
+        
+        Account account = new Account();
+        account.setOwner(person);
+        account.setAmount(BigDecimal.valueOf(1234.56));
+        account.setCanBeClosed(true);
+        account.setDescription("custom");
+        
+        DecisionsResultsTable resultsTable = decisions.apply(new Facts(account, account.getOwner()),
+                new File("src/examples/close_account.decisions"));
+        
+        resultsTable.getEvents().forEach(System.out::println);
+        
+        /* It prints:
+            CLOSE_ACCOUNT
+            SEND_CONFIRMATION_LETTER
+            DEFAULT_DESCRIPTION
+         */
+    }    
     
     // .....
 }
@@ -172,7 +176,10 @@ public static class Account {
 
     @Fact
     private boolean canBeClosed;
-    // ...
+
+    @Fact(qualifier = "customStuff")
+    private String description;
+// ...
 }
 ````
 
@@ -197,14 +204,20 @@ facts are retrieved:
 
 These facts are checked against the rule:
 ~~~~
-when age >= 18
+set $minimum_age to 18
+
+when age >= $minimum_age
     and canBeClosed is true
     and amount > 0
     then CLOSE_ACCOUNT
     and SEND_CONFIRMATION_LETTER
+
+when customStuff == custom
+    and amount >= 0
+    then DEFAULT_DESCRIPTION
 ~~~~
 
-which applies, so the business events *CLOSE_ACCOUNT* and *SEND_CONFIRMATION_LETTER* are returned.
+which applies, so the business events *CLOSE_ACCOUNT*, *SEND_CONFIRMATION_LETTER* and *DEFAULT_DESCRIPTION* are returned.
 
 For more examples, check [here](src/examples/nl/suriani/jadeval/examples)
 

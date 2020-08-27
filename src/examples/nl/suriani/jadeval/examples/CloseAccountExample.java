@@ -20,14 +20,18 @@ class CloseAccountExample {
 		account.setOwner(person);
 		account.setAmount(BigDecimal.valueOf(1234.56));
 		account.setCanBeClosed(true);
+		account.setDescription("custom");
 
-		DecisionsResultsTable decisionsResultsTable = decisions.apply(new Facts(account, account.getOwner()), new File("src/examples/close_account.decisions"));
-		decisionsResultsTable.getEvents().stream()
-				.filter(event -> event.equalsIgnoreCase("CLOSE_ACCOUNT"))
-				.findFirst()
-				.ifPresent(System.out::println);
+		DecisionsResultsTable resultsTable = decisions.apply(new Facts(account, account.getOwner()),
+				new File("src/examples/close_account.decisions"));
 
-		// It prints "CLOSE_ACCOUNT".
+		resultsTable.getEvents().forEach(System.out::println);
+
+		/* It prints:
+			CLOSE_ACCOUNT
+			SEND_CONFIRMATION_LETTER
+			DEFAULT_DESCRIPTION
+		 */
 	}
 
 	public static class Account {
@@ -38,6 +42,9 @@ class CloseAccountExample {
 
 		@Fact
 		private boolean canBeClosed;
+
+		@Fact(qualifier = "customStuff")
+		private String description;
 
 		public Person getOwner() {
 			return owner;
@@ -61,6 +68,14 @@ class CloseAccountExample {
 
 		public void setCanBeClosed(boolean canBeClosed) {
 			this.canBeClosed = canBeClosed;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
 		}
 	}
 

@@ -89,7 +89,9 @@ public class Facts {
 	private List<FactEntry> getFactEntriesFromAnnotatedObject(Object object) {
 		List<FactEntry> currentFactEntries = Arrays.stream(object.getClass().getDeclaredFields())
 				.filter(field -> field.isAnnotationPresent(Fact.class))
-				.map(field -> new FactEntry(field.getName(), getValueFromfield(field, object)))
+				.map(field -> new FactEntry("".equals(field.getAnnotation(Fact.class).qualifier().trim()) ?
+						field.getName() : field.getAnnotation(Fact.class).qualifier().trim(),
+						getValueFromfield(field, object)))
 				.filter(factEntry -> factEntry.getFactValue() != null)
 				.collect(Collectors.toList());
 		return currentFactEntries;

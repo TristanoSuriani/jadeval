@@ -1,5 +1,11 @@
-when age >= 18
+set $minimum_age to 18
+
+when age >= $minimum_age
     and canBeClosed is true
     and amount > 0
     then CLOSE_ACCOUNT
     and SEND_CONFIRMATION_LETTER
+
+when customStuff == custom
+    and amount >= 0
+    then DEFAULT_DESCRIPTION
