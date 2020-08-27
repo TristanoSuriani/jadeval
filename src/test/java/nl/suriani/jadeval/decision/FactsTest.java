@@ -1,6 +1,7 @@
 package nl.suriani.jadeval.decision;
 
 import junit.framework.Assert;
+import nl.suriani.jadeval.common.Facts;
 import nl.suriani.jadeval.common.annotation.Fact;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

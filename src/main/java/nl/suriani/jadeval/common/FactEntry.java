@@ -1,4 +1,4 @@
-package nl.suriani.jadeval.decision;
+package nl.suriani.jadeval.common;
 
 import nl.suriani.jadeval.common.internal.value.FactValue;
 

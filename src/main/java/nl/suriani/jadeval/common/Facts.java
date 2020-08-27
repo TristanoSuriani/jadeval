@@ -1,4 +1,4 @@
-package nl.suriani.jadeval.decision;
+package nl.suriani.jadeval.common;
 
 import nl.suriani.jadeval.common.annotation.Fact;
 import nl.suriani.jadeval.common.internal.value.BooleanValue;
@@ -91,13 +91,13 @@ public class Facts {
 				.filter(field -> field.isAnnotationPresent(Fact.class))
 				.map(field -> new FactEntry("".equals(field.getAnnotation(Fact.class).qualifier().trim()) ?
 						field.getName() : field.getAnnotation(Fact.class).qualifier().trim(),
-						getValueFromfield(field, object)))
+						getValueFromField(field, object)))
 				.filter(factEntry -> factEntry.getFactValue() != null)
 				.collect(Collectors.toList());
 		return currentFactEntries;
 	}
 
-	private FactValue getValueFromfield(Field field, Object object) {
+	private FactValue getValueFromField(Field field, Object object) {
 		try {
 			field.setAccessible(true);
 			Object value = field.get(object);

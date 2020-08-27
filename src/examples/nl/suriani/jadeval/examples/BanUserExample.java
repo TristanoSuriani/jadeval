@@ -1,7 +1,7 @@
 package nl.suriani.jadeval.examples;
 
 import nl.suriani.jadeval.decision.Decisions;
-import nl.suriani.jadeval.decision.Facts;
+import nl.suriani.jadeval.common.Facts;
 import nl.suriani.jadeval.decision.DecisionsResultsTable;
 
 import java.util.HashMap;

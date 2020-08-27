@@ -1,5 +1,6 @@
 package nl.suriani.jadeval.decision;
 
+import nl.suriani.jadeval.common.Facts;
 import nl.suriani.jadeval.common.annotation.Fact;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

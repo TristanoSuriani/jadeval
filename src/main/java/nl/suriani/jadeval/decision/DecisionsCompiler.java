@@ -1,5 +1,6 @@
 package nl.suriani.jadeval.decision;
 
+import nl.suriani.jadeval.common.Facts;
 import nl.suriani.jadeval.common.internal.value.BooleanValue;
 import nl.suriani.jadeval.common.internal.value.EmptyValue;
 import nl.suriani.jadeval.common.internal.value.FactValue;

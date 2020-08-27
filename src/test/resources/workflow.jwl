@@ -1,23 +1,33 @@
 set $maximum_score to 3
 set $timeout_seconds to 60
 
+/*
+    modify grammar to allow writing assignments as:
+    constants
+        $maximum_score = 3
+        $timeout_seconds = 60
+*/
+
 root states
     waitingForPlayer1ToJoin
 
 intermediate states
-    waitingForPlayer1ToJoin, waitingForPlayer2ToJoin, bothPlayersJoined,
+    waitingForPlayer2ToJoin, bothPlayersJoined,
     waitingForBothPlayersToChoose, waitingForPlayer1ToChoose, waitingForPlayer2ToChoose,
-    bothPlayersHaveChosen, player1HasScored, player2HasScored, nobodyHasScored,
-    player1HasWon, player2HasWon, player1IsDisconnected, player2IsDisconnected, sessionTimeout
+    bothPlayersHaveChosen, player1HasScored, player2HasScored, nobodyHasScored
 
 final states
      player1HasWon, player2HasWon, player1IsDisconnected, player2IsDisconnected, sessionTimeout
+
+// A state can only be either root, or intermediate, or final.
 
 user events
     PLAYER1_JOINS, PLAYER2_JOINS, PLAYER1_CHOOSES, PLAYER2_CHOOSES, PLAYER1_DISCONNECTS, PLAYER2_DISCONNECTS
 
 system events
     PLAYER1_SCORES, PLAYER2_SCORES, NOBODY_SCORES, SYSTEM_TIMEOUT
+
+// An event can only be either user or system.
 
 transitions
     waitingForPlayer1ToJoin -> waitingForPlayer2ToJoin when user event is PLAYER1_JOINS
@@ -41,6 +51,44 @@ transitions
 
     nobodyHasScored -> waitingForBothPlayersToChoose
 
-    any -> player1IsDisconnected when system event is PLAYER1_DISCONNECTS
-    any -> player2IsDisconnected when system event is PLAYER2_DISCONNECTS
+
+    /*
+        any -> someState actually means: any intermediate state will transition to someState
+        This also imply that a state cannot be called 'any'.
+        any -> someState doesn't allow an alternative state in case the condition is not satisfied.
+    */
+
+    any -> player1IsDisconnected when user event is PLAYER1_DISCONNECTS
+    any -> player2IsDisconnected when user event is PLAYER2_DISCONNECTS
     any -> sessionTimeout when system event is SYSTEM_TIMEOUT
+
+/*
+    There may not be conflicting transitions.
+        T1: A -> B
+        T2: A -> B when [...] otherwise -> C (no event in when clause)
+        T3: A -> C
+        T4: A -> B when [...] otherwise -> C (there is an event in when clause)
+        T5: A -> C when [...] otherwise -> D (same event as T4 but different when clause)
+
+        T1 conflicts with T2 and T3, but not with T4. The presence of an event allows T4 to not
+            conflict with the other transitions.
+        T4 conflicts with T5 because it uses the same event.
+
+        Side note: does the language really need to allow defining events? An event cannot be a fact?
+        Choice A) Yes events. More flexibility in defining transition. Much more difficult to analyse.
+        Choice B) No events. More strict transitions definitions. Easier to analyse. 'Any' transitions are illegal.
+        I'm going to sleep on it. Most likely I'll choose B)
+
+
+    There may not be duplicated transitions.
+    There may not be orphan states (intermediate or final state there are never transitioned into).
+    Every root and intermediate state must be able to transition directly or indirectly to a final state.
+    A transition can either contain one user or one system event.
+    A transition can be direct or conditional.
+    A direct condition can be seen as a conditional without an alternative destination state.
+    A -> B when certain condition otherwise -> C:
+        A, B and C must be distinct states. A state can thus not transition to itself.
+    A root state can transition to an intermediate or a final state.
+    An intermediate state can transition to another intermediate state or a final state.
+    A final state cannot transition to any state.
+*/

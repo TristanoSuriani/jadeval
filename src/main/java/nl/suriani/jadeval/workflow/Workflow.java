@@ -1,4 +1,4 @@
-package nl.suriani.jadeval.decision;
+package nl.suriani.jadeval.workflow;
 
 import nl.suriani.jadeval.common.Facts;
 import nl.suriani.jadeval.common.internal.condition.ConditionResolver;
@@ -16,11 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
-/**
- * Runner for sets of decisions
- */
-public class Decisions {
-	private final static Logger logger = Logger.getLogger(Decisions.class.getName());
+public class Workflow {
 	private final static CharStreamRetriever charStreamRetriever = new CharStreamRetriever();
 
 	/**
@@ -29,8 +25,8 @@ public class Decisions {
 	 * @param file, not null
 	 * @return results table
 	 */
-	public DecisionsResultsTable apply(Facts facts, File file) {
-		return apply(facts, charStreamRetriever.get(file));
+	public void apply(Facts facts, File file) {
+		apply(facts, charStreamRetriever.get(file));
 	}
 
 	/**
@@ -39,8 +35,8 @@ public class Decisions {
 	 * @param inputStream, not null
 	 * @return results table
 	 */
-	public DecisionsResultsTable apply(Facts facts, InputStream inputStream) {
-		return apply(facts, charStreamRetriever.get(inputStream));
+	public void apply(Facts facts, InputStream inputStream) {
+		apply(facts, charStreamRetriever.get(inputStream));
 	}
 
 	/**
@@ -49,8 +45,8 @@ public class Decisions {
 	 * @param decisionStatements, not null
 	 * @return results table
 	 */
-	public DecisionsResultsTable apply(Facts facts, List<String> decisionStatements) {
-		return apply(facts, charStreamRetriever.get(decisionStatements));
+	public void apply(Facts facts, List<String> decisionStatements) {
+		apply(facts, charStreamRetriever.get(decisionStatements));
 	}
 
 	/**
@@ -59,26 +55,25 @@ public class Decisions {
 	 * @param decisionStatements, not null
 	 * @return results table
 	 */
-	public DecisionsResultsTable apply(Facts facts, String... decisionStatements) {
-		return apply(facts, charStreamRetriever.get(decisionStatements));
+	public void apply(Facts facts, String... decisionStatements) {
+		apply(facts, charStreamRetriever.get(decisionStatements));
 	}
 
-	private DecisionsResultsTable apply(Facts facts, CharStream input) {
+	private void apply(Facts facts, CharStream input) {
 		try {
-			DecisionsLexer javaLexer = new DecisionsLexer(input);
-			CommonTokenStream tokens = new CommonTokenStream(javaLexer);
-			DecisionsParser decisionsParser = new DecisionsParser(tokens);
-			ParseTree tree = decisionsParser.decisionTable();
+			WorkflowLexer workflowLexer = new WorkflowLexer(input);
+			CommonTokenStream tokens = new CommonTokenStream(workflowLexer);
+			WorkflowParser workflowParser = new WorkflowParser(tokens);
+			ParseTree tree = workflowParser.workflowDefinition();
 			ConditionResolver conditionResolver = new ConditionResolver();
-			DecisionsCompiler decisionsListener = new DecisionsCompiler(facts, conditionResolver);
+			WorkflowCompiler workflowCompiler = new WorkflowCompiler();
 			ParseTreeWalker walker = new ParseTreeWalker();
-			walker.walk(decisionsListener, tree);
-			return decisionsListener.getDecisionsResultsTable();
+			walker.walk(workflowCompiler, tree);
 		} catch (Exception exception) {
-			return new DecisionsResultsTable(exception);
+			throw new RuntimeException(exception);
 		}
 	}
-	
+
 	private static class CharStreamRetriever {
 		public CharStream get(File file) {
 			try {
