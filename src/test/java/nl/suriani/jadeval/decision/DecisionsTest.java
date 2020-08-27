@@ -41,7 +41,7 @@ class DecisionsTest {
 
 	@Test
 	void runFromFileName() {
-		String fileName = "src/test/resources/decisions.txt";
+		String fileName = "src/test/resources/decisions.jdl";
 		Map<String, Object> factsMap = new HashMap<>();
 		factsMap.put("connected", false);
 		factsMap.put("credit", 2000);
@@ -66,7 +66,7 @@ class DecisionsTest {
 
 	@Test
 	void runFromFileNameAndAnnotedFacts() {
-		String fileName = "src/test/resources/decisions.txt";
+		String fileName = "src/test/resources/decisions.jdl";
 
 		/*
 			Matching rule:
@@ -88,7 +88,7 @@ class DecisionsTest {
 
 	@Test
 	void runFromInputStream() throws FileNotFoundException {
-		String fileName = "src/test/resources/decisions.txt";
+		String fileName = "src/test/resources/decisions.jdl";
 		File file = new File(fileName);
 		FileInputStream inputStream = new FileInputStream(file);
 		/*
