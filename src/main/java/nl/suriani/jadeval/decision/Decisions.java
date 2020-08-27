@@ -69,7 +69,7 @@ public class Decisions {
 			DecisionsParser decisionsParser = new DecisionsParser(tokens);
 			ParseTree tree = decisionsParser.decisionTable();
 			ConditionResolver conditionResolver = new ConditionResolver();
-			DecisionsListenerImpl decisionsListener = new DecisionsListenerImpl(facts, conditionResolver);
+			DecisionsCompiler decisionsListener = new DecisionsCompiler(facts, conditionResolver);
 			ParseTreeWalker walker = new ParseTreeWalker();
 			walker.walk(decisionsListener, tree);
 			return decisionsListener.getDecisionsResultsTable();

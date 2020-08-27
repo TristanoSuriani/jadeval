@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-class DecisionsListenerImpl extends DecisionsBaseListener {
+class DecisionsCompiler extends DecisionsBaseListener {
 	private final Facts facts;
 	private final ConditionResolver conditionResolver;
 
@@ -28,8 +28,7 @@ class DecisionsListenerImpl extends DecisionsBaseListener {
 	private String ruleDescription;
 	private Map<String, FactValue> constantsScope;
 
-
-	public DecisionsListenerImpl(Facts facts, ConditionResolver conditionResolver) {
+	public DecisionsCompiler(Facts facts, ConditionResolver conditionResolver) {
 		this.facts = facts;
 		this.conditionResolver = conditionResolver;
 		this.decisionsResultsTable = new DecisionsResultsTable();
