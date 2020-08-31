@@ -135,6 +135,12 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 	}
 
 	@Override
+	public void enterConstantEqualityCondition(WorkflowParser.ConstantEqualityConditionContext ctx) {
+		Condition condition = workflowConditionFactory.make(constantsScope, ctx);
+		currentConditions.add(condition);
+	}
+
+	@Override
 	public void exitConditionalTransition(WorkflowParser.ConditionalTransitionContext ctx) {
 		transitions.add(new ConditionalTransition(currentFromState, currentToState, currentConditions, currentAlternativeToState));
 

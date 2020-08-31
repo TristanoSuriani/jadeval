@@ -1,6 +1,6 @@
 constants
-    $maximum_score = 3
-    $timeout_seconds = 60
+    $maximumScore = 3
+    $timeoutSeconds = 60
 
 
 root states
@@ -15,7 +15,7 @@ final states
      player1HasWon, player2HasWon, player1IsDisconnected, player2IsDisconnected, sessionTimeout
 
 transitions
-    schifo -> superSchifo when schifissimo is 1 and something starts with cacca otherwise -> puppa
+    schifo -> superSchifo when schifissimo is $timeoutSeconds and something starts with cacca otherwise -> puppa
     waitingForPlayer1ToJoin -> waitingForPlayer2ToJoin when userEvent is PLAYER1_JOINS
     waitingForPlayer2ToJoin -> bothPlayersJoined when userEvent is PLAYER2_JOINS
     bothPlayersJoined -> waitingForBothPlayersToChoose
