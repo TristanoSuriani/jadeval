@@ -14,10 +14,8 @@ intermediate states
 final states
      player1HasWon, player2HasWon, player1IsDisconnected, player2IsDisconnected, sessionTimeout
 
-// A state can only be either root, or intermediate, or final.
-
 transitions
-    schifo -> superSchifo when schifissimo is 1
+    schifo -> superSchifo when schifissimo is 1 and something starts with cacca otherwise -> puppa
     waitingForPlayer1ToJoin -> waitingForPlayer2ToJoin when userEvent is PLAYER1_JOINS
     waitingForPlayer2ToJoin -> bothPlayersJoined when userEvent is PLAYER2_JOINS
     bothPlayersJoined -> waitingForBothPlayersToChoose
@@ -38,20 +36,6 @@ transitions
                         otherwise -> waitingForBothPlayersToChoose
 
     nobodyHasScored -> waitingForBothPlayersToChoose
-
-
-    /*
-        any -> someState actually means: any intermediate state will transition to someState
-        This also imply that a state cannot be called 'any'.
-        any -> someState doesn't allow an alternative state in case the condition is not satisfied.
-        any -> someState must always be a conditional transition
-        in any -> someState someState must be a final state.
-    */
-
-    any -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
-    any -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS
-    any -> sessionTimeout when systemEvent is SYSTEM_TIMEOUT
-
 
 /*
     There may not be conflicting transitions.

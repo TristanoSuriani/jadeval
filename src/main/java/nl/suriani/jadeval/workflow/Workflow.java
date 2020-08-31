@@ -1,5 +1,7 @@
 package nl.suriani.jadeval.workflow;
 
+import nl.suriani.jadeval.common.condition.EqualitySymbolFactory;
+import nl.suriani.jadeval.workflow.internal.WorkflowConditionFactory;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -30,7 +32,9 @@ public class Workflow {
 			CommonTokenStream tokens = new CommonTokenStream(workflowLexer);
 			WorkflowParser workflowParser = new WorkflowParser(tokens);
 			ParseTree tree = workflowParser.workflowDefinition();
-			WorkflowCompiler workflowCompiler = new WorkflowCompiler();
+			EqualitySymbolFactory equalitySymbolFactory = new EqualitySymbolFactory();
+			WorkflowConditionFactory workflowConditionFactory = new WorkflowConditionFactory(equalitySymbolFactory);
+			WorkflowCompiler workflowCompiler = new WorkflowCompiler(workflowConditionFactory);
 			ParseTreeWalker walker = new ParseTreeWalker();
 			walker.walk(workflowCompiler, tree);
 		} catch (Exception exception) {

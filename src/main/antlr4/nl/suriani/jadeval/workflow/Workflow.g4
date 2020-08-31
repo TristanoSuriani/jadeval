@@ -8,13 +8,11 @@ rootStatesDefinition            : 'root states' ID+ ;
 intermediateStatesDefinition    : 'intermediate states' ID+ ;
 finalStatesDefinition           : 'final states' ID+ ;
 transitionsDefinition           : 'transitions' transitionDefinition+ ;
-transitionDefinition            : anyTypeTransition
-                                | conditionalTransition
+transitionDefinition            : conditionalTransition
                                 | directTransition
                                 ;
 
-anyTypeTransition               : ANY ARROW ID WHEN conditionExpression ;
-conditionalTransition           : ID ARROW ID WHEN conditionExpression (OTHERWISE ARROW ID) ;
+conditionalTransition           : ID ARROW ID WHEN conditionExpression (OTHERWISE ARROW ID)? ;
 directTransition                : ID ARROW ID ;
 
 
@@ -42,6 +40,9 @@ booleanEqualityCondition    : ID IS booleanValue
 
 textEqualityCondition       : ID IS textValue
                             | ID ISNOT textValue
+                            | ID CONTAINS textValue
+                            | ID STARTS_WITH textValue
+                            | ID ENDS_WITH textValue
                             ;
 
 constantEqualityCondition     : ID IS constantValue
@@ -57,7 +58,6 @@ booleanValue : BOOLEAN ;
 constantValue : CONSTANT ;
 textValue : ID ;
 
-ANY         : 'any' ;
 ARROW       : '->' ;
 EQUALS      : '=' ;
 OTHERWISE   : 'otherwise' ;
@@ -69,6 +69,9 @@ GTE         : '>=' ;
 GT          : '>' ;
 LTE         : '<=' ;
 LT          : '<' ;
+CONTAINS    : 'contains' ;
+STARTS_WITH : 'starts with' ;
+ENDS_WITH   : 'ends with' ;
 
 SET         : 'set' ;
 TO          : 'to' ;

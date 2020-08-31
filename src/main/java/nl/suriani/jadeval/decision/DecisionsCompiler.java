@@ -40,13 +40,13 @@ class DecisionsCompiler extends DecisionsBaseListener {
 
 	@Override
 	public void enterAssignment(DecisionsParser.AssignmentContext ctx) {
-		String constantName = ctx.children.get(1).getText();
+		String constantName = ctx.getChild(1).getText();
 
 		if (!(constantsScopeLookup(constantName) instanceof EmptyValue)) {
 			throw new IllegalStateException("The constant " + constantName + "is already defined and cannot be redefined");
 		}
 
-		ParseTree valueContext = ctx.children.get(3);
+		ParseTree valueContext = ctx.getChild(3);
 		if (valueContext instanceof DecisionsParser.NumericValueContext) {
 			constantsScopeUpdate(constantName, (DecisionsParser.NumericValueContext) valueContext);
 		} else if (valueContext instanceof DecisionsParser.BooleanValueContext) {

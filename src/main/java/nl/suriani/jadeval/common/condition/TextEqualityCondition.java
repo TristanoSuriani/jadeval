@@ -3,10 +3,12 @@ package nl.suriani.jadeval.common.condition;
 import nl.suriani.jadeval.common.internal.value.TextValue;
 
 public class TextEqualityCondition extends Condition<TextValue> {
+	private String factName;
 	private TextValue comparing;
 	private TextEqualitySymbol symbol;
 
-	public TextEqualityCondition(TextValue comparing, TextEqualitySymbol symbol) {
+	public TextEqualityCondition(String factName, TextValue comparing, TextEqualitySymbol symbol) {
+		this.factName = factName;
 		this.comparing = comparing;
 		this.symbol = symbol;
 	}

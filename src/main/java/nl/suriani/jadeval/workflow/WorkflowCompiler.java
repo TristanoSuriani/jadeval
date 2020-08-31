@@ -1,6 +1,9 @@
 package nl.suriani.jadeval.workflow;
 
+import nl.suriani.jadeval.common.condition.BooleanEqualityCondition;
 import nl.suriani.jadeval.common.condition.Condition;
+import nl.suriani.jadeval.common.condition.NumericEqualityCondition;
+import nl.suriani.jadeval.common.condition.TextEqualityCondition;
 import nl.suriani.jadeval.workflow.internal.WorkflowConditionFactory;
 import nl.suriani.jadeval.workflow.internal.transition.ConditionalTransition;
 import nl.suriani.jadeval.workflow.internal.transition.DirectTransition;
@@ -25,21 +28,26 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 	private List<Transition> transitions;
 	private String currentFromState;
 	private String currentToState;
+	private String currentAlternativeToState;
 	private List<Condition> currentConditions;
 
-	public WorkflowCompiler() {
+	private WorkflowConditionFactory workflowConditionFactory;
+
+	public WorkflowCompiler(WorkflowConditionFactory workflowConditionFactory) {
 		constantsScope = new SymbolTable();
 		rootStates = new HashSet<>();
 		intermediateStates = new HashSet<>();
 		finalStates = new HashSet<>();
 		allStates = new HashSet<>();
 		transitions = new ArrayList<>();
+
+		this.workflowConditionFactory = workflowConditionFactory;
 	}
 
 	@Override
 	public void enterConstantDefinition(WorkflowParser.ConstantDefinitionContext ctx) {
-		String constantName = ctx.children.get(0).getText();
-		ParseTree valueContext = ctx.children.get(2);
+		String constantName = ctx.getChild(0).getText();
+		ParseTree valueContext = ctx.getChild(2);
 		if (valueContext instanceof WorkflowParser.NumericValueContext) {
 			constantsScope.update(constantName, new NumericValue((valueContext.getText())));
 		} else if (valueContext instanceof WorkflowParser.BooleanValueContext) {
@@ -86,59 +94,54 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 
 	@Override
 	public void enterDirectTransition(WorkflowParser.DirectTransitionContext ctx) {
-		String fromState = ctx.children.get(0).getText();
-		String toState = ctx.children.get(2).getText();
+		String fromState = ctx.getChild(0).getText();
+		String toState = ctx.getChild(2).getText();
 
 		Transition transition = new DirectTransition(fromState, toState);
 		transitions.add(transition);
 	}
 
 	@Override
-	public void enterAnyTypeTransition(WorkflowParser.AnyTypeTransitionContext ctx) {
-		super.enterAnyTypeTransition(ctx);
-	}
-
-	@Override
 	public void enterConditionalTransition(WorkflowParser.ConditionalTransitionContext ctx) {
-		currentFromState = ctx.children.get(0).getText();
-		currentToState = ctx.children.get(2).getText();
+		currentFromState = ctx.getChild(0).getText();
+		currentToState = ctx.getChild(2).getText();
+
+		if (ctx.OTHERWISE() != null) {
+			currentAlternativeToState = ctx.getChild(7).getText();
+		}
 	}
 
 	@Override
 	public void enterConditionExpression(WorkflowParser.ConditionExpressionContext ctx) {
-
 		currentConditions = new ArrayList<>();
-		super.enterConditionExpression(ctx);
 	}
 
 	@Override
 	public void enterNumericEqualityCondition(WorkflowParser.NumericEqualityConditionContext ctx) {
-		super.enterNumericEqualityCondition(ctx);
+		NumericEqualityCondition condition = workflowConditionFactory.make(ctx);
+		currentConditions.add(condition);
 	}
 
 	@Override
 	public void enterBooleanEqualityCondition(WorkflowParser.BooleanEqualityConditionContext ctx) {
-		super.enterBooleanEqualityCondition(ctx);
+		BooleanEqualityCondition condition = workflowConditionFactory.make(ctx);
+		currentConditions.add(condition);
 	}
 
 	@Override
 	public void enterTextEqualityCondition(WorkflowParser.TextEqualityConditionContext ctx) {
-		super.enterTextEqualityCondition(ctx);
+		TextEqualityCondition condition = workflowConditionFactory.make(ctx);
+		currentConditions.add(condition);
 	}
 
 	@Override
-	public void exitConditionExpression(WorkflowParser.ConditionExpressionContext ctx) {
-		transitions.add(new ConditionalTransition(currentFromState, currentToState, currentConditions));
-	}
+	public void exitConditionalTransition(WorkflowParser.ConditionalTransitionContext ctx) {
+		transitions.add(new ConditionalTransition(currentFromState, currentToState, currentConditions, currentAlternativeToState));
 
-	private boolean resolveCondition(ParseTree equalityConditionContext) {
-		String factName = equalityConditionContext.getChild(0).getText();
-		String equalitySymbol = equalityConditionContext.getChild(1).getText();
-		ParseTree valueContext = equalityConditionContext.getChild(2);
-		if (equalityConditionContext instanceof WorkflowParser.NumericEqualityConditionContext) {
-			new WorkflowConditionFactory().make((WorkflowParser.NumericEqualityConditionContext) equalityConditionContext);
-		}
-		return false;
+		currentFromState = null;
+		currentToState = null;
+		currentAlternativeToState = null;
+		currentConditions = null;
 	}
 
 	private boolean isRootState(String state) {
