@@ -1,8 +1,8 @@
-package nl.suriani.jadeval.common.internal.condition;
+package nl.suriani.jadeval.decision.condition;
 
 import nl.suriani.jadeval.common.internal.value.FactValue;
 
-public class ISNOTCondition<T extends FactValue> implements ResolvableCondition {
+public class ISNOTCondition<T extends FactValue> implements Condition {
 	private final T comparing;
 	private final T comparison;
 
@@ -12,7 +12,7 @@ public class ISNOTCondition<T extends FactValue> implements ResolvableCondition 
 	}
 
 	@Override
-	public boolean resolve() {
+	public boolean solve() {
 		return !comparing.getValue().equals(comparison.getValue());
 	}
 }

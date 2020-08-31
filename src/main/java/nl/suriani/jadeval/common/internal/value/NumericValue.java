@@ -7,6 +7,10 @@ public class NumericValue extends FactValue<BigDecimal> implements Comparable<Nu
 		super(value);
 	}
 
+	public NumericValue(String value) {
+		this(Double.valueOf(value));
+	}
+
 	public NumericValue(Integer value) {
 		super(BigDecimal.valueOf(value));
 	}

@@ -1,6 +1,6 @@
-package nl.suriani.jadeval.common.internal.condition;
+package nl.suriani.jadeval.decision.condition;
 
-public class NotCondition implements ResolvableCondition {
+public class NotCondition implements Condition {
 	private boolean comparing;
 	private boolean comparison;
 
@@ -10,7 +10,7 @@ public class NotCondition implements ResolvableCondition {
 	}
 
 	@Override
-	public boolean resolve() {
+	public boolean solve() {
 		return comparing != comparison;
 	}
 }

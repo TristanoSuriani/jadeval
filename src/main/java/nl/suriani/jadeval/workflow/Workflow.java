@@ -1,7 +1,8 @@
 package nl.suriani.jadeval.workflow;
 
 import nl.suriani.jadeval.common.Facts;
-import nl.suriani.jadeval.common.internal.condition.ConditionResolver;
+import nl.suriani.jadeval.decision.condition.ConditionFactory;
+import nl.suriani.jadeval.decision.condition.ConditionResolver;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -14,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class Workflow {
 	private final static CharStreamRetriever charStreamRetriever = new CharStreamRetriever();
@@ -65,8 +65,9 @@ public class Workflow {
 			CommonTokenStream tokens = new CommonTokenStream(workflowLexer);
 			WorkflowParser workflowParser = new WorkflowParser(tokens);
 			ParseTree tree = workflowParser.workflowDefinition();
-			ConditionResolver conditionResolver = new ConditionResolver();
-			WorkflowCompiler workflowCompiler = new WorkflowCompiler();
+			ConditionFactory conditionFactory = new ConditionFactory();
+			ConditionResolver conditionResolver = new ConditionResolver(facts, conditionFactory);
+			WorkflowCompiler workflowCompiler = new WorkflowCompiler(facts, conditionFactory, conditionResolver);
 			ParseTreeWalker walker = new ParseTreeWalker();
 			walker.walk(workflowCompiler, tree);
 		} catch (Exception exception) {

@@ -8,10 +8,10 @@ import org.antlr.v4.gui.TestRig;
 class GrunLauncher {
 	// *************** Configurations **********************************
 	private static final String FOLDER_TEST_FILE = "/Users/tristanosuriani/workspace/IdeaProjects/jadeval/src/test/resources/";
-	private static final String NAME_TEST_FILE = "decisions.jdl";
-	private static final String GRAMMAR_CLASS_NAME = "nl.suriani.jadeval.decision.Decisions";
+	private static final String NAME_TEST_FILE = "workflow.jwl";
+	private static final String GRAMMAR_CLASS_NAME = "nl.suriani.jadeval.workflow.Workflow";
 	private static final String OPTIONS = "-gui";
-	private static final String ROOT_RULE = "decisionTable";
+	private static final String ROOT_RULE = "workflowDefinition";
 	private static final String PATH_TEST_FILE = FOLDER_TEST_FILE.concat(NAME_TEST_FILE);
 	// ******************************************************************
 

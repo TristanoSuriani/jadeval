@@ -1,8 +1,8 @@
-package nl.suriani.jadeval.common.internal.condition;
+package nl.suriani.jadeval.decision.condition;
 
 import nl.suriani.jadeval.common.internal.value.NumericValue;
 
-public class GTECondition implements ResolvableCondition {
+public class GTECondition implements Condition {
 	private NumericValue comparing;
 	private NumericValue comparison;
 
@@ -12,7 +12,7 @@ public class GTECondition implements ResolvableCondition {
 	}
 
 	@Override
-	public boolean resolve() {
+	public boolean solve() {
 		return comparing.compareTo(comparison) >= 0;
 	}
 }

@@ -1,11 +1,12 @@
 package nl.suriani.jadeval.decision;
 
 import nl.suriani.jadeval.common.Facts;
+import nl.suriani.jadeval.decision.condition.Condition;
 import nl.suriani.jadeval.common.internal.value.BooleanValue;
 import nl.suriani.jadeval.common.internal.value.EmptyValue;
 import nl.suriani.jadeval.common.internal.value.FactValue;
 import nl.suriani.jadeval.common.internal.value.TextValue;
-import nl.suriani.jadeval.common.internal.condition.ConditionResolver;
+import nl.suriani.jadeval.decision.condition.ConditionFactory;
 import nl.suriani.jadeval.common.internal.value.NumericValue;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 
 class DecisionsCompiler extends DecisionsBaseListener {
 	private final Facts facts;
-	private final ConditionResolver conditionResolver;
+	private final ConditionFactory conditionFactory;
 
 	private DecisionsResultsTable decisionsResultsTable;
 	private List<Boolean> currentResolvedConditions;
@@ -29,9 +30,9 @@ class DecisionsCompiler extends DecisionsBaseListener {
 	private String ruleDescription;
 	private Map<String, FactValue> constantsScope;
 
-	public DecisionsCompiler(Facts facts, ConditionResolver conditionResolver) {
+	public DecisionsCompiler(Facts facts, ConditionFactory conditionFactory) {
 		this.facts = facts;
-		this.conditionResolver = conditionResolver;
+		this.conditionFactory = conditionFactory;
 		this.decisionsResultsTable = new DecisionsResultsTable();
 		this.constantsScope = new HashMap<>();
 		initializeCurrentResultsAndEvents();
@@ -86,7 +87,8 @@ class DecisionsCompiler extends DecisionsBaseListener {
 		return facts.getFact(factName)
 				.filter(factValue -> factValue instanceof NumericValue)
 				.map(factValue -> (NumericValue) factValue)
-				.map(factValue -> conditionResolver.resolve(factValue, expectedValue, equalitySymbol))
+				.map(factValue -> conditionFactory.make(factValue, expectedValue, equalitySymbol))
+				.map(Condition::solve)
 				.orElse(false);
 	}
 
@@ -105,7 +107,8 @@ class DecisionsCompiler extends DecisionsBaseListener {
 		return facts.getFact(factName)
 				.filter(factValue -> factValue instanceof BooleanValue)
 				.map(factValue -> (BooleanValue) factValue)
-				.map(factValue -> conditionResolver.resolve(factValue, expectedValue, equalitySymbol))
+				.map(factValue -> conditionFactory.make(factValue, expectedValue, equalitySymbol))
+				.map(Condition::solve)
 				.orElse(false);
 	}
 
@@ -124,7 +127,8 @@ class DecisionsCompiler extends DecisionsBaseListener {
 		return facts.getFact(factName)
 				.filter(factValue -> factValue instanceof TextValue)
 				.map(factValue -> (TextValue) factValue)
-				.map(factValue -> conditionResolver.resolve(factValue, expectedValue, equalitySymbol))
+				.map(factValue -> conditionFactory.make(factValue, expectedValue, equalitySymbol))
+				.map(Condition::solve)
 				.orElse(false);
 	}
 

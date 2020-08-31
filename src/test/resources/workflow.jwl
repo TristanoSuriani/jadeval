@@ -1,12 +1,7 @@
-set $maximum_score to 3
-set $timeout_seconds to 60
+constants
+    $maximum_score = 3
+    $timeout_seconds = 60
 
-/*
-    modify grammar to allow writing assignments as:
-    constants
-        $maximum_score = 3
-        $timeout_seconds = 60
-*/
 
 root states
     waitingForPlayer1ToJoin
@@ -21,27 +16,19 @@ final states
 
 // A state can only be either root, or intermediate, or final.
 
-user events
-    PLAYER1_JOINS, PLAYER2_JOINS, PLAYER1_CHOOSES, PLAYER2_CHOOSES, PLAYER1_DISCONNECTS, PLAYER2_DISCONNECTS
-
-system events
-    PLAYER1_SCORES, PLAYER2_SCORES, NOBODY_SCORES, SYSTEM_TIMEOUT
-
-// An event can only be either user or system.
-
 transitions
-    waitingForPlayer1ToJoin -> waitingForPlayer2ToJoin when user event is PLAYER1_JOINS
-    waitingForPlayer2ToJoin -> bothPlayersJoined when user event is PLAYER2_JOINS
+    waitingForPlayer1ToJoin -> waitingForPlayer2ToJoin when userEvent is PLAYER1_JOINS and supercazzola is true
+    waitingForPlayer2ToJoin -> bothPlayersJoined when userEvent is PLAYER2_JOINS
     bothPlayersJoined -> waitingForBothPlayersToChoose
 
-    waitingForBothPlayersToChoose -> waitingForPlayer2ToChoose when user event is PLAYER1_CHOOSES
-    waitingForBothPlayersToChoose -> waitingForPlayer2ToChoose when user event is PLAYER2_CHOOSES
-    waitingForPlayer1ToChoose -> bothPlayersHaveChosen when user event is PLAYER1_CHOOSES
-    waitingForPlayer2ToChoose -> bothPlayersHaveChosen when user event is PLAYER2_CHOOSES
+    waitingForBothPlayersToChoose -> waitingForPlayer2ToChoose when userEvent is PLAYER1_CHOOSES
+    waitingForBothPlayersToChoose -> waitingForPlayer2ToChoose when userEvent is PLAYER2_CHOOSES
+    waitingForPlayer1ToChoose -> bothPlayersHaveChosen when userEvent is PLAYER1_CHOOSES
+    waitingForPlayer2ToChoose -> bothPlayersHaveChosen when userEvent is PLAYER2_CHOOSES
 
-    bothPlayersHaveChosen -> player1HasScored when system event is PLAYER1_SCORES
-    bothPlayersHaveChosen -> player2HasScored when system event is PLAYER2_SCORES
-    bothPlayersHaveChosen -> nobodyHasScored when system event is NOBODY_SCORES
+    bothPlayersHaveChosen -> player1HasScored when systemEvent is PLAYER1_SCORES
+    bothPlayersHaveChosen -> player2HasScored when systemEvent is PLAYER2_SCORES
+    bothPlayersHaveChosen -> nobodyHasScored when systemEvent is NOBODY_SCORES
 
     player1HasScored -> player1HasWon when player1Score >= $maximumScore
                         otherwise -> waitingForBothPlayersToChoose
@@ -56,34 +43,34 @@ transitions
         any -> someState actually means: any intermediate state will transition to someState
         This also imply that a state cannot be called 'any'.
         any -> someState doesn't allow an alternative state in case the condition is not satisfied.
+        any -> someState must always be a conditional transition
+        in any -> someState someState must be a final state.
     */
 
-    any -> player1IsDisconnected when user event is PLAYER1_DISCONNECTS
-    any -> player2IsDisconnected when user event is PLAYER2_DISCONNECTS
-    any -> sessionTimeout when system event is SYSTEM_TIMEOUT
+    any -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
+    any -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS
+    any -> sessionTimeout when systemEvent is SYSTEM_TIMEOUT
+
 
 /*
     There may not be conflicting transitions.
         T1: A -> B
         T2: A -> B when [...] otherwise -> C (no event in when clause)
         T3: A -> C
-        T4: A -> B when [...] otherwise -> C (there is an event in when clause)
-        T5: A -> C when [...] otherwise -> D (same event as T4 but different when clause)
+        T4: any -> C when [...]
 
-        T1 conflicts with T2 and T3, but not with T4. The presence of an event allows T4 to not
-            conflict with the other transitions.
-        T4 conflicts with T5 because it uses the same event.
+        T1 conflicts with T2 and T3, but not with T4.
 
-        Side note: does the language really need to allow defining events? An event cannot be a fact?
-        Choice A) Yes events. More flexibility in defining transition. Much more difficult to analyse.
-        Choice B) No events. More strict transitions definitions. Easier to analyse. 'Any' transitions are illegal.
-        I'm going to sleep on it. Most likely I'll choose B)
-
+        T5: A -> A is illegal.
+        T6: A -> A when [...] otherwise C is legal.
+        T7: A -> C when [...] is legal
+        T8: A -> C when [...] otherwise A is legal. (it is equivalent to T7)
+        T9: any -> A is illegal. A condition is required.
 
     There may not be duplicated transitions.
     There may not be orphan states (intermediate or final state there are never transitioned into).
     Every root and intermediate state must be able to transition directly or indirectly to a final state.
-    A transition can either contain one user or one system event.
+    A transition can either contain one user or one systemEvent.
     A transition can be direct or conditional.
     A direct condition can be seen as a conditional without an alternative destination state.
     A -> B when certain condition otherwise -> C:

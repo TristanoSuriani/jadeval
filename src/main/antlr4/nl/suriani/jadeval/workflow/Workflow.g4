@@ -1,26 +1,25 @@
 grammar Workflow;
 
-workflowDefinition      :   (assignment+)? rootStatesDefinition intermediateStatesDefinition? finalStatesDefinition
-                            userEventsDefinition? systemEventsDefinition? transitionsDefinition
+workflowDefinition      :   constantsDefinition? rootStatesDefinition intermediateStatesDefinition? finalStatesDefinition
+                            transitionsDefinition
                          ;
 
 rootStatesDefinition            : 'root states' ID+ ;
 intermediateStatesDefinition    : 'intermediate states' ID+ ;
 finalStatesDefinition           : 'final states' ID+ ;
-userEventsDefinition            : 'user events' ID+ ;
-systemEventsDefinition          : 'system events' ID+ ;
 transitionsDefinition           : 'transitions' transitionDefinition+ ;
-transitionDefinition            :  ID '->' ID 'when' conditionExpression 'otherwise ->' ID
-                                | (ID | 'any') '->' ID 'when' conditionExpression
-                                | ID '->' ID
+transitionDefinition            : anyTypeTransition
+                                | baseTransition WHEN conditionExpression (OTHERWISE ARROW ID)?
+                                | baseTransition
                                 ;
-alternativeStateName    : ID ;
 
-assignment              : SET CONSTANT TO numericValue
-                        | SET CONSTANT TO booleanValue
-                        | SET CONSTANT TO textValue
-                        ;
+anyTypeTransition               : ANY ARROW ID WHEN conditionExpression ;
+baseTransition                 : ID ARROW ID ;
 
+
+
+constantsDefinition     : 'constants' constantDefinition+ ;
+constantDefinition      : CONSTANT EQUALS (numericValue | booleanValue | textValue) ;
 conditionExpression   : conditionExpression 'and' conditionExpression
             | numericEqualityCondition
             | booleanEqualityCondition
@@ -61,6 +60,12 @@ numericValue : NUMBER ;
 booleanValue : BOOLEAN ;
 constantValue : CONSTANT ;
 textValue : ID ;
+
+ANY         : 'any' ;
+ARROW       : '->' ;
+EQUALS      : '=' ;
+OTHERWISE   : 'otherwise' ;
+WHEN        : 'when' ;
 
 ISNOT       : '!=' | 'is not' ;
 IS          : '==' | 'is' ;
