@@ -1,8 +1,5 @@
 package nl.suriani.jadeval.workflow;
 
-import nl.suriani.jadeval.common.Facts;
-import nl.suriani.jadeval.decision.condition.ConditionFactory;
-import nl.suriani.jadeval.decision.condition.ConditionResolver;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -19,55 +16,21 @@ import java.util.List;
 public class Workflow {
 	private final static CharStreamRetriever charStreamRetriever = new CharStreamRetriever();
 
-	/**
-	 * Runs the decisions.
-	 * @param facts, not null
-	 * @param file, not null
-	 * @return results table
-	 */
-	public void apply(Facts facts, File file) {
-		apply(facts, charStreamRetriever.get(file));
+	public void build(File file) {
+		build(charStreamRetriever.get(file));
 	}
 
-	/**
-	 * Runs the decisions.
-	 * @param facts, not null
-	 * @param inputStream, not null
-	 * @return results table
-	 */
-	public void apply(Facts facts, InputStream inputStream) {
-		apply(facts, charStreamRetriever.get(inputStream));
+	public void build(InputStream inputStream) {
+		build(charStreamRetriever.get(inputStream));
 	}
 
-	/**
-	 * Runs the decisions.
-	 * @param facts, not null
-	 * @param decisionStatements, not null
-	 * @return results table
-	 */
-	public void apply(Facts facts, List<String> decisionStatements) {
-		apply(facts, charStreamRetriever.get(decisionStatements));
-	}
-
-	/**
-	 * Runs the decisions.
-	 * @param facts, not null
-	 * @param decisionStatements, not null
-	 * @return results table
-	 */
-	public void apply(Facts facts, String... decisionStatements) {
-		apply(facts, charStreamRetriever.get(decisionStatements));
-	}
-
-	private void apply(Facts facts, CharStream input) {
+	private void build(CharStream input) {
 		try {
 			WorkflowLexer workflowLexer = new WorkflowLexer(input);
 			CommonTokenStream tokens = new CommonTokenStream(workflowLexer);
 			WorkflowParser workflowParser = new WorkflowParser(tokens);
 			ParseTree tree = workflowParser.workflowDefinition();
-			ConditionFactory conditionFactory = new ConditionFactory();
-			ConditionResolver conditionResolver = new ConditionResolver(facts, conditionFactory);
-			WorkflowCompiler workflowCompiler = new WorkflowCompiler(facts, conditionFactory, conditionResolver);
+			WorkflowCompiler workflowCompiler = new WorkflowCompiler();
 			ParseTreeWalker walker = new ParseTreeWalker();
 			walker.walk(workflowCompiler, tree);
 		} catch (Exception exception) {

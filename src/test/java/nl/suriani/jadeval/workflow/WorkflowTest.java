@@ -18,6 +18,6 @@ class WorkflowTest {
 	void test() {
 		Facts facts = new Facts();
 		File file = new File("src/test/resources/workflow.jwl");
-		workflow.apply(facts, file);
+		workflow.build(facts, file);
 	}
 }

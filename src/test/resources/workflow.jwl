@@ -17,7 +17,8 @@ final states
 // A state can only be either root, or intermediate, or final.
 
 transitions
-    waitingForPlayer1ToJoin -> waitingForPlayer2ToJoin when userEvent is PLAYER1_JOINS and supercazzola is true
+    schifo -> superSchifo when schifissimo is 1
+    waitingForPlayer1ToJoin -> waitingForPlayer2ToJoin when userEvent is PLAYER1_JOINS
     waitingForPlayer2ToJoin -> bothPlayersJoined when userEvent is PLAYER2_JOINS
     bothPlayersJoined -> waitingForBothPlayersToChoose
 

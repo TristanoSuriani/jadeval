@@ -9,12 +9,13 @@ intermediateStatesDefinition    : 'intermediate states' ID+ ;
 finalStatesDefinition           : 'final states' ID+ ;
 transitionsDefinition           : 'transitions' transitionDefinition+ ;
 transitionDefinition            : anyTypeTransition
-                                | baseTransition WHEN conditionExpression (OTHERWISE ARROW ID)?
-                                | baseTransition
+                                | conditionalTransition
+                                | directTransition
                                 ;
 
 anyTypeTransition               : ANY ARROW ID WHEN conditionExpression ;
-baseTransition                 : ID ARROW ID ;
+conditionalTransition           : ID ARROW ID WHEN conditionExpression (OTHERWISE ARROW ID) ;
+directTransition                : ID ARROW ID ;
 
 
 
@@ -25,8 +26,6 @@ conditionExpression   : conditionExpression 'and' conditionExpression
             | booleanEqualityCondition
             | textEqualityCondition
             | constantEqualityCondition
-            | userEventEqualityCondition
-            | systemEventEqualityCondition
             ;
 
 numericEqualityCondition    : ID IS numericValue
@@ -52,9 +51,6 @@ constantEqualityCondition     : ID IS constantValue
                               | ID LTE constantValue
                               | ID LT constantValue
                               ;
-
-userEventEqualityCondition  : 'user event is' ID ;
-systemEventEqualityCondition  : 'system event is' ID ;
 
 numericValue : NUMBER ;
 booleanValue : BOOLEAN ;

@@ -1,20 +1,22 @@
 package nl.suriani.jadeval.workflow.internal.transition;
 
-import nl.suriani.jadeval.decision.condition.Condition;
+import nl.suriani.jadeval.common.condition.Condition;
 
-public class ConditionalTransition extends BaseTransition {
-	private Condition condition;
+import java.util.List;
+
+public class ConditionalTransition extends DirectTransition {
+	private List<Condition> conditions;
 	private String alternativeToState;
 
-	public ConditionalTransition(String fromState, String toState, Condition condition) {
+	public ConditionalTransition(String fromState, String toState, List<Condition> conditions) {
 		super(fromState, toState);
-		this.condition = condition;
+		this.conditions = conditions;
 		alternativeToState = fromState;
 	}
 
-	public ConditionalTransition(String fromState, String toState, Condition condition, String alternativeToState) {
+	public ConditionalTransition(String fromState, String toState, List<Condition> conditions, String alternativeToState) {
 		super(fromState, toState);
-		this.condition = condition;
+		this.conditions = conditions;
 		this.alternativeToState = alternativeToState;
 	}
 }
