@@ -1,6 +1,5 @@
 package nl.suriani.jadeval.workflow;
 
-import edu.emory.mathcs.backport.java.util.Collections;
 import nl.suriani.jadeval.common.Facts;
 import nl.suriani.jadeval.common.annotation.Fact;
 import nl.suriani.jadeval.common.condition.EqualitySymbolFactory;
@@ -12,6 +11,7 @@ import org.mockito.Mockito;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -243,7 +243,6 @@ class WorkflowExecutorTest {
 	}
 
 	private List<StateUpdateEventHandler<ToDoBoardFacts>> getEventHandlers() {
-		final String greetingsReceiver = "Jack";
 		return Collections.singletonList(eventHandler);
 	}
 
