@@ -2,7 +2,6 @@ constants
     $maximumScore = 3
     $timeoutSeconds = 60
 
-
 root states
     waitingForPlayer1ToJoin
 
@@ -12,7 +11,7 @@ intermediate states
     bothPlayersHaveChosen, player1HasScored, player2HasScored, nobodyHasScored
 
 final states
-     player1HasWon, player2HasWon, player1IsDisconnected, player2IsDisconnected, sessionTimeout
+     player1HasWon, player2HasWon, player1IsDisconnected, player2IsDisconnected
 
 transitions
     waitingForPlayer1ToJoin -> waitingForPlayer2ToJoin when userEvent is PLAYER1_JOINS
@@ -20,7 +19,7 @@ transitions
     bothPlayersJoined -> waitingForBothPlayersToChoose
 
     waitingForBothPlayersToChoose -> waitingForPlayer2ToChoose when userEvent is PLAYER1_CHOOSES
-    waitingForBothPlayersToChoose -> waitingForPlayer2ToChoose when userEvent is PLAYER2_CHOOSES
+    waitingForBothPlayersToChoose -> waitingForPlayer1ToChoose when userEvent is PLAYER2_CHOOSES
     waitingForPlayer1ToChoose -> bothPlayersHaveChosen when userEvent is PLAYER1_CHOOSES
     waitingForPlayer2ToChoose -> bothPlayersHaveChosen when userEvent is PLAYER2_CHOOSES
 
@@ -31,35 +30,27 @@ transitions
     player1HasScored -> player1HasWon when player1Score >= $maximumScore
                         otherwise -> waitingForBothPlayersToChoose
 
-    player2HasScored -> player2HasWon when player1Score >= $maximumScore
+    player2HasScored -> player2HasWon when player2Score >= $maximumScore
                         otherwise -> waitingForBothPlayersToChoose
 
     nobodyHasScored -> waitingForBothPlayersToChoose
+    
+    waitingForPlayer2ToJoin -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS;
+    bothPlayersJoined -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS;
+    waitingForBothPlayersToChoose -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS;
+    waitingForPlayer1ToChoose -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS;
+    waitingForPlayer2ToChoose -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS;
+    bothPlayersHaveChosen -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS;
+    player1HasScored -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS;
+    player2HasScored -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS;
+    nobodyHasScored -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS;
+    
+    bothPlayersJoined -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS;
+    waitingForBothPlayersToChoose -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS;
+    waitingForPlayer1ToChoose -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS;
+    waitingForPlayer2ToChoose -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS;
+    bothPlayersHaveChosen -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS;
+    player1HasScored -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS;
+    player2HasScored -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS;
+    nobodyHasScored -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS;
 
-/*
-    There may not be conflicting transitions.
-        T1: A -> B
-        T2: A -> B when [...] otherwise -> C (no event in when clause)
-        T3: A -> C
-        T4: any -> C when [...]
-
-        T1 conflicts with T2 and T3, but not with T4.
-
-        T5: A -> A is illegal.
-        T6: A -> A when [...] otherwise C is legal.
-        T7: A -> C when [...] is legal
-        T8: A -> C when [...] otherwise A is legal. (it is equivalent to T7)
-        T9: any -> A is illegal. A condition is required.
-
-    There may not be duplicated transitions.
-    There may not be orphan states (intermediate or final state there are never transitioned into).
-    Every root and intermediate state must be able to transition directly or indirectly to a final state.
-    A transition can either contain one user or one systemEvent.
-    A transition can be direct or conditional.
-    A direct condition can be seen as a conditional without an alternative destination state.
-    A -> B when certain condition otherwise -> C:
-        A, B and C must be distinct states. A state can thus not transition to itself.
-    A root state can transition to an intermediate or a final state.
-    An intermediate state can transition to another intermediate state or a final state.
-    A final state cannot transition to any state.
-*/

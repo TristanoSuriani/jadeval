@@ -4,7 +4,6 @@ import nl.suriani.jadeval.common.condition.BooleanEqualityCondition;
 import nl.suriani.jadeval.common.condition.Condition;
 import nl.suriani.jadeval.common.condition.NumericEqualityCondition;
 import nl.suriani.jadeval.common.condition.TextEqualityCondition;
-import nl.suriani.jadeval.workflow.internal.WorkflowConditionFactory;
 import nl.suriani.jadeval.workflow.internal.transition.ConditionalTransition;
 import nl.suriani.jadeval.workflow.internal.transition.DirectTransition;
 import nl.suriani.jadeval.workflow.internal.transition.Transition;
@@ -113,7 +112,9 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 
 	@Override
 	public void enterConditionExpression(WorkflowParser.ConditionExpressionContext ctx) {
-		currentConditions = new ArrayList<>();
+		if (ctx.getParent() instanceof WorkflowParser.ConditionalTransitionContext) {
+			currentConditions = new ArrayList<>();
+		}
 	}
 
 	@Override
@@ -164,5 +165,9 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 
 	private boolean isAState(String state) {
 		return allStates.contains(state);
+	}
+
+	public List<Transition> getTransitions() {
+		return transitions;
 	}
 }

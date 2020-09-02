@@ -8,4 +8,12 @@ public class DirectTransition implements Transition {
 		this.fromState = fromState;
 		this.toState = toState;
 	}
+
+	public String getFromState() {
+		return fromState;
+	}
+
+	public String getToState() {
+		return toState;
+	}
 }

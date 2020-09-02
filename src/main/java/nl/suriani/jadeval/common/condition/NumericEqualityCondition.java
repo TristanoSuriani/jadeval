@@ -3,12 +3,11 @@ package nl.suriani.jadeval.common.condition;
 import nl.suriani.jadeval.common.internal.value.NumericValue;
 
 public class NumericEqualityCondition extends Condition<NumericValue> {
-	private String factName;
 	private NumericValue comparing;
 	private NumericEqualitySymbol symbol;
 
 	public NumericEqualityCondition(String factName, NumericValue comparing, NumericEqualitySymbol symbol) {
-		this.factName = factName;
+		super(factName);
 		this.comparing = comparing;
 		this.symbol = symbol;
 	}

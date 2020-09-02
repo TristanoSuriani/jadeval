@@ -1,0 +1,41 @@
+digraph {
+    waitingForPlayer1ToJoin -> waitingForPlayer2ToJoin [label="userEvent is PLAYER1_JOIN"]
+    waitingForPlayer2ToJoin -> bothPlayersJoined [label="userEvent is PLAYER2_JOIN"]
+    bothPlayersJoined -> waitingForBothPlayersToChoose
+
+    waitingForBothPlayersToChoose -> waitingForPlayer2ToChoose [label="userEvent is PLAYER1_CHOOSE"]
+    waitingForBothPlayersToChoose -> waitingForPlayer1ToChoose [label="userEvent is PLAYER2_CHOOSE"]
+    waitingForPlayer1ToChoose -> bothPlayersHaveChosen [label="userEvent is PLAYER1_CHOOSE"]
+    waitingForPlayer2ToChoose -> bothPlayersHaveChosen [label="userEvent is PLAYER2_CHOOSE"]
+
+    bothPlayersHaveChosen -> player1HasScored [label="systemEvent is PLAYER1_SCORE"]
+    bothPlayersHaveChosen -> player2HasScored [label="systemEvent is PLAYER2_SCORE"]
+    bothPlayersHaveChosen -> nobodyHasScored [label="systemEvent is NOBODY_SCORE"]
+
+    player1HasScored -> player1HasWon [label="player1Score >= $maximumScore otherwise -> waitingForBothPlayersToChoose"]
+
+    player2HasScored -> player2HasWon [label="player2Score >= $maximumScore otherwise -> waitingForBothPlayersToChoose"]
+
+    nobodyHasScored -> waitingForBothPlayersToChoose
+}
+
+digraph {
+    waitingForPlayer2ToJoin -> player1IsDisconnected [label="userEvent is PLAYER1_DISCONNECT"]
+    bothPlayersJoined -> player1IsDisconnected [label="userEvent is PLAYER1_DISCONNECT"]
+    waitingForBothPlayersToChoose -> player1IsDisconnected [label="userEvent is PLAYER1_DISCONNECT"]
+    waitingForPlayer1ToChoose -> player1IsDisconnected [label="userEvent is PLAYER1_DISCONNECT"]
+    waitingForPlayer2ToChoose -> player1IsDisconnected [label="userEvent is PLAYER1_DISCONNECT"]
+    bothPlayersHaveChosen -> player1IsDisconnected [label="userEvent is PLAYER1_DISCONNECT"]
+    player1HasScored -> player1IsDisconnected [label="userEvent is PLAYER1_DISCONNECT"]
+    player2HasScored -> player1IsDisconnected [label="userEvent is PLAYER1_DISCONNECT"]
+    nobodyHasScored -> player1IsDisconnected [label="userEvent is PLAYER1_DISCONNECT"]
+
+    bothPlayersJoined -> player2IsDisconnected [label="userEvent is PLAYER2_DISCONNECT"]
+    waitingForBothPlayersToChoose -> player2IsDisconnected [label="userEvent is PLAYER2_DISCONNECT"]
+    waitingForPlayer1ToChoose -> player2IsDisconnected [label="userEvent is PLAYER2_DISCONNECT"]
+    waitingForPlayer2ToChoose -> player2IsDisconnected [label="userEvent is PLAYER2_DISCONNECT"]
+    bothPlayersHaveChosen -> player2IsDisconnected [label="userEvent is PLAYER2_DISCONNECT"]
+    player1HasScored -> player2IsDisconnected [label="userEvent is PLAYER2_DISCONNECT"]
+    player2HasScored -> player2IsDisconnected [label="userEvent is PLAYER2_DISCONNECT"]
+    nobodyHasScored -> player2IsDisconnected [label="userEvent is PLAYER2_DISCONNECT"]
+}

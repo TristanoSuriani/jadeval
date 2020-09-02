@@ -1,4 +1,4 @@
-package nl.suriani.jadeval.workflow.internal;
+package nl.suriani.jadeval.workflow;
 
 import nl.suriani.jadeval.common.condition.BooleanEqualityCondition;
 import nl.suriani.jadeval.common.condition.BooleanEqualitySymbol;
@@ -14,9 +14,8 @@ import nl.suriani.jadeval.common.internal.value.FactValue;
 import nl.suriani.jadeval.common.internal.value.NumericValue;
 import nl.suriani.jadeval.common.internal.value.SymbolTable;
 import nl.suriani.jadeval.common.internal.value.TextValue;
-import nl.suriani.jadeval.workflow.WorkflowParser;
 
-public class WorkflowConditionFactory {
+class WorkflowConditionFactory {
 	private EqualitySymbolFactory equalitySymbolFactory;
 
 	public WorkflowConditionFactory(EqualitySymbolFactory equalitySymbolFactory) {

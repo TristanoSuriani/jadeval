@@ -1,7 +1,5 @@
 package nl.suriani.jadeval.workflow;
 
-import nl.suriani.jadeval.common.condition.EqualitySymbolFactory;
-import nl.suriani.jadeval.workflow.internal.WorkflowConditionFactory;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -17,24 +15,36 @@ import java.util.List;
 
 public class Workflow {
 	private final static CharStreamRetriever charStreamRetriever = new CharStreamRetriever();
+	private WorkflowCompiler workflowCompiler;
 
-	public void build(File file) {
-		build(charStreamRetriever.get(file));
+	public Workflow(WorkflowCompiler workflowCompiler) {
+		this.workflowCompiler = workflowCompiler;
 	}
 
-	public void build(InputStream inputStream) {
-		build(charStreamRetriever.get(inputStream));
+	public WorkflowExecutor build(File file) {
+		compile(file);
+		return new WorkflowExecutor(workflowCompiler.getTransitions());
 	}
 
-	private void build(CharStream input) {
+	public WorkflowExecutor build(InputStream inputStream) {
+		compile(inputStream);
+		return new WorkflowExecutor(workflowCompiler.getTransitions());
+	}
+
+	private void compile(File file) {
+		compile(charStreamRetriever.get(file));
+	}
+
+	private void compile(InputStream inputStream) {
+		compile(charStreamRetriever.get(inputStream));
+	}
+
+	private void compile(CharStream input) {
 		try {
 			WorkflowLexer workflowLexer = new WorkflowLexer(input);
 			CommonTokenStream tokens = new CommonTokenStream(workflowLexer);
 			WorkflowParser workflowParser = new WorkflowParser(tokens);
 			ParseTree tree = workflowParser.workflowDefinition();
-			EqualitySymbolFactory equalitySymbolFactory = new EqualitySymbolFactory();
-			WorkflowConditionFactory workflowConditionFactory = new WorkflowConditionFactory(equalitySymbolFactory);
-			WorkflowCompiler workflowCompiler = new WorkflowCompiler(workflowConditionFactory);
 			ParseTreeWalker walker = new ParseTreeWalker();
 			walker.walk(workflowCompiler, tree);
 		} catch (Exception exception) {
