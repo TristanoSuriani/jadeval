@@ -8,14 +8,16 @@ rootStatesDefinition            : 'root states' ID+ ;
 intermediateStatesDefinition    : 'intermediate states' ID+ ;
 finalStatesDefinition           : 'final states' ID+ ;
 transitionsDefinition           : 'transitions' transitionDefinition+ ;
-transitionDefinition            : conditionalTransition
+transitionDefinition            : multipleConditionalTransition
+                                | multipleDirectTransition
+                                | conditionalTransition
                                 | directTransition
                                 ;
 
-conditionalTransition           : ID ARROW ID WHEN conditionExpression (OTHERWISE ARROW ID)? ;
+multipleConditionalTransition   : OPEN_BRACKET ID ID+ CLOSE_BRACKET ARROW ID WHEN conditionExpression ;
+multipleDirectTransition        : OPEN_BRACKET ID ID+ CLOSE_BRACKET ARROW ID ;
+conditionalTransition           : ID ARROW ID WHEN conditionExpression ;
 directTransition                : ID ARROW ID ;
-
-
 
 constantsDefinition     : 'constants' constantDefinition+ ;
 constantDefinition      : CONSTANT EQUALS (numericValue | booleanValue | textValue) ;
@@ -60,7 +62,6 @@ textValue : ID ;
 
 ARROW       : '->' ;
 EQUALS      : '=' ;
-OTHERWISE   : 'otherwise' ;
 WHEN        : 'when' ;
 
 ISNOT       : '!=' | 'is not' ;
@@ -73,6 +74,9 @@ CONTAINS    : 'contains' ;
 STARTS_WITH : 'starts with' ;
 ENDS_WITH   : 'ends with' ;
 
+OPEN_BRACKET    : '{' ;
+CLOSE_BRACKET   : '}' ;
+
 SET         : 'set' ;
 TO          : 'to' ;
 
@@ -82,7 +86,6 @@ CONSTANT    : '$' [a-zA-Z0-9_.]+ ;
 ID          : [a-zA-Z0-9_.]+ ;
 
 DOUBLE_QUOTES  : '"' ;
-
 
 COMMENT : '/*' .*? '*/' -> skip ;
 LINE_COMMENT : '//' ~[\r\n]* -> skip ;

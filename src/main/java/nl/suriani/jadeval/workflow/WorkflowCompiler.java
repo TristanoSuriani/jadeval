@@ -26,8 +26,8 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 	private Set<String> allStates;
 	private List<Transition> transitions;
 	private String currentFromState;
+	private List<String> currentFromStates;
 	private String currentToState;
-	private String currentAlternativeToState;
 	private List<Condition> currentConditions;
 
 	private WorkflowConditionFactory workflowConditionFactory;
@@ -39,7 +39,7 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 		finalStates = new HashSet<>();
 		allStates = new HashSet<>();
 		transitions = new ArrayList<>();
-
+		currentFromStates = new ArrayList<>();
 		this.workflowConditionFactory = workflowConditionFactory;
 	}
 
@@ -92,6 +92,43 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 	}
 
 	@Override
+	public void enterMultipleConditionalTransition(WorkflowParser.MultipleConditionalTransitionContext ctx) {
+
+		List<ParseTree> children = ctx.children;
+		for(ParseTree child: children) {
+			if (!(child.getText().equals(ctx.OPEN_BRACKET().getText()) ||
+					child.getText().equals(ctx.CLOSE_BRACKET().getText()))) {
+				if (child.getText().equals(ctx.ARROW().getText())) {
+					break;
+				}
+				else {
+					currentFromStates.add(child.getText());
+				}
+			}
+		}
+		currentToState = children.get(children.size() - 3).getText();
+	}
+
+	@Override
+	public void enterMultipleDirectTransition(WorkflowParser.MultipleDirectTransitionContext ctx) {
+		List<ParseTree> children = ctx.children;
+		List<String> localFromStates = new ArrayList<>();
+		for(ParseTree child: children) {
+			if (!(child.getText().equals(ctx.OPEN_BRACKET().getText()) ||
+					child.getText().equals(ctx.CLOSE_BRACKET().getText()))) {
+				if (child.getText().equals(ctx.ARROW().getText())) {
+					break;
+				}
+				else {
+					localFromStates.add(child.getText());
+				}
+			}
+		}
+		String toState = children.get(children.size() - 1).getText();
+		localFromStates.forEach(fromState -> transitions.add(new DirectTransition(fromState, toState)));
+	}
+
+	@Override
 	public void enterDirectTransition(WorkflowParser.DirectTransitionContext ctx) {
 		String fromState = ctx.getChild(0).getText();
 		String toState = ctx.getChild(2).getText();
@@ -104,15 +141,12 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 	public void enterConditionalTransition(WorkflowParser.ConditionalTransitionContext ctx) {
 		currentFromState = ctx.getChild(0).getText();
 		currentToState = ctx.getChild(2).getText();
-
-		if (ctx.OTHERWISE() != null) {
-			currentAlternativeToState = ctx.getChild(7).getText();
-		}
 	}
 
 	@Override
 	public void enterConditionExpression(WorkflowParser.ConditionExpressionContext ctx) {
-		if (ctx.getParent() instanceof WorkflowParser.ConditionalTransitionContext) {
+		if (ctx.getParent() instanceof WorkflowParser.ConditionalTransitionContext ||
+				ctx.getParent() instanceof WorkflowParser.MultipleConditionalTransitionContext) {
 			currentConditions = new ArrayList<>();
 		}
 	}
@@ -142,13 +176,21 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 	}
 
 	@Override
+	public void exitMultipleConditionalTransition(WorkflowParser.MultipleConditionalTransitionContext ctx) {
+		currentFromStates.forEach(fromState -> transitions.add(new ConditionalTransition(fromState, currentToState, currentConditions)));
+
+		currentFromStates = new ArrayList<>();
+		currentToState = null;
+		currentConditions = new ArrayList<>();
+	}
+
+	@Override
 	public void exitConditionalTransition(WorkflowParser.ConditionalTransitionContext ctx) {
-		transitions.add(new ConditionalTransition(currentFromState, currentToState, currentConditions, currentAlternativeToState));
+		transitions.add(new ConditionalTransition(currentFromState, currentToState, currentConditions));
 
 		currentFromState = null;
 		currentToState = null;
-		currentAlternativeToState = null;
-		currentConditions = null;
+		currentConditions = new ArrayList<>();
 	}
 
 	private boolean isRootState(String state) {

@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -219,6 +220,45 @@ class WorkflowExecutorTest {
 		Facts facts = new Facts();
 
 		assertTransitionEquals(facts, fromState, expectedToState);
+	}
+
+	@Test
+	void test_cancel_by_player1() {
+		List<String> fromStates = Arrays.asList(
+				"waitingForPlayer2ToJoin",
+				"waitingForBothPlayersToChoose",
+				"waitingForPlayer1ToChoose",
+				"waitingForPlayer2ToChoose",
+				"bothPlayersHaveChosen",
+				"player1HasScored",
+				"player2HasScored");
+
+		String expectedToState = "player1IsDisconnected";
+
+		Map<String, Object> factsMap = new HashMap<>();
+		factsMap.put("userEvent", "PLAYER1_DISCONNECTS");
+		Facts facts = new Facts(factsMap);
+
+		fromStates.forEach(fromState -> assertTransitionEquals(facts, fromState, expectedToState));
+	}
+
+	@Test
+	void test_cancel_by_player2() {
+		List<String> fromStates = Arrays.asList(
+				"waitingForBothPlayersToChoose",
+				"waitingForPlayer1ToChoose",
+				"waitingForPlayer2ToChoose",
+				"bothPlayersHaveChosen",
+				"player1HasScored",
+				"player2HasScored");
+
+		String expectedToState = "player2IsDisconnected";
+
+		Map<String, Object> factsMap = new HashMap<>();
+		factsMap.put("userEvent", "PLAYER2_DISCONNECTS");
+		Facts facts = new Facts(factsMap);
+
+		fromStates.forEach(fromState -> assertTransitionEquals(facts, fromState, expectedToState));
 	}
 
 	@Test

@@ -28,29 +28,18 @@ transitions
     bothPlayersHaveChosen -> nobodyHasScored when systemEvent is NOBODY_SCORES
 
     player1HasScored -> player1HasWon when player1Score >= $maximumScore
-                        otherwise -> waitingForBothPlayersToChoose
+    player1HasScored -> waitingForBothPlayersToChoose when player1Score < $maximumScore
 
     player2HasScored -> player2HasWon when player2Score >= $maximumScore
-                        otherwise -> waitingForBothPlayersToChoose
+    player2HasScored -> waitingForBothPlayersToChoose when player2Score < $maximumScore
 
     nobodyHasScored -> waitingForBothPlayersToChoose
-    
-    waitingForPlayer2ToJoin -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
-    bothPlayersJoined -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
-    waitingForBothPlayersToChoose -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
-    waitingForPlayer1ToChoose -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
-    waitingForPlayer2ToChoose -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
-    bothPlayersHaveChosen -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
-    player1HasScored -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
-    player2HasScored -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
-    nobodyHasScored -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
-    
-    bothPlayersJoined -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS
-    waitingForBothPlayersToChoose -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS
-    waitingForPlayer1ToChoose -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS
-    waitingForPlayer2ToChoose -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS
-    bothPlayersHaveChosen -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS
-    player1HasScored -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS
-    player2HasScored -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS
-    nobodyHasScored -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS
+
+    { waitingForPlayer2ToJoin, bothPlayersJoined, waitingForBothPlayersToChoose, waitingForPlayer1ToChoose,
+        waitingForPlayer2ToChoose, bothPlayersHaveChosen, player1HasScored, player2HasScored, nobodyHasScored }
+            -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
+
+    { bothPlayersJoined, waitingForBothPlayersToChoose, waitingForPlayer1ToChoose,
+            waitingForPlayer2ToChoose, bothPlayersHaveChosen, player1HasScored, player2HasScored, nobodyHasScored }
+                -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS
 

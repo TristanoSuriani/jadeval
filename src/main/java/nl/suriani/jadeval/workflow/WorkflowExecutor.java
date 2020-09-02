@@ -88,8 +88,6 @@ public class WorkflowExecutor<T> {
 				.map(condition -> isConditionSatisfied(condition, facts))
 				.allMatch(result -> result == true)) {
 				return transition.getToState();
-			} else if (transition.getAlternativeToState().isPresent()){
-				return transition.getAlternativeToState().get();
 			}
 		}
 		return current;
