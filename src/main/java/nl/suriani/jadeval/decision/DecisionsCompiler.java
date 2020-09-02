@@ -1,13 +1,13 @@
 package nl.suriani.jadeval.decision;
 
 import nl.suriani.jadeval.common.Facts;
-import nl.suriani.jadeval.decision.condition.Condition;
 import nl.suriani.jadeval.common.internal.value.BooleanValue;
 import nl.suriani.jadeval.common.internal.value.EmptyValue;
 import nl.suriani.jadeval.common.internal.value.FactValue;
-import nl.suriani.jadeval.common.internal.value.TextValue;
-import nl.suriani.jadeval.decision.condition.ConditionFactory;
 import nl.suriani.jadeval.common.internal.value.NumericValue;
+import nl.suriani.jadeval.common.internal.value.TextValue;
+import nl.suriani.jadeval.decision.condition.Condition;
+import nl.suriani.jadeval.decision.condition.ConditionFactory;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.math.BigDecimal;

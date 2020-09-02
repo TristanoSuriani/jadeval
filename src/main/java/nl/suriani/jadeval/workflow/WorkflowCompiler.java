@@ -4,13 +4,13 @@ import nl.suriani.jadeval.common.condition.BooleanEqualityCondition;
 import nl.suriani.jadeval.common.condition.Condition;
 import nl.suriani.jadeval.common.condition.NumericEqualityCondition;
 import nl.suriani.jadeval.common.condition.TextEqualityCondition;
-import nl.suriani.jadeval.workflow.internal.transition.ConditionalTransition;
-import nl.suriani.jadeval.workflow.internal.transition.DirectTransition;
-import nl.suriani.jadeval.workflow.internal.transition.Transition;
 import nl.suriani.jadeval.common.internal.value.BooleanValue;
 import nl.suriani.jadeval.common.internal.value.NumericValue;
 import nl.suriani.jadeval.common.internal.value.SymbolTable;
 import nl.suriani.jadeval.common.internal.value.TextValue;
+import nl.suriani.jadeval.workflow.internal.transition.ConditionalTransition;
+import nl.suriani.jadeval.workflow.internal.transition.DirectTransition;
+import nl.suriani.jadeval.workflow.internal.transition.Transition;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.ArrayList;

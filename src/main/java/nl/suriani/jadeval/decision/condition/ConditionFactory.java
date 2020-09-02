@@ -1,9 +1,9 @@
 package nl.suriani.jadeval.decision.condition;
 
 import nl.suriani.jadeval.common.internal.value.BooleanValue;
+import nl.suriani.jadeval.common.internal.value.FactValue;
 import nl.suriani.jadeval.common.internal.value.NumericValue;
 import nl.suriani.jadeval.common.internal.value.TextValue;
-import nl.suriani.jadeval.common.internal.value.FactValue;
 
 public class ConditionFactory {
 	

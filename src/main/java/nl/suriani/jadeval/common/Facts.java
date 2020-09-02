@@ -2,10 +2,10 @@ package nl.suriani.jadeval.common;
 
 import nl.suriani.jadeval.common.annotation.Fact;
 import nl.suriani.jadeval.common.internal.value.BooleanValue;
-import nl.suriani.jadeval.common.internal.value.NumericValue;
-import nl.suriani.jadeval.common.internal.value.TextValue;
 import nl.suriani.jadeval.common.internal.value.EmptyValue;
 import nl.suriani.jadeval.common.internal.value.FactValue;
+import nl.suriani.jadeval.common.internal.value.NumericValue;
+import nl.suriani.jadeval.common.internal.value.TextValue;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;

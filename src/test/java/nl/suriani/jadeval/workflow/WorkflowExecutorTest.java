@@ -1,7 +1,6 @@
 package nl.suriani.jadeval.workflow;
 
 import edu.emory.mathcs.backport.java.util.Collections;
-import nl.suriani.jadeval.RPSLSGame;
 import nl.suriani.jadeval.common.Facts;
 import nl.suriani.jadeval.common.annotation.Fact;
 import nl.suriani.jadeval.common.condition.EqualitySymbolFactory;
