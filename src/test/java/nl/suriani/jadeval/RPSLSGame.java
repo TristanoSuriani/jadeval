@@ -1,7 +1,5 @@
 package nl.suriani.jadeval;
 
-import nl.suriani.jadeval.workflow.annotation.State;
-
 import java.util.UUID;
 
 public class RPSLSGame {
@@ -10,7 +8,6 @@ public class RPSLSGame {
 	private Player player2;
 	private Move movePlayer1;
 	private Move movePlayer2;
-	@State
 	private Status status;
 
 	public static int MAXIMUM_SCORE = 3;
