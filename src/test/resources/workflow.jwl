@@ -35,22 +35,22 @@ transitions
 
     nobodyHasScored -> waitingForBothPlayersToChoose
     
-    waitingForPlayer2ToJoin -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS;
-    bothPlayersJoined -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS;
-    waitingForBothPlayersToChoose -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS;
-    waitingForPlayer1ToChoose -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS;
-    waitingForPlayer2ToChoose -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS;
-    bothPlayersHaveChosen -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS;
-    player1HasScored -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS;
-    player2HasScored -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS;
-    nobodyHasScored -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS;
+    waitingForPlayer2ToJoin -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
+    bothPlayersJoined -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
+    waitingForBothPlayersToChoose -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
+    waitingForPlayer1ToChoose -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
+    waitingForPlayer2ToChoose -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
+    bothPlayersHaveChosen -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
+    player1HasScored -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
+    player2HasScored -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
+    nobodyHasScored -> player1IsDisconnected when userEvent is PLAYER1_DISCONNECTS
     
-    bothPlayersJoined -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS;
-    waitingForBothPlayersToChoose -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS;
-    waitingForPlayer1ToChoose -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS;
-    waitingForPlayer2ToChoose -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS;
-    bothPlayersHaveChosen -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS;
-    player1HasScored -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS;
-    player2HasScored -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS;
-    nobodyHasScored -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS;
+    bothPlayersJoined -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS
+    waitingForBothPlayersToChoose -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS
+    waitingForPlayer1ToChoose -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS
+    waitingForPlayer2ToChoose -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS
+    bothPlayersHaveChosen -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS
+    player1HasScored -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS
+    player2HasScored -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS
+    nobodyHasScored -> player2IsDisconnected when userEvent is PLAYER2_DISCONNECTS
 

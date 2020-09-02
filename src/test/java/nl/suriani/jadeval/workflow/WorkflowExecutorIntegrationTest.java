@@ -1,13 +1,19 @@
 package nl.suriani.jadeval.workflow;
 
+import edu.emory.mathcs.backport.java.util.Collections;
+import nl.suriani.jadeval.RPSLSGame;
 import nl.suriani.jadeval.common.Facts;
+import nl.suriani.jadeval.common.annotation.Fact;
 import nl.suriani.jadeval.common.condition.EqualitySymbolFactory;
+import nl.suriani.jadeval.workflow.annotation.State;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 class WorkflowExecutorIntegrationTest {
@@ -22,6 +28,7 @@ class WorkflowExecutorIntegrationTest {
 	private WorkflowCompiler workflowCompiler;
 	private WorkflowConditionFactory workflowConditionFactory;
 	private EqualitySymbolFactory equalitySymbolFactory;
+	private List<StateUpdateEventHandler<RPSLSGame>> eventHandlers;
 	private WorkflowExecutor executor;
 
 	private final static String USER_EVENT = "userEvent";
@@ -32,7 +39,7 @@ class WorkflowExecutorIntegrationTest {
 		equalitySymbolFactory = new EqualitySymbolFactory();
 		workflowConditionFactory = new WorkflowConditionFactory(equalitySymbolFactory);
 		workflowCompiler = new WorkflowCompiler(workflowConditionFactory);
-		workflow = new Workflow(workflowCompiler);
+		workflow = new Workflow(workflowCompiler, new ArrayList<>());
 		File file = new File("src/test/resources/workflow.jwl");
 		executor = workflow.build(file);
 	}
@@ -208,7 +215,53 @@ class WorkflowExecutorIntegrationTest {
 		assertTransitionEquals(facts, fromState, expectedToState);
 	}
 
+	@Test
+	void testEventHandlers() {
+		workflow = new Workflow(workflowCompiler, getEventHandlers());
+		File file = new File("src/test/resources/todo_workflow.jwl");
+		executor = workflow.build(file);
+		ToDoBoardFacts facts = new ToDoBoardFacts("start", ToDoState.TO_DO);
+		executor.updateState(facts);
+
+		facts = new ToDoBoardFacts("cancel", ToDoState.IN_PROGRESS);
+		executor.updateState(facts);
+
+		// prints Hi Jack, Goodbye Jack
+	}
+
 	private void assertTransitionEquals(Facts facts, String fromState, String toState) {
 		Assertions.assertEquals(toState, executor.getNextState(fromState, facts));
+	}
+
+	private List<StateUpdateEventHandler<ToDoBoardFacts>> getEventHandlers() {
+		final String greetingsReceiver = "Jack";
+		return Collections.singletonList(new StateUpdateEventHandler<ToDoBoardFacts>("IN_PROGRESS") {
+			@Override
+			public void enterState(ToDoBoardFacts object) {
+				System.out.println("Hi " + greetingsReceiver);
+			}
+
+			@Override
+			public void exitState(ToDoBoardFacts object) {
+				System.out.println("Goodbye " + greetingsReceiver);
+			}
+		});
+	}
+
+	private class ToDoBoardFacts {
+		@Fact
+		private String userAction;
+
+		@State
+		private ToDoState state;
+
+		public ToDoBoardFacts(String userAction, ToDoState state) {
+			this.userAction = userAction;
+			this.state = state;
+		}
+	}
+
+	private enum ToDoState {
+		TO_DO, IN_PROGRESS, ON_HOLD, DONE, CANCELLED
 	}
 }

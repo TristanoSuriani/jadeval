@@ -1,0 +1,19 @@
+root states
+    TO_DO
+
+intermediate state
+    IN_PROGRESS, ON_HOLD
+
+final states
+    DONE, CANCELLED
+
+transitions
+    TO_DO -> IN_PROGRESS when userAction is start
+    TO_DO -> CANCELLED when userAction is cancel
+
+    IN_PROGRESS -> ON_HOLD when userAction is impediment
+    IN_PROGRESS -> CANCELLED when userAction is cancel
+    IN_PROGRESS -> DONE when userAction is complete
+
+    ON_HOLD -> IN_PROGRESS when userAction is removeImpediment
+    ON_HOLD -> CANCELLED when userAction is cancel

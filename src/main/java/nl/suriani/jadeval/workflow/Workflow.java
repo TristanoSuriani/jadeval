@@ -1,5 +1,6 @@
 package nl.suriani.jadeval.workflow;
 
+import nl.suriani.jadeval.common.condition.EqualitySymbolFactory;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -13,22 +14,29 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
-public class Workflow {
+public class Workflow<T> {
 	private final static CharStreamRetriever charStreamRetriever = new CharStreamRetriever();
 	private WorkflowCompiler workflowCompiler;
+	private List<StateUpdateEventHandler<T>> eventHandlers;
 
-	public Workflow(WorkflowCompiler workflowCompiler) {
+	Workflow(WorkflowCompiler workflowCompiler, List<StateUpdateEventHandler<T>> eventHandlers) {
 		this.workflowCompiler = workflowCompiler;
+		this.eventHandlers = eventHandlers;
+	}
+
+	public Workflow(List<StateUpdateEventHandler<T>> eventHandlers) {
+		this.workflowCompiler = new WorkflowCompiler(new WorkflowConditionFactory(new EqualitySymbolFactory()));
+		this.eventHandlers = eventHandlers;
 	}
 
 	public WorkflowExecutor build(File file) {
 		compile(file);
-		return new WorkflowExecutor(workflowCompiler.getTransitions());
+		return new WorkflowExecutor(workflowCompiler.getTransitions(), workflowCompiler.getAllStates(), eventHandlers);
 	}
 
 	public WorkflowExecutor build(InputStream inputStream) {
 		compile(inputStream);
-		return new WorkflowExecutor(workflowCompiler.getTransitions());
+		return new WorkflowExecutor(workflowCompiler.getTransitions(), workflowCompiler.getAllStates(), eventHandlers);
 	}
 
 	private void compile(File file) {

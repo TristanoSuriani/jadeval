@@ -170,4 +170,8 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 	public List<Transition> getTransitions() {
 		return transitions;
 	}
+
+	public Set<String> getAllStates() {
+		return allStates;
+	}
 }

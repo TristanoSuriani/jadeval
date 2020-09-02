@@ -1,5 +1,7 @@
 package nl.suriani.jadeval;
 
+import nl.suriani.jadeval.workflow.annotation.State;
+
 import java.util.UUID;
 
 public class RPSLSGame {
@@ -8,6 +10,7 @@ public class RPSLSGame {
 	private Player player2;
 	private Move movePlayer1;
 	private Move movePlayer2;
+	@State
 	private Status status;
 
 	public static int MAXIMUM_SCORE = 3;
@@ -74,63 +77,6 @@ public class RPSLSGame {
 
 	public void setStatus(Status status) {
 		this.status = status;
-	}
-
-	public boolean equals(final Object o) {
-		if (o == this)
-			return true;
-		if (!(o instanceof RPSLSGame))
-			return false;
-		final RPSLSGame other = (RPSLSGame) o;
-		if (!other.canEqual((Object) this))
-			return false;
-		final Object this$uuid = this.uuid;
-		final Object other$uuid = other.uuid;
-		if (this$uuid == null ? other$uuid != null : !this$uuid.equals(other$uuid))
-			return false;
-		final Object this$player1 = this.player1;
-		final Object other$player1 = other.player1;
-		if (this$player1 == null ? other$player1 != null : !this$player1.equals(other$player1))
-			return false;
-		final Object this$player2 = this.player2;
-		final Object other$player2 = other.player2;
-		if (this$player2 == null ? other$player2 != null : !this$player2.equals(other$player2))
-			return false;
-		final Object this$movePlayer1 = this.movePlayer1;
-		final Object other$movePlayer1 = other.movePlayer1;
-		if (this$movePlayer1 == null ? other$movePlayer1 != null : !this$movePlayer1.equals(other$movePlayer1))
-			return false;
-		final Object this$movePlayer2 = this.movePlayer2;
-		final Object other$movePlayer2 = other.movePlayer2;
-		if (this$movePlayer2 == null ? other$movePlayer2 != null : !this$movePlayer2.equals(other$movePlayer2))
-			return false;
-		final Object this$status = this.status;
-		final Object other$status = other.status;
-		if (this$status == null ? other$status != null : !this$status.equals(other$status))
-			return false;
-		return true;
-	}
-
-	protected boolean canEqual(final Object other) {
-		return other instanceof RPSLSGame;
-	}
-
-	public int hashCode() {
-		final int PRIME = 59;
-		int result = 1;
-		final Object $uuid = this.uuid;
-		result = result * PRIME + ($uuid == null ? 43 : $uuid.hashCode());
-		final Object $player1 = this.player1;
-		result = result * PRIME + ($player1 == null ? 43 : $player1.hashCode());
-		final Object $player2 = this.player2;
-		result = result * PRIME + ($player2 == null ? 43 : $player2.hashCode());
-		final Object $movePlayer1 = this.movePlayer1;
-		result = result * PRIME + ($movePlayer1 == null ? 43 : $movePlayer1.hashCode());
-		final Object $movePlayer2 = this.movePlayer2;
-		result = result * PRIME + ($movePlayer2 == null ? 43 : $movePlayer2.hashCode());
-		final Object $status = this.status;
-		result = result * PRIME + ($status == null ? 43 : $status.hashCode());
-		return result;
 	}
 
 	public String toString() {
