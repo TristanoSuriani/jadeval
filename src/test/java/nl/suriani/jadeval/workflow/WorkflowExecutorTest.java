@@ -9,6 +9,7 @@ import nl.suriani.jadeval.workflow.annotation.State;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,7 +17,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class WorkflowExecutorIntegrationTest {
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+class WorkflowExecutorTest {
 	public static final String PLAYER_1_JOINS = "PLAYER1_JOINS";
 	private static final String PLAYER_2_JOINS = "PLAYER2_JOINS";
 	private static final String PLAYER_1_CHOOSES = "PLAYER1_CHOOSES";
@@ -28,7 +34,7 @@ class WorkflowExecutorIntegrationTest {
 	private WorkflowCompiler workflowCompiler;
 	private WorkflowConditionFactory workflowConditionFactory;
 	private EqualitySymbolFactory equalitySymbolFactory;
-	private List<StateUpdateEventHandler<RPSLSGame>> eventHandlers;
+	private StateUpdateEventHandler eventHandler;
 	private WorkflowExecutor executor;
 
 	private final static String USER_EVENT = "userEvent";
@@ -42,6 +48,7 @@ class WorkflowExecutorIntegrationTest {
 		workflow = new Workflow(workflowCompiler, new ArrayList<>());
 		File file = new File("src/test/resources/workflow.jwl");
 		executor = workflow.build(file);
+		eventHandler = Mockito.mock(StateUpdateEventHandler.class);
 	}
 
 	@Test
@@ -216,17 +223,20 @@ class WorkflowExecutorIntegrationTest {
 	}
 
 	@Test
-	void testEventHandlers() {
+	void test_eventHandler_enterState_and_exitState_are_called_1_time() {
 		workflow = new Workflow(workflowCompiler, getEventHandlers());
 		File file = new File("src/test/resources/todo_workflow.jwl");
 		executor = workflow.build(file);
+
+		when(eventHandler.getStateName()).thenReturn("IN_PROGRESS");
+
 		ToDoBoardFacts facts = new ToDoBoardFacts("start", ToDoState.TO_DO);
 		executor.updateState(facts);
+		verify(eventHandler, times(1)).enterState(any());
 
 		facts = new ToDoBoardFacts("cancel", ToDoState.IN_PROGRESS);
 		executor.updateState(facts);
-
-		// prints Hi Jack, Goodbye Jack
+		verify(eventHandler, times(1)).exitState(any());
 	}
 
 	private void assertTransitionEquals(Facts facts, String fromState, String toState) {
@@ -235,17 +245,7 @@ class WorkflowExecutorIntegrationTest {
 
 	private List<StateUpdateEventHandler<ToDoBoardFacts>> getEventHandlers() {
 		final String greetingsReceiver = "Jack";
-		return Collections.singletonList(new StateUpdateEventHandler<ToDoBoardFacts>("IN_PROGRESS") {
-			@Override
-			public void enterState(ToDoBoardFacts object) {
-				System.out.println("Hi " + greetingsReceiver);
-			}
-
-			@Override
-			public void exitState(ToDoBoardFacts object) {
-				System.out.println("Goodbye " + greetingsReceiver);
-			}
-		});
+		return Collections.singletonList(eventHandler);
 	}
 
 	private class ToDoBoardFacts {

@@ -1,17 +1,9 @@
 package nl.suriani.jadeval.workflow;
 
-public abstract class StateUpdateEventHandler<T> {
-	private String stateName;
+public interface StateUpdateEventHandler<T> {
+	void enterState(T object);
 
-	public StateUpdateEventHandler(String stateName) {
-		this.stateName = stateName;
-	}
+	void exitState(T object);
 
-	public abstract void enterState(T object);
-
-	public abstract void exitState(T object);
-
-	public String getStateName() {
-		return stateName;
-	}
+	String getStateName();
 }
