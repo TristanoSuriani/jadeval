@@ -1,5 +1,6 @@
 package nl.suriani.jadeval.common.condition;
 
+import nl.suriani.jadeval.common.internal.value.FactValue;
 import nl.suriani.jadeval.common.internal.value.TextValue;
 
 public class TextEqualityCondition extends Condition<TextValue> {
@@ -12,7 +13,15 @@ public class TextEqualityCondition extends Condition<TextValue> {
 		this.symbol = symbol;
 	}
 
-	public boolean solve(TextValue comparison) {
+	public boolean solve(FactValue comparison) {
+		if (comparison instanceof TextValue) {
+			return solve((TextValue) comparison);
+		} else {
+			return false;
+		}
+	}
+
+	private boolean solve(TextValue comparison) {
 		switch (symbol) {
 			case IS:
 				return comparison.getValue().equals(comparing.getValue());

@@ -42,7 +42,7 @@ public class WorkflowExecutor<T> {
 			} else if (stateField.get(object) instanceof Enum) {
 				stateName = ((Enum) stateField.get(object)).name();
 			} else {
-				throw new IllegalArgumentException("The property annotated with @State must be a String or an enum");
+				throw new IllegalArgumentException("The property annotated with @State must be a non-null String or an enum");
 			}
 
 			String nextState = getNextState(stateName, new Facts(object));

@@ -1,6 +1,7 @@
 package nl.suriani.jadeval.common.condition;
 
 import nl.suriani.jadeval.common.internal.value.BooleanValue;
+import nl.suriani.jadeval.common.internal.value.FactValue;
 
 public class BooleanEqualityCondition extends Condition<BooleanValue> {
 	private BooleanValue comparing;
@@ -12,7 +13,15 @@ public class BooleanEqualityCondition extends Condition<BooleanValue> {
 		this.symbol = symbol;
 	}
 
-	public boolean solve(BooleanValue comparison) {
+	public boolean solve(FactValue comparison) {
+		if (comparison instanceof BooleanValue) {
+			return solve((BooleanValue) comparison);
+		} else {
+			return false;
+		}
+	}
+
+	private boolean solve(BooleanValue comparison) {
 		switch (symbol) {
 			case IS:
 				return comparison.getValue() == comparing.getValue();

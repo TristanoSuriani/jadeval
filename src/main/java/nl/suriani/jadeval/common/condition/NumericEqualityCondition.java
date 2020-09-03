@@ -1,5 +1,6 @@
 package nl.suriani.jadeval.common.condition;
 
+import nl.suriani.jadeval.common.internal.value.FactValue;
 import nl.suriani.jadeval.common.internal.value.NumericValue;
 
 public class NumericEqualityCondition extends Condition<NumericValue> {
@@ -12,7 +13,15 @@ public class NumericEqualityCondition extends Condition<NumericValue> {
 		this.symbol = symbol;
 	}
 
-	public boolean solve(NumericValue comparison) {
+	public boolean solve(FactValue comparison) {
+		if (comparison instanceof NumericValue) {
+			return solve((NumericValue) comparison);
+		} else {
+			return false;
+		}
+	}
+
+	private boolean solve(NumericValue comparison) {
 		switch (symbol) {
 			case IS:
 				return comparison.compareTo(comparing) == 0;

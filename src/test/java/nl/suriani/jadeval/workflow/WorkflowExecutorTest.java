@@ -278,6 +278,21 @@ class WorkflowExecutorTest {
 		verify(eventHandler, times(1)).exitState(any());
 	}
 
+	@Test
+	void test_condition_is_correctly_processed_when_facts_are_missing() {
+		workflow = new Workflow(workflowCompiler, new ArrayList<>());
+		File file = new File("src/test/resources/todo_workflow.jwl");
+		executor = workflow.build(file);
+
+		when(eventHandler.getStateName()).thenReturn("IN_PROGRESS");
+
+		ToDoBoardFacts facts = new ToDoBoardFacts(null, ToDoState.TO_DO);
+		executor.updateState(facts);
+
+		facts = new ToDoBoardFacts("cancel", ToDoState.IN_PROGRESS);
+		executor.updateState(facts);
+	}
+
 	private void assertTransitionEquals(Facts facts, String fromState, String toState) {
 		Assertions.assertEquals(toState, executor.getNextState(fromState, facts));
 	}

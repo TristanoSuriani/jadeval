@@ -9,7 +9,7 @@ public abstract class Condition<T extends FactValue> {
 		this.factName = factName;
 	}
 
-	public abstract boolean solve(T comparing);
+	public abstract boolean solve(FactValue comparing);
 
 	public String getFactName() {
 		return factName;

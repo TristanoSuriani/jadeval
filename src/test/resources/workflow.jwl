@@ -1,6 +1,5 @@
 constants
     $maximumScore = 3
-    $timeoutSeconds = 60
 
 root states
     waitingForPlayer1ToJoin
