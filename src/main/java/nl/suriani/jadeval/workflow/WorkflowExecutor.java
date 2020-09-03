@@ -13,21 +13,21 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class WorkflowExecutor<T> {
+public class WorkflowExecutor<CONTEXT> {
 	private List<Transition> transitions;
 	private Set<String> availableStates;
-	private List<StateUpdateEventHandler<T>> eventHandlers;
+	private List<StateUpdateEventHandler<CONTEXT>> eventHandlers;
 
-	WorkflowExecutor(List<Transition> transitions, Set<String> availableStates, List<StateUpdateEventHandler<T>> eventHandlers) {
+	WorkflowExecutor(List<Transition> transitions, Set<String> availableStates, List<StateUpdateEventHandler<CONTEXT>> eventHandlers) {
 		this.transitions = transitions;
 		this.availableStates = availableStates;
 		this.eventHandlers = eventHandlers;
 	}
 
-	public void updateState(T object) {
+	public void updateState(CONTEXT context) {
 		try {
 			String stateName;
-			Field stateField = Arrays.asList(object.getClass().getDeclaredFields())
+			Field stateField = Arrays.asList(context.getClass().getDeclaredFields())
 					.stream().filter(field -> field.isAnnotationPresent(State.class))
 					.peek(field -> field.setAccessible(true))
 					.findFirst()
@@ -37,32 +37,40 @@ public class WorkflowExecutor<T> {
 				throw new IllegalArgumentException("No @State annotation present in given object, cannot determine current state");
 			}
 
-			if (stateField.get(object) instanceof String) {
-				stateName = (String) stateField.get(object);
-			} else if (stateField.get(object) instanceof Enum) {
-				stateName = ((Enum) stateField.get(object)).name();
+			if (stateField.get(context) instanceof String) {
+				stateName = (String) stateField.get(context);
+			} else if (stateField.get(context) instanceof Enum) {
+				stateName = ((Enum) stateField.get(context)).name();
 			} else {
 				throw new IllegalArgumentException("The property annotated with @State must be a non-null String or an enum");
 			}
 
-			String nextState = getNextState(stateName, new Facts(object));
+			if (!availableStates.contains(stateName)) {
+				throw new IllegalArgumentException("Invalid state " + stateName + ". It must be one of the following states:\n" + availableStates);
+			}
+
+			String nextState = getNextState(stateName, new Facts(context));
 			if (!stateName.equals(nextState)) {
-
-
-				if (!availableStates.contains(stateName)) {
-					throw new IllegalArgumentException("Invalid state " + stateName + ". It must be one of the following states:\n" + availableStates);
-				}
+				synchroniseState(stateField, context, nextState);
 
 				eventHandlers.stream().
 						filter(eventHandler -> eventHandler.getStateName().equals(stateName))
-						.forEach(eventHandler -> eventHandler.exitState(object));
+						.forEach(eventHandler -> eventHandler.exitState(context));
 
 				eventHandlers.stream()
 						.filter(eventHandler -> eventHandler.getStateName().equals(nextState))
-						.forEach(eventHandler -> eventHandler.enterState(object));
+						.forEach(eventHandler -> eventHandler.enterState(context));
 			}
 		} catch(IllegalAccessException exception){
 			throw new RuntimeException(exception);
+		}
+	}
+
+	void synchroniseState(Field stateField, CONTEXT context, String nextState) throws IllegalAccessException {
+		if (stateField.get(context) instanceof String) {
+			stateField.set(context, nextState);
+		} else if (stateField.get(context) instanceof Enum) {
+			stateField.set(context, Enum.valueOf((Class<Enum>) stateField.getType(), nextState));
 		}
 	}
 

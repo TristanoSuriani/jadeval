@@ -293,6 +293,19 @@ class WorkflowExecutorTest {
 		executor.updateState(facts);
 	}
 
+	@Test
+	void test_synchronise_state_after_next_state_retrieval() {
+		workflow = new Workflow(workflowCompiler, new ArrayList<>());
+		File file = new File("src/test/resources/todo_workflow.jwl");
+		executor = workflow.build(file);
+
+		when(eventHandler.getStateName()).thenReturn("IN_PROGRESS");
+
+		ToDoBoardFacts facts = new ToDoBoardFacts("cancel", ToDoState.TO_DO);
+		executor.updateState(facts);
+		Assertions.assertEquals(ToDoState.CANCELLED, facts.state);
+	}
+
 	private void assertTransitionEquals(Facts facts, String fromState, String toState) {
 		Assertions.assertEquals(toState, executor.getNextState(fromState, facts));
 	}
