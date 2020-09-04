@@ -4,12 +4,10 @@ import nl.suriani.jadeval.common.internal.value.FactValue;
 import nl.suriani.jadeval.common.internal.value.NumericValue;
 
 public class NumericEqualityCondition extends Condition<NumericValue> {
-	private NumericValue comparing;
 	private NumericEqualitySymbol symbol;
 
 	public NumericEqualityCondition(String factName, NumericValue comparing, NumericEqualitySymbol symbol) {
-		super(factName);
-		this.comparing = comparing;
+		super(factName, comparing);
 		this.symbol = symbol;
 	}
 
@@ -22,6 +20,7 @@ public class NumericEqualityCondition extends Condition<NumericValue> {
 	}
 
 	private boolean solve(NumericValue comparison) {
+		NumericValue comparing = getComparing();
 		switch (symbol) {
 			case IS:
 				return comparison.compareTo(comparing) == 0;

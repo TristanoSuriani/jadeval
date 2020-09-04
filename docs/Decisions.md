@@ -1,4 +1,6 @@
 # Jadeval
+You can define decisions using Jadeval's Decisions Language or through the fluent API.
+
 ## Jadeval Decisions Language
 
 You can write decisions using Jadeval's own DSL instead of writing Java code.
@@ -56,7 +58,7 @@ The actual fact values are provided to the library through the **Facts** object.
 Check [CloseAccountExample.java](src/examples/nl/suriani/jadeval/examplesCloseAccountExample.java) and [close_account.decisions](src/examples/nl/suriani/jadeval/examplesclose_account.decisions) for the complete code.
 
 ````java
-class CloseAccountExample {
+public class CloseAccountExample {
     public static void main(String[] args) {
         Decisions decisions = new Decisions();
         Person person = new Person();
@@ -70,10 +72,10 @@ class CloseAccountExample {
         account.setCanBeClosed(true);
         account.setDescription("custom");
         
-        DecisionsResultsTable resultsTable = decisions.apply(new Facts(account, account.getOwner()),
+        DecisionResults results = decisions.apply(new Facts(account, account.getOwner()),
                 new File("src/examples/close_account.decisions"));
         
-        resultsTable.getEvents().forEach(System.out::println);
+        results.getEvents().forEach(System.out::println);
         
         /* It prints:
             CLOSE_ACCOUNT
@@ -137,3 +139,60 @@ when customStuff == custom
     and amount >= 0
     then DEFAULT_DESCRIPTION
 ~~~~
+
+## Jadeval Decisions Fluent API
+It's possible to define the same rules with a Java fluent API, as follows:
+
+````java
+public class CloseAccountDecisionsBuilder extends DecisionsBuilder {
+    private static final BigDecimal MINIMUM_AGE = BigDecimal.valueOf(18);
+    
+    @Override
+    protected void compile() {
+        decision()
+            .when("age")
+            .greatherThanEquals(MINIMUM_AGE)
+            .and("amount")
+            .greatherThan(toBigDecimal(0))
+            .then("CLOSE_ACCOUNT")
+            .and("SEND_CONFIRMATION_LETTER")
+            .end();
+    
+        decision()
+            .when("customStuff")
+            .is("custom")
+            .then("DEFAULT_DESCRIPTION")
+            .end();
+    }
+}
+````
+The class CloseAccountExample will look almost exactly the same as the previous version:
+````java
+public class CloseAccountExample {
+    public static void main(String[] args) {
+        FluentDecisions decisions = new CloseAccountDecisionsBuilder().build();
+        Person person = new Person();
+        person.setAge(19);
+        person.setFirstname("Piet");
+        person.setLastname("de Haan");
+        
+        Account account = new Account();
+        account.setOwner(person);
+        account.setAmount(BigDecimal.valueOf(1234.56));
+        account.setCanBeClosed(true);
+        account.setDescription("custom");
+        
+        DecisionResults results = decisions.apply(account, account.getOwner());
+        
+        results.getEvents().forEach(System.out::println);
+        
+        /* It prints:
+            CLOSE_ACCOUNT
+            SEND_CONFIRMATION_LETTER
+            DEFAULT_DESCRIPTION
+         */
+    }    
+    
+    // .....
+}
+````

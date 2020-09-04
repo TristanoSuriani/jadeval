@@ -24,16 +24,16 @@ class DecisionsCompiler extends DecisionsBaseListener {
 	private final Facts facts;
 	private final ConditionFactory conditionFactory;
 
-	private DecisionsResultsTable decisionsResultsTable;
+	private DecisionResults results;
 	private List<Boolean> currentResolvedConditions;
-	private List<String> currentEvents;
+	private List<String> currentResponses;
 	private String ruleDescription;
 	private Map<String, FactValue> constantsScope;
 
 	public DecisionsCompiler(Facts facts, ConditionFactory conditionFactory) {
 		this.facts = facts;
 		this.conditionFactory = conditionFactory;
-		this.decisionsResultsTable = new DecisionsResultsTable();
+		this.results = new DecisionResults();
 		this.constantsScope = new HashMap<>();
 		initializeCurrentResultsAndEvents();
 	}
@@ -167,18 +167,18 @@ class DecisionsCompiler extends DecisionsBaseListener {
 		boolean result = currentResolvedConditions.stream()
 				.allMatch(resolvedCondition -> resolvedCondition == true);
 
-		List<String> events = result ? new ArrayList<>(currentEvents) : new ArrayList<>();
-		decisionsResultsTable = decisionsResultsTable.add(new DecisionsResultsRow(ruleDescription, events));
+		List<String> responses = result ? new ArrayList<>(currentResponses) : new ArrayList<>();
+		results.add(new DecisionResult(ruleDescription, responses));
 	}
 
 	private void addToCurrentEventsIfTerminalNode(DecisionsParser.EventsAggregationContext ctx) {
 		if (ctx.getChildCount() == 1) {
-			currentEvents.add(ctx.getText());
+			currentResponses.add(ctx.getText());
 		}
 	}
 
 	private void initializeCurrentResultsAndEvents() {
-		this.currentEvents = new ArrayList<>();
+		this.currentResponses = new ArrayList<>();
 		this.currentResolvedConditions = new ArrayList<>();
 		this.ruleDescription = "";
 	}
@@ -208,7 +208,7 @@ class DecisionsCompiler extends DecisionsBaseListener {
 				.anyMatch(Objects::nonNull);
 	}
 
-	public DecisionsResultsTable getDecisionsResultsTable() {
-		return decisionsResultsTable;
+	public DecisionResults getResults() {
+		return results;
 	}
 }

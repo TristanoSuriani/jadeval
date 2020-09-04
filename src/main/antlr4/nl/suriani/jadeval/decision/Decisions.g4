@@ -28,9 +28,12 @@ booleanEqualityCondition    : factName IS booleanValue
                             | factName NOT booleanValue
                             ;
 
-textEqualityCondition       : factName IS textValue
-                            | factName ISNOT textValue
-                            ;
+textEqualityCondition      : ID IS textValue
+                           | ID ISNOT textValue
+                           | ID CONTAINS textValue
+                           | ID STARTS_WITH textValue
+                           | ID ENDS_WITH textValue
+                           ;
 
 constantEqualityCondition     : factName IS constantValue
                               | factName ISNOT constantValue
@@ -76,6 +79,9 @@ GTE         : '>=' ;
 GT          : '>' ;
 LTE         : '<=' ;
 LT          : '<' ;
+CONTAINS    : 'contains' ;
+STARTS_WITH : 'starts with' ;
+ENDS_WITH   : 'ends with' ;
 
 SET         : 'set' ;
 TO          : 'to' ;

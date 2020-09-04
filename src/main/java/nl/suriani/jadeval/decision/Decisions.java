@@ -29,7 +29,7 @@ public class Decisions {
 	 * @param file, not null
 	 * @return results table
 	 */
-	public DecisionsResultsTable apply(Facts facts, File file) {
+	public DecisionResults apply(Facts facts, File file) {
 		return apply(facts, charStreamRetriever.get(file));
 	}
 
@@ -39,7 +39,7 @@ public class Decisions {
 	 * @param inputStream, not null
 	 * @return results table
 	 */
-	public DecisionsResultsTable apply(Facts facts, InputStream inputStream) {
+	public DecisionResults apply(Facts facts, InputStream inputStream) {
 		return apply(facts, charStreamRetriever.get(inputStream));
 	}
 
@@ -49,7 +49,7 @@ public class Decisions {
 	 * @param decisionStatements, not null
 	 * @return results table
 	 */
-	public DecisionsResultsTable apply(Facts facts, List<String> decisionStatements) {
+	public DecisionResults apply(Facts facts, List<String> decisionStatements) {
 		return apply(facts, charStreamRetriever.get(decisionStatements));
 	}
 
@@ -59,23 +59,23 @@ public class Decisions {
 	 * @param decisionStatements, not null
 	 * @return results table
 	 */
-	public DecisionsResultsTable apply(Facts facts, String... decisionStatements) {
+	public DecisionResults apply(Facts facts, String... decisionStatements) {
 		return apply(facts, charStreamRetriever.get(decisionStatements));
 	}
 
-	private DecisionsResultsTable apply(Facts facts, CharStream input) {
+	private DecisionResults apply(Facts facts, CharStream input) {
 		try {
 			DecisionsLexer javaLexer = new DecisionsLexer(input);
 			CommonTokenStream tokens = new CommonTokenStream(javaLexer);
 			DecisionsParser decisionsParser = new DecisionsParser(tokens);
 			ParseTree tree = decisionsParser.decisionTable();
 			ConditionFactory conditionFactory = new ConditionFactory();
-			DecisionsCompiler decisionsListener = new DecisionsCompiler(facts, conditionFactory);
+			DecisionsCompiler decisionsCompiler = new DecisionsCompiler(facts, conditionFactory);
 			ParseTreeWalker walker = new ParseTreeWalker();
-			walker.walk(decisionsListener, tree);
-			return decisionsListener.getDecisionsResultsTable();
+			walker.walk(decisionsCompiler, tree);
+			return decisionsCompiler.getResults();
 		} catch (Exception exception) {
-			return new DecisionsResultsTable(exception);
+			throw new RuntimeException(exception);
 		}
 	}
 	
