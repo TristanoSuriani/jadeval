@@ -4,12 +4,10 @@ import nl.suriani.jadeval.common.internal.value.FactValue;
 import nl.suriani.jadeval.common.internal.value.TextValue;
 
 public class TextEqualityCondition extends Condition<TextValue> {
-	private TextValue comparing;
 	private TextEqualitySymbol symbol;
 
 	public TextEqualityCondition(String factName, TextValue comparing, TextEqualitySymbol symbol) {
-		super(factName);
-		this.comparing = comparing;
+		super(factName, comparing);
 		this.symbol = symbol;
 	}
 
@@ -22,6 +20,7 @@ public class TextEqualityCondition extends Condition<TextValue> {
 	}
 
 	private boolean solve(TextValue comparison) {
+		TextValue comparing = getComparing();
 		switch (symbol) {
 			case IS:
 				return comparison.getValue().equals(comparing.getValue());

@@ -1,16 +1,17 @@
-package nl.suriani.jadeval.examples;
+package nl.suriani.jadeval.examples.decision.fluentapi;
 
 import nl.suriani.jadeval.common.Facts;
-import nl.suriani.jadeval.decision.DecisionsResultsTable;
+import nl.suriani.jadeval.decision.DecisionResults;
 import nl.suriani.jadeval.decision.Decisions;
 import nl.suriani.jadeval.common.annotation.Fact;
+import nl.suriani.jadeval.decision.FluentDecisions;
 
 import java.io.File;
 import java.math.BigDecimal;
 
-class CloseAccountExample {
+public class CloseAccountExample {
 	public static void main(String[] args) {
-		Decisions decisions = new Decisions();
+		FluentDecisions decisions = new CloseAccountDecisionsBuilder().build();
 		Person person = new Person();
 		person.setAge(19);
 		person.setFirstname("Piet");
@@ -22,10 +23,9 @@ class CloseAccountExample {
 		account.setCanBeClosed(true);
 		account.setDescription("custom");
 
-		DecisionsResultsTable resultsTable = decisions.apply(new Facts(account, account.getOwner()),
-				new File("src/examples/close_account.decisions"));
+		DecisionResults results = decisions.apply(account, account.getOwner());
 
-		resultsTable.getEvents().forEach(System.out::println);
+		results.getResponses().forEach(System.out::println);
 
 		/* It prints:
 			CLOSE_ACCOUNT

@@ -57,9 +57,9 @@ class DecisionsTest {
 				and SEND_10_EUROS_COUPON
 		* */
 		Facts facts = new Facts(factsMap);
-		DecisionsResultsTable resultsTable = runner.apply(facts, new File(fileName));
+		DecisionResults resultsTable = runner.apply(facts, new File(fileName));
 
-		List<String> events = resultsTable.getEvents();
+		List<String> events = resultsTable.getResponses();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
 		assertEquals("This rule has a description too", resultsTable.getResults().get(2).getDescription());
 		assertEquals(2, events.size());
@@ -79,9 +79,9 @@ class DecisionsTest {
 		 */
 		Facts facts = new Facts(this);
 
-		DecisionsResultsTable resultsTable = runner.apply(facts, new File(fileName));
+		DecisionResults resultsTable = runner.apply(facts, new File(fileName));
 
-		List<String> events = resultsTable.getEvents();
+		List<String> events = resultsTable.getResponses();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
 		assertEquals("This rule has a description too", resultsTable.getResults().get(2).getDescription());
 		assertEquals(3, events.size());
@@ -105,9 +105,9 @@ class DecisionsTest {
 		factsMap.put("life_expectance", "short");
 		factsMap.put("numberOfPartners", 1);
 		Facts facts = new Facts(factsMap);
-		DecisionsResultsTable resultsTable = runner.apply(facts, new File(fileName));
+		DecisionResults resultsTable = runner.apply(facts, new File(fileName));
 
-		List<String> events = resultsTable.getEvents();
+		List<String> events = resultsTable.getResponses();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
 		assertEquals("This rule has a description too", resultsTable.getResults().get(2).getDescription());
 		assertEquals(3, events.size());
@@ -117,9 +117,9 @@ class DecisionsTest {
 	@Test
 	void runFromString() {
 		Facts facts = new Facts(this);
-		DecisionsResultsTable resultsTable = runner.apply(facts, "\"description.\"\n\n\n\n\nwhen connected is true and credit > 1234.56 then CONGRATULATE /*multilinecommentBut123132RQRQInline!!!~\\*/and SEND_10_EUROS_COUPON//Comment!@#@%!");
+		DecisionResults resultsTable = runner.apply(facts, "\"description.\"\n\n\n\n\nwhen connected is true and credit > 1234.56 then CONGRATULATE /*multilinecommentBut123132RQRQInline!!!~\\*/and SEND_10_EUROS_COUPON//Comment!@#@%!");
 
-		List<String> events = resultsTable.getEvents();
+		List<String> events = resultsTable.getResponses();
 		assertEquals(1, resultsTable.getResults().size());
 		assertEquals("description.", resultsTable.getResults().get(0).getDescription());
 		assertEquals(2, events.size());
@@ -129,10 +129,10 @@ class DecisionsTest {
 	@Test
 	void runFromStrings() {
 		Facts facts = new Facts(this);
-		DecisionsResultsTable resultsTable = runner.apply(facts, "\"description.\"\n\n\n\n\nwhen connected is true and credit > 1234.56 then CONGRATULATE /*multilinecommentBut123132RQRQInline!!!~\\*/and SEND_10_EUROS_COUPON//Comment!@#@%!",
+		DecisionResults resultsTable = runner.apply(facts, "\"description.\"\n\n\n\n\nwhen connected is true and credit > 1234.56 then CONGRATULATE /*multilinecommentBut123132RQRQInline!!!~\\*/and SEND_10_EUROS_COUPON//Comment!@#@%!",
 				"when alive == true and dead not true then EVENT_NAME");
 
-		List<String> events = resultsTable.getEvents();
+		List<String> events = resultsTable.getResponses();
 		assertEquals(2, resultsTable.getResults().size());
 		assertEquals("description.", resultsTable.getResults().get(0).getDescription());
 		assertEquals(2, events.size());
