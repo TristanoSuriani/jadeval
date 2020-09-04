@@ -1,260 +1,127 @@
 # Jadeval
-### Just A DEcision and VAlidation Library
+### Just A DEcision and VAlidation Library (and actually other things too)
 
-Jadeval is a free, simple library for executing business rules, decisions and validations. You can do so by using the Java fluent 
-interface and Jadeval's own decision and validation DSLs.
+##Introduction
+Jadeval is an open source library that allows to define business decisions, validations and workflows, 
+through Java fluent APIs and own domain specific languages for maximum flexibility.
 
-## Rules
-Rules are composed by conditions and actions and are performed against a subject 
-Think about the sentence: 
-
-~~~~
-If there are less than 100 euros on a bank account, send a notification
-~~~~
-
-In this example the subject is *'a bank account'*, the condition is *'there are less than 100 euros \[on the bank account\]'* and the action is *'send a notification 
-[using some information found in the bank account]'*.
-When the condition is satisfied the action is performed.
-
-## Decisions
-Decisions are similar to the rules, but instead of running an action when the condition is satisfied,
-a business event is generated. Think about the sentence:
-~~~~
-If there are less than 100 euros on a bank account, generate event: SEND_NOTIFICATION
-~~~~
-In this case the output will be the event itself which holds a certain meaning and can be coupled to specific actions to be performed later in the process.
-
-## Validations
-Validations are also similar to rules, but are meant to check the validity of a certain subject.
-If the check fails, a validation error will be raised. If the check succeeds, there will be no consequence.
+##Main concepts
+###Decisions
+Business decisions defines or constrains some aspect of business and resolves with a set of responses.
 Think about the sentence:
 ~~~~
-A city must have at least 10000 inhabitants
+When the customer's age is at least 18 years old and his salary at least 40000 and no previous breaches are found then approve loan
 ~~~~
 
-## Fluent interface for rules example
-First subclass RulesBuilder with a parameter type that correspond to the root object you want to run the business rules against:
-````Java
-public class LocationRulesBuilder extends RulesBuilder<Location> {
-    @Override
-    protected void compile() {
-        rule("Tutte le strade portano a Roma")
-                .when(location -> location.getName().equals("Roma") || location.getName().equals("Rome"))
-                .then(this::printAllTheStreetsBringToLocationName)
-                .andThen(location -> System.out.println(location.getName() + ", the eternal city"))
-                .end();
-        
-        rule("A city is a big city if it has more than 1M inhabitants and it's not called Frank")
-                .when(location -> location.getInhabitants() > 1_000_000)
-                .and(location -> !location.getName().equalsIgnoreCase("Frank"))
-                .then(location -> System.out.println(location.getName() + " is hella big!"))
-                .end();
-		
-        rule("No place can have 123456 as a zipcode")
-                .when(location -> location.getZipCode().equals("123456"))
-                .then(location -> System.out.println(location.getName() + " has the invalid zipcode" + location.getZipCode() + ". Shame!"))
-                .end();
-	}
-
-	private void printAllTheStreetsBringToLocationName(Location location) {
-		System.out.println("Tutte le strade portano a " + location.getName());
-	}
-}
-````
-PRO tip: don't forget to add .end() to terminate the rule definition.
-
-Now it's time to check the rules!
-````Java
-...
-Rules<Location> locationRules = rulesBuilder.build();
-Location roma = new Location("Roma", "00100", "Roma", 3_700_000);
-locationRules.apply(roma);
-````
-
-As expected, the output for this example will be:
+In this example the customer's age, his salary and the presence of previous breaches are the facts that are used to take
+ the decision and 'approve loan' is the response.
+ 
+[Jadeval Decisions Language](docs/Decisions.md) allows to define this decision in almost plain English: 
 ~~~~
-Tutte le strade portano a Roma
-Roma, the eternal city
-Roma is hella big!
-~~~~
-For more examples, check [here](src/examples/nl/suriani/jadeval/examples)
-
-## Jadeval's own DSL for decisions
-You can write decisions using Jadeval's own DSL instead of writing Java code.
-There are multiple advantages related to this:
-- The decision statements read in plain English, making it immediately accessible to non technical people like domain experts
-- It allows to store the decisions externally to the application, like in a filesystem, database or other application.
-- If a decision creates issues in production, is possible to correct it or remove it without downtime and without a new deployment
-
-The followings are all valid decisions:
-~~~~
-/*
-    This is a multiline comment.
-    Useful, isn't it?
-*/
-"send notification when there aren't items in stock anymore" // that was a rule description, this is an inline comment
-when itemsInStock == 0 then SEND_NO_ITEMS_IN_STOCK_NOTIFICATION
-
-// the next rule doesn't have a description
-when productType is clothing and status is ACTIVE then DO_THIS and DO_THAT
-
-# not enough money in your bank account
-when amount <= 1234.56 then SEND_UNSATISFYING_AMOUNT_EMAIL and SEND_UNSATISFYING_AMOUNT_NOTIFICATION
-
-when connected not true then REMOVE_LOCK and /* I can add a multiline comment here, no problem! */ LOG_USER_DISCONNECTED
-
-when flagged is true and amountInfractions > 3 and amountDebt > 2000 then SEND_CONVOCATION_LETTER and ADD_TO_PRIORITY_LIST
+when customerAge >= 18 and hisSalary >= 40000 and foundPreviousBreaches is false then APPROVE_LOAN
 ~~~~
 
-**Rule description:**
-A rule description consist in a text wrapped in double quotes (example: "this is a description"). It is optional.
-
-**When:**
-The keyword *when* indicates the beginning of a new decision rule, that starts with a condition. A condition can be composed
-by multiple conditions separated by the keyword *and*.
-
-**Then:**
-The keyword *then* indicates which event will be returned in case the condition is satisfied. In case multiple
-events are returned the names of the events are separated by the keyword *and*.
-
-**Comments:**
-Inline comments start with // followed by text and they end at the end of the line.
-Multiline comments start with /* and terminate with */.
-
-## Facts
-A fact is a portion of reality that is compared with the decision rules in order to decrete
-which business events will be created. Check this example:
+###Validations
+Validations constrant aspects of business and resolves either without a response (sucess) or a validation exception (failure).
+Think about the sentence:
 ~~~~
-when flagged is true and amountInfractions > 3 and amountDebt >= 2000 then SEND_CONVOCATION_LETTER and ADD_TO_PRIORITY_LIST
+When the customer's last name is unknown stop the process and notify the error
 ~~~~
-In this decision statement **flagged**, **amountInfractions** and **amountDebt** are fact names; **true**, **3** and **2000** are the expected fact values;
- **is**, **>** and **>=** are equality operators.
-The actual fact values are provided to the library through the **Facts** object.
+[Jadeval Validations Fluent API](docs/Validations.md) allows to define validations like this one with a declarative approach. Follow the link for examples.
 
-**Example**
-Check [CloseAccountExample.java](src/examples/nl/suriani/jadeval/examplesCloseAccountExample.java) and [close_account.decisions](src/examples/nl/suriani/jadeval/examplesclose_account.decisions) for the complete code.
 
-````java
-class CloseAccountExample {
-    public static void main(String[] args) {
-        Decisions decisions = new Decisions();
-        Person person = new Person();
-        person.setAge(19);
-        person.setFirstname("Piet");
-        person.setLastname("de Haan");
-        
-        Account account = new Account();
-        account.setOwner(person);
-        account.setAmount(BigDecimal.valueOf(1234.56));
-        account.setCanBeClosed(true);
-        account.setDescription("custom");
-        
-        DecisionsResultsTable resultsTable = decisions.apply(new Facts(account, account.getOwner()),
-                new File("src/examples/close_account.decisions"));
-        
-        resultsTable.getEvents().forEach(System.out::println);
-        
-        /* It prints:
-            CLOSE_ACCOUNT
-            SEND_CONFIRMATION_LETTER
-            DEFAULT_DESCRIPTION
-         */
-    }    
+###Workflows
+A workflow consists of an orchestrated and repeatable pattern of activity. Elements of a workflow include states, 
+transitions between states and the rules the regulate them, as well as task performed as consequence of a state transition.
+Think about this set of sentences:
+~~~~
+Start playing this card game.
+Get cards (they will be 37 in total, divided by the two players. The only queen in the deck will be the queen of spades).
+Choose a card from opponent's deck.
+Offer a card to your opponent.
+If you have matching cards (for example two cards with the value 3) you may discard them.
+Repeat until both players discarded all their cards and one of them remained with
+If you remained with the queen of spades you lost. 
+~~~~
+
+Now reorganise this use case as a set of events. You can find for example:
+~~~~
+GameStarted
+GotCards
+ChosenCardFromOpponentDeck
+CardsDiscarded
+CardOfferedToOpponent
+YouWon
+YouLost
+~~~~
+You may realise that _GameStarted_ is the entrypoint (root state), _YouWon_ and _YouLost_ are final states
+and all the other states are intermediate states. Hereby a brief explanation:
+- *Root states* may flow into intermediate and final states and no state can flow into them
+- *Intermediate states* may flow to intermediate and final states and can be reached by root and intermediate states
+- *Final states* can be reached by non-final states and cannot flow to any other state
+
+Now you can defined how these states flow into the others:
+~~~~
+from GameStarted to GotCards
+
+from GotCards to ChosenCardFromOpponentDeck
+
+from ChosenCardFromOpponentDeck to YouLost if you have only the queen of spades and your opponent finished the cards
+from ChosenCardFromOpponentDeck to CardsDiscarded if there are matching cards
+from ChosenCardFromOpponentDeck to CardOfferedToOpponent if there aren't matching cards
+
+from CardsDiscarded to CardOfferedToOpponent if there are more than one card in your deck
+from CardsDiscarded to YouWon if you finished your cards and your opponent has only the queen of spades
+from CardsDiscarded to ChosenCardFromOpponentDeck if the sum of the cards in both players' decks is greather then 1
+~~~~
+
+[Jadeval Workflow Definition language](docs/Workflow.md) allow to define workflows in a formal but easy to read fashion.
+Defining this example would like something like this:
+~~~~
+root states
+    GameStarted
+
+intermediateStates
+    GotCards
+    ChosenCardFromOpponentDeck
+    CardsDiscarded
+    CardOfferedToOpponent
+
+final states
+    YouWon
+    YouLost
+
+transitions
+    GameStarted -> GotCards
+    GotCards -> ChosenCardFromOpponentDeck
+
+    ChosenCardFromOpponentDeck -> YouLost when numberOfCardsInOpponentDeck is 0 and numberOfCardsInYourDeck is 1 and lastCard is queenOfSpades
+    ChosenCardFromOpponentDeck -> CardsDiscarded when thereAreMatchingCards is true
+    ChosenCardFromOpponentDeck -> CardOfferedToOpponent when thereAreMatchingCards is false
     
-    // .....
-}
-````
-
-The facts are retrieved in this example with the statement *Facts.fromObjects(account, account.getOwner())*.
-In order to mark a class member as a fact you can use the annotation @Fact:
-````java
-public static class Account {
-    private Person owner;
-
-    @Fact
-    private BigDecimal amount;
-
-    @Fact
-    private boolean canBeClosed;
-
-    @Fact(qualifier = "customStuff")
-    private String description;
-// ...
-}
-````
-
-
-````java
-public static class Person {
-    private String firstname;
-
-    private String lastname;
-
-    @Fact
-    private int age;
-    // ...
-}
-````
-
-By providing the objects account (of type Account) and account.getOwner (of type Person) the following
-facts are retrieved:
-- amount (with value 1234.56)
-- canBeClosed (with value true)
-- age (with value 19).
-
-These facts are checked against the rule:
-~~~~
-set $minimum_age to 18
-
-when age >= $minimum_age
-    and canBeClosed is true
-    and amount > 0
-    then CLOSE_ACCOUNT
-    and SEND_CONFIRMATION_LETTER
-
-when customStuff == custom
-    and amount >= 0
-    then DEFAULT_DESCRIPTION
+    CardsDiscarded -> CardOfferedToOpponent when numberOfCardsInYourDeck > 1
+    CardsDiscarded -> YouWon when numberOfCardsInYourDeck is 0 and opponentHasQueenOfSpades is true
+    CardsDiscarded -> ChosenCardFromOpponentDeck when sumOfCardsInBothDecks > 1
 ~~~~
 
-which applies, so the business events *CLOSE_ACCOUNT*, *SEND_CONFIRMATION_LETTER* and *DEFAULT_DESCRIPTION* are returned.
-
-For more examples, check [here](src/examples/nl/suriani/jadeval/examples)
-
-## Fluent interface for validations example
-First subclass ValidationsBuilder with a parameter type that correspond to the root object you want to run the business rules against:
-
-````java
-public class TrainValidationsBuilder extends ValidationsBuilder<Train> {
-    @Override
-    public void compile() {
-        validation("The train must have at least 100 chairs and 3 wagons")
-                .when(always())
-                .then(train -> train.chairs >= 100)
-                .and(train -> train.wagons >= 3)
-                .orElseThrow(AbnormallySmallTrainException::new);
-
-        validation("A train cannot be called Frank")
-                .when(always())
-                .then(train -> !train.name.equals("Frank"))
-                .orElseThrow(TrainIsCalledFrankValidationException::new);
-
-        validation("An intercity of type A must have at least 5 wagons and 200 chairs")
-                .when(itIsOfType(Intercity.class))
-                .and(train -> ((Intercity) train).getType() == IntercityType.A)
-                .then(train -> train.wagons >= 5)
-                .and(train -> train.chairs >= 200)
-                .orElseThrow(DepressingIntercityTypeAException::new);
-    }
-}
+##Import Jadeval in your project with Maven
+To import Jadeval simply add this Maven dependency:
+````xml
+<dependency>
+    <groupId>nl.suriani</groupId>
+    <artifactId>jadeval</artifactId>
+    <version>xxx</version>
+</dependency>
 ````
-Now let's validate!
-````java
-ValidationsBuilder<Train> validationsBuilder = new TrainValidationsBuilder();
-Validations<Train> validations = validationsBuilder.build();
 
-Assertions.assertThrows(AbnormallySmallTrainException.class, () -> validations.apply(new Train("Train", 1, 100)));
-Assertions.assertThrows(TrainIsCalledFrankValidationException.class, () -> validations.apply(new Train("Frank", 4, 199)));
-Assertions.assertThrows(DepressingIntercityTypeAException.class, () -> validations.apply(new Intercity("Damien", 4, 199, IntercityType.A)));
-````
-For more examples, check [here](src/examples/nl/suriani/jadeval/examples)
+##Status of the library
+Jadeval is currently in alpha version. This means that it can change considerably between versions,
+the stability and absence of major bugs in not guaranteed and it should therefore not be used for production code.
+
+##Roadmap
+The following features are planned for the next releases of Jadeval:
+- Java Fluent API for Decisions
+- Jadeval Validations Language
+- Java Fluent API for Workflows
+- *Jadeval Workbench*, graphical tool to generate and test decisions, validations and workflows.
+- Expand Jadeval's Decisions model
