@@ -75,7 +75,7 @@ from CardsDiscarded to YouWon if you finished your cards and your opponent has o
 from CardsDiscarded to ChosenCardFromOpponentDeck if the sum of the cards in both players' decks is greather then 1
 ~~~~
 
-[Jadeval Workflow Definition language](docs/Workflow.md) allow to define workflows in a formal but easy to read fashion.
+[Jadeval Workflow Definition language](docs/Workflow.md) allows to define workflows in a formal but easy to read fashion.
 Defining this example would like something like this:
 ~~~~
 root states
