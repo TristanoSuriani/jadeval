@@ -3,7 +3,7 @@ You can define decisions using Jadeval's Decisions Language or through the fluen
 
 ## Jadeval Decisions Language
 
-You can write decisions using Jadeval's own DSL instead of writing Java code.
+You can write decisions using Jadeval's Decision Language instead of writing Java code.
 There are multiple advantages related to this:
 - The decision statements read in plain English, making it immediately accessible to non technical people like domain experts
 - It allows to store the decisions externally to the application, like in a filesystem, database or other application.
