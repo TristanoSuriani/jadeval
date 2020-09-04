@@ -1,12 +1,12 @@
 # Jadeval
 ### Just A DEcision and VAlidation Library (and actually other things too)
 
-##Introduction
+## Introduction
 Jadeval is an open source library that allows to define business decisions, validations and workflows, 
 through Java fluent APIs and own domain specific languages for maximum flexibility.
 
-##Main concepts
-###Decisions
+## Main concepts
+### Decisions
 Business decisions defines or constrains some aspect of business and resolves with a set of responses.
 Think about the sentence:
 ~~~~
@@ -21,7 +21,7 @@ In this example the customer's age, his salary and the presence of previous brea
 when customerAge >= 18 and hisSalary >= 40000 and foundPreviousBreaches is false then APPROVE_LOAN
 ~~~~
 
-###Validations
+### Validations
 Validations constrant aspects of business and resolves either without a response (sucess) or a validation exception (failure).
 Think about the sentence:
 ~~~~
@@ -30,7 +30,7 @@ When the customer's last name is unknown stop the process and notify the error
 [Jadeval Validations Fluent API](docs/Validations.md) allows to define validations like this one with a declarative approach. Follow the link for examples.
 
 
-###Workflows
+### Workflows
 A workflow consists of an orchestrated and repeatable pattern of activity. Elements of a workflow include states, 
 transitions between states and the rules the regulate them, as well as task performed as consequence of a state transition.
 Think about this set of sentences:
@@ -104,7 +104,7 @@ transitions
     CardsDiscarded -> ChosenCardFromOpponentDeck when sumOfCardsInBothDecks > 1
 ~~~~
 
-##Import Jadeval in your project with Maven
+## Import Jadeval in your project with Maven
 To import Jadeval simply add this Maven dependency:
 ````xml
 <dependency>
@@ -114,11 +114,11 @@ To import Jadeval simply add this Maven dependency:
 </dependency>
 ````
 
-##Status of the library
+## Status of the library
 Jadeval is currently in alpha version. This means that it can change considerably between versions,
 the stability and absence of major bugs in not guaranteed and it should therefore not be used for production code.
 
-##Roadmap
+## Roadmap
 The following features are planned for the next releases of Jadeval:
 - Java Fluent API for Decisions
 - Jadeval Validations Language
