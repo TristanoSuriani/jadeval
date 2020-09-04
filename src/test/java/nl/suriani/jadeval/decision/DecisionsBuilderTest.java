@@ -48,7 +48,7 @@ class DecisionsBuilderTest {
 				.getResponses()
 				.contains("OFFER_DISCOUNT_RATE"));
 
-		assertFalse(decisions.apply(fourthAccount)
+		assertTrue(decisions.apply(fourthAccount)
 				.getResponses()
 				.contains("APPROVE_LOAN"));
 
