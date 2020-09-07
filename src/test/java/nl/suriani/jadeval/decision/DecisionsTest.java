@@ -62,11 +62,11 @@ class DecisionsTest {
 		decisions = DecisionsBuilder.newFromFile(file).build();
 		DecisionResults resultsTable = decisions.apply(factsMap);
 
-		List<String> events = resultsTable.getResponses();
+		List<String> responses = resultsTable.getResponses();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
 		assertEquals("This rule has a description too", resultsTable.getResults().get(2).getDescription());
-		assertEquals(2, events.size());
-		assertLinesMatch(events, Arrays.asList("CONGRATULATE", "SEND_10_EUROS_COUPON"));
+		assertEquals(2, responses.size());
+		assertLinesMatch(responses, Arrays.asList("CONGRATULATE", "SEND_10_EUROS_COUPON"));
 	}
 
 	@Test
@@ -83,11 +83,11 @@ class DecisionsTest {
 		decisions = DecisionsBuilder.newFromFile(new File(fileName)).build();
 		DecisionResults resultsTable = decisions.apply(this);
 
-		List<String> events = resultsTable.getResponses();
+		List<String> responses = resultsTable.getResponses();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
 		assertEquals("This rule has a description too", resultsTable.getResults().get(2).getDescription());
-		assertEquals(3, events.size());
-		assertLinesMatch(events, Arrays.asList("LOG_NOT_DISCONNECTED", "LOG_CONNECTED", "HOUSTON_GOT_PROBLEM"));
+		assertEquals(3, responses.size());
+		assertLinesMatch(responses, Arrays.asList("LOG_NOT_DISCONNECTED", "LOG_CONNECTED", "HOUSTON_GOT_PROBLEM"));
 	}
 
 	@Test
@@ -108,23 +108,23 @@ class DecisionsTest {
 		factsMap.put("numberOfPartners", 1);
 		decisions = DecisionsBuilder.newFromInputStream(inputStream).build();
 		DecisionResults resultsTable = decisions.apply(factsMap);
-		List<String> events = resultsTable.getResponses();
+		List<String> responses = resultsTable.getResponses();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
 		assertEquals("This rule has a description too", resultsTable.getResults().get(2).getDescription());
-		assertEquals(3, events.size());
-		assertLinesMatch(events, Arrays.asList("SEND_COUPON", "SUGGEST_THERAPY", "CALL_THE_POLICE"));
+		assertEquals(3, responses.size());
+		assertLinesMatch(responses, Arrays.asList("SEND_COUPON", "SUGGEST_THERAPY", "CALL_THE_POLICE"));
 	}
 
 	@Test
 	void runFromString() {
-		Facts facts = new Facts(this);
 		String string = "\"description.\"\n\n\n\n\nwhen connected is true and credit > 1234.56 then CONGRATULATE /*multilinecommentBut123132RQRQInline!!!~\\*/and SEND_10_EUROS_COUPON//Comment!@#@%!";
-		DecisionResults resultsTable = decisions.apply(facts, new ByteArrayInputStream(string.getBytes()));
+		decisions = DecisionsBuilder.newFromString(string).build();
+		DecisionResults resultsTable = decisions.apply(this, new ByteArrayInputStream(string.getBytes()));
 
-		List<String> events = resultsTable.getResponses();
+		List<String> responses = resultsTable.getResponses();
 		assertEquals(1, resultsTable.getResults().size());
 		assertEquals("description.", resultsTable.getResults().get(0).getDescription());
-		assertEquals(2, events.size());
-		assertLinesMatch(events, Arrays.asList("CONGRATULATE", "SEND_10_EUROS_COUPON"));
+		assertEquals(2, responses.size());
+		assertLinesMatch(responses, Arrays.asList("CONGRATULATE", "SEND_10_EUROS_COUPON"));
 	}
 }
