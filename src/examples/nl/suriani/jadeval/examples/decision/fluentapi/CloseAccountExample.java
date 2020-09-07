@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 
 class CloseAccountExample {
 	public static void main(String[] args) {
-		Decisions decisions = new CloseAccountDecisionsFluentBuilder().build();
 		Person person = new Person();
 		person.setAge(19);
 		person.setFirstname("Piet");
@@ -20,6 +19,7 @@ class CloseAccountExample {
 		account.setCanBeClosed(true);
 		account.setDescription("custom");
 
+		Decisions decisions = new CloseAccountDecisionsFluentBuilder().build();
 		DecisionResults results = decisions.apply(account, account.getOwner());
 
 		results.getResponses().forEach(System.out::println);

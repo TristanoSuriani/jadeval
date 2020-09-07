@@ -22,7 +22,6 @@ class CloseAccountExample {
 		account.setDescription("custom");
 
 		File file = new File("src/examples/close_account.decisions");
-
 		Decisions decisions = DecisionsBuilder.newFromFile(file).build();
 		DecisionResults results = decisions.apply(person, account);
 
