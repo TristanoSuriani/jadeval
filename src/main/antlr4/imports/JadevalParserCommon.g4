@@ -7,6 +7,9 @@ conditionExpression   : conditionExpression AND conditionExpression
             | constantEqualityCondition
             ;
 
+constantsDefinition     : 'constants' constantDefinition+ ;
+constantDefinition      : CONSTANT EQUALS (numericValue | booleanValue | textValue) ;
+
 numericEqualityCondition    : ID IS numericValue
                             | ID ISNOT numericValue
                             | ID GTE numericValue

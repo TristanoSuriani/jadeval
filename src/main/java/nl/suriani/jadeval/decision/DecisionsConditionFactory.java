@@ -14,7 +14,6 @@ import nl.suriani.jadeval.common.internal.value.FactValue;
 import nl.suriani.jadeval.common.internal.value.NumericValue;
 import nl.suriani.jadeval.common.internal.value.SymbolTable;
 import nl.suriani.jadeval.common.internal.value.TextValue;
-import nl.suriani.jadeval.decision.DecisionsParser;
 
 class DecisionsConditionFactory {
 	private EqualitySymbolFactory equalitySymbolFactory;

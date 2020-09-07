@@ -2,6 +2,7 @@ package nl.suriani.jadeval.decision;
 
 import nl.suriani.jadeval.common.condition.BooleanEqualityCondition;
 import nl.suriani.jadeval.common.condition.BooleanEqualitySymbol;
+import nl.suriani.jadeval.common.condition.Condition;
 import nl.suriani.jadeval.common.condition.NumericEqualityCondition;
 import nl.suriani.jadeval.common.condition.NumericEqualitySymbol;
 import nl.suriani.jadeval.common.condition.TextEqualityCondition;
@@ -10,7 +11,6 @@ import nl.suriani.jadeval.common.internal.value.BooleanValue;
 import nl.suriani.jadeval.common.internal.value.FactValue;
 import nl.suriani.jadeval.common.internal.value.NumericValue;
 import nl.suriani.jadeval.common.internal.value.TextValue;
-import nl.suriani.jadeval.common.condition.Condition;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

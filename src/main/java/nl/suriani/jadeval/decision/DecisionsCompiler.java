@@ -2,6 +2,7 @@ package nl.suriani.jadeval.decision;
 
 import nl.suriani.jadeval.common.Facts;
 import nl.suriani.jadeval.common.condition.BooleanEqualityCondition;
+import nl.suriani.jadeval.common.condition.Condition;
 import nl.suriani.jadeval.common.condition.NumericEqualityCondition;
 import nl.suriani.jadeval.common.condition.TextEqualityCondition;
 import nl.suriani.jadeval.common.internal.value.BooleanValue;
@@ -10,15 +11,11 @@ import nl.suriani.jadeval.common.internal.value.FactValue;
 import nl.suriani.jadeval.common.internal.value.NumericValue;
 import nl.suriani.jadeval.common.internal.value.SymbolTable;
 import nl.suriani.jadeval.common.internal.value.TextValue;
-import nl.suriani.jadeval.common.condition.Condition;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,14 +39,14 @@ class DecisionsCompiler extends DecisionsBaseListener {
 	}
 
 	@Override
-	public void enterAssignment(DecisionsParser.AssignmentContext ctx) {
-		String constantName = ctx.getChild(1).getText();
+	public void enterConstantDefinition(DecisionsParser.ConstantDefinitionContext ctx) {
+		String constantName = ctx.getChild(0).getText();
 
 		if (!(constantsScopeLookup(constantName) instanceof EmptyValue)) {
 			throw new IllegalStateException("The constant " + constantName + "is already defined and cannot be redefined");
 		}
 
-		ParseTree valueContext = ctx.getChild(3);
+		ParseTree valueContext = ctx.getChild(2);
 		if (valueContext instanceof DecisionsParser.NumericValueContext) {
 			constantsScopeUpdate(constantName, (DecisionsParser.NumericValueContext) valueContext);
 		} else if (valueContext instanceof DecisionsParser.BooleanValueContext) {
@@ -57,8 +54,6 @@ class DecisionsCompiler extends DecisionsBaseListener {
 		} else if (valueContext instanceof DecisionsParser.TextValueContext) {
 			constantsScopeUpdate(constantName, (DecisionsParser.TextValueContext) valueContext);
 		}
-
-		super.enterAssignment(ctx);
 	}
 
 	@Override

@@ -68,7 +68,7 @@ public class Decisions {
 			DecisionsLexer javaLexer = new DecisionsLexer(input);
 			CommonTokenStream tokens = new CommonTokenStream(javaLexer);
 			DecisionsParser decisionsParser = new DecisionsParser(tokens);
-			ParseTree tree = decisionsParser.decisionTable();
+			ParseTree tree = decisionsParser.decisionsDefinition();
 			EqualitySymbolFactory equalitySymbolFactory = new EqualitySymbolFactory();
 			DecisionsConditionFactory conditionFactory = new DecisionsConditionFactory(equalitySymbolFactory);
 			DecisionsCompiler decisionsCompiler = new DecisionsCompiler(facts, conditionFactory);

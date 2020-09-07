@@ -1,13 +1,12 @@
 grammar Decisions;
 import JadevalLexer, JadevalParserCommon ;
 
-decisionTable           : (decisionStatement | assignment)+ ;
-
-decisionStatement       : (ruleDescription)? WHEN conditionExpression THEN eventsAggregation ;
-assignment              : SET CONSTANT TO numericValue
-                        | SET CONSTANT TO booleanValue
-                        | SET CONSTANT TO textValue
+decisionsDefinition   : constantsDefinition? decisionStatements
+                        | constantsDefinition? decisionStatement+
                         ;
+
+decisionStatements      : 'decisions' decisionStatement+ ;
+decisionStatement       : (ruleDescription)? WHEN conditionExpression THEN eventsAggregation ;
 
 ruleDescriptionWord     : NUMBER
                         | BOOLEAN

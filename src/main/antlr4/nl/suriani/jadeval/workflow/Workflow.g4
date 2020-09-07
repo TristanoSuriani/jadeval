@@ -19,6 +19,3 @@ multipleConditionalTransition   : OPEN_BRACKET ID ID+ CLOSE_BRACKET ARROW ID WHE
 multipleDirectTransition        : OPEN_BRACKET ID ID+ CLOSE_BRACKET ARROW ID ;
 conditionalTransition           : ID ARROW ID WHEN conditionExpression ;
 directTransition                : ID ARROW ID ;
-
-constantsDefinition     : 'constants' constantDefinition+ ;
-constantDefinition      : CONSTANT EQUALS (numericValue | booleanValue | textValue) ;
