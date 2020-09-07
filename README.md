@@ -121,6 +121,7 @@ the stability and absence of major bugs in not guaranteed and it should therefor
 ## Roadmap
 The following features are planned for the next releases of Jadeval:
 - Jadeval Validations Language
+- New Java Fluent API for Validations
 - Java Fluent API for Workflows
 - *Jadeval Workbench*, graphical tool to generate and test decisions, validations and workflows.
 - Expand Jadeval's Decisions model

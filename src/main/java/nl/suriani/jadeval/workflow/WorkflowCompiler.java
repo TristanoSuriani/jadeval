@@ -30,9 +30,9 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 	private String currentToState;
 	private List<Condition> currentConditions;
 
-	private WorkflowConditionFactory workflowConditionFactory;
+	private WorkflowConditionFactory conditionFactory;
 
-	public WorkflowCompiler(WorkflowConditionFactory workflowConditionFactory) {
+	public WorkflowCompiler(WorkflowConditionFactory conditionFactory) {
 		constantsScope = new SymbolTable();
 		rootStates = new HashSet<>();
 		intermediateStates = new HashSet<>();
@@ -40,7 +40,7 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 		allStates = new HashSet<>();
 		transitions = new ArrayList<>();
 		currentFromStates = new ArrayList<>();
-		this.workflowConditionFactory = workflowConditionFactory;
+		this.conditionFactory = conditionFactory;
 	}
 
 	@Override
@@ -153,25 +153,25 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 
 	@Override
 	public void enterNumericEqualityCondition(WorkflowParser.NumericEqualityConditionContext ctx) {
-		NumericEqualityCondition condition = workflowConditionFactory.make(ctx);
+		NumericEqualityCondition condition = conditionFactory.make(ctx);
 		currentConditions.add(condition);
 	}
 
 	@Override
 	public void enterBooleanEqualityCondition(WorkflowParser.BooleanEqualityConditionContext ctx) {
-		BooleanEqualityCondition condition = workflowConditionFactory.make(ctx);
+		BooleanEqualityCondition condition = conditionFactory.make(ctx);
 		currentConditions.add(condition);
 	}
 
 	@Override
 	public void enterTextEqualityCondition(WorkflowParser.TextEqualityConditionContext ctx) {
-		TextEqualityCondition condition = workflowConditionFactory.make(ctx);
+		TextEqualityCondition condition = conditionFactory.make(ctx);
 		currentConditions.add(condition);
 	}
 
 	@Override
 	public void enterConstantEqualityCondition(WorkflowParser.ConstantEqualityConditionContext ctx) {
-		Condition condition = workflowConditionFactory.make(constantsScope, ctx);
+		Condition condition = conditionFactory.make(constantsScope, ctx);
 		currentConditions.add(condition);
 	}
 

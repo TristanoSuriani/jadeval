@@ -7,18 +7,18 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class DecisionsBuilderTest {
+class DecisionsFluentBuilderTest {
 
-	private TestDecisionBuilder builder;
+	private TestDecisionsBuilder builder;
 
 	@BeforeEach
 	void setUp() {
-		builder = new TestDecisionBuilder();
+		builder = new TestDecisionsBuilder();
 	}
 
 	@Test
 	public void test() {
-		FluentDecisions decisions = builder.build();
+		Decisions decisions = builder.build();
 		AccountContext firstAccount = new AccountContext(19, false, 41000);
 		AccountContext secondAccount = new AccountContext(17, false, 41000);
 		AccountContext thirdAccount = new AccountContext(19, true, 41000);
@@ -74,7 +74,7 @@ class DecisionsBuilderTest {
 		}
 	}
 
-	private class TestDecisionBuilder extends DecisionsBuilder {
+	private class TestDecisionsBuilder extends DecisionsFluentBuilder {
 
 		@Override
 		protected void compile() {

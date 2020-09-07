@@ -2,9 +2,12 @@ package nl.suriani.jadeval.decision;
 
 import nl.suriani.jadeval.common.Facts;
 import nl.suriani.jadeval.common.annotation.Fact;
+import org.codehaus.plexus.util.StringInputStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 
 class DecisionsTest {
 
-	private Decisions runner;
+	private Decisions decisions;
 
 	@Fact
 	private double amount;
@@ -34,7 +37,6 @@ class DecisionsTest {
 
 	@BeforeEach
 	void setUp() {
-		runner = new Decisions();
 		amount = 0.1;
 		disconnected = true;
 		connected = true;
@@ -42,8 +44,9 @@ class DecisionsTest {
 	}
 
 	@Test
-	void runFromFileName() {
+	void runFromFile() {
 		String fileName = "src/test/resources/decisions.jdl";
+		File file = new File(fileName);
 		Map<String, Object> factsMap = new HashMap<>();
 		factsMap.put("connected", false);
 		factsMap.put("credit", 2000);
@@ -56,8 +59,8 @@ class DecisionsTest {
 				then CONGRATULATE
 				and SEND_10_EUROS_COUPON
 		* */
-		Facts facts = new Facts(factsMap);
-		DecisionResults resultsTable = runner.apply(facts, new File(fileName));
+		decisions = DecisionsBuilder.newFromFile(file).build();
+		DecisionResults resultsTable = decisions.apply(factsMap);
 
 		List<String> events = resultsTable.getResponses();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
@@ -73,13 +76,12 @@ class DecisionsTest {
 		/*
 			Matching rule:
 			when amount is 0.1
-				and disconnected not false
+				and disconnected is not false
 				then LOG_NOT_DISCONNECTED
 				and LOG_CONNECTED
 		 */
-		Facts facts = new Facts(this);
-
-		DecisionResults resultsTable = runner.apply(facts, new File(fileName));
+		decisions = DecisionsBuilder.newFromFile(new File(fileName)).build();
+		DecisionResults resultsTable = decisions.apply(this);
 
 		List<String> events = resultsTable.getResponses();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
@@ -104,9 +106,8 @@ class DecisionsTest {
 		factsMap.put("debt", "big");
 		factsMap.put("life_expectance", "short");
 		factsMap.put("numberOfPartners", 1);
-		Facts facts = new Facts(factsMap);
-		DecisionResults resultsTable = runner.apply(facts, new File(fileName));
-
+		decisions = DecisionsBuilder.newFromInputStream(inputStream).build();
+		DecisionResults resultsTable = decisions.apply(factsMap);
 		List<String> events = resultsTable.getResponses();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
 		assertEquals("This rule has a description too", resultsTable.getResults().get(2).getDescription());
@@ -117,23 +118,11 @@ class DecisionsTest {
 	@Test
 	void runFromString() {
 		Facts facts = new Facts(this);
-		DecisionResults resultsTable = runner.apply(facts, "\"description.\"\n\n\n\n\nwhen connected is true and credit > 1234.56 then CONGRATULATE /*multilinecommentBut123132RQRQInline!!!~\\*/and SEND_10_EUROS_COUPON//Comment!@#@%!");
+		String string = "\"description.\"\n\n\n\n\nwhen connected is true and credit > 1234.56 then CONGRATULATE /*multilinecommentBut123132RQRQInline!!!~\\*/and SEND_10_EUROS_COUPON//Comment!@#@%!";
+		DecisionResults resultsTable = decisions.apply(facts, new ByteArrayInputStream(string.getBytes()));
 
 		List<String> events = resultsTable.getResponses();
 		assertEquals(1, resultsTable.getResults().size());
-		assertEquals("description.", resultsTable.getResults().get(0).getDescription());
-		assertEquals(2, events.size());
-		assertLinesMatch(events, Arrays.asList("CONGRATULATE", "SEND_10_EUROS_COUPON"));
-	}
-
-	@Test
-	void runFromStrings() {
-		Facts facts = new Facts(this);
-		DecisionResults resultsTable = runner.apply(facts, "\"description.\"\n\n\n\n\nwhen connected is true and credit > 1234.56 then CONGRATULATE /*multilinecommentBut123132RQRQInline!!!~\\*/and SEND_10_EUROS_COUPON//Comment!@#@%!",
-				"when alive == true and dead not true then EVENT_NAME");
-
-		List<String> events = resultsTable.getResponses();
-		assertEquals(2, resultsTable.getResults().size());
 		assertEquals("description.", resultsTable.getResults().get(0).getDescription());
 		assertEquals(2, events.size());
 		assertLinesMatch(events, Arrays.asList("CONGRATULATE", "SEND_10_EUROS_COUPON"));

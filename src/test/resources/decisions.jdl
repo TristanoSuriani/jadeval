@@ -1,6 +1,9 @@
-set $maximum_amount to 3
-set $connected to true
-set $greeting to hello
+constants
+    $maximum_amount = 3
+    $connected = true
+    $greeting = hello
+
+decisions
 
 "This rule has a description"
 when connected is false
@@ -8,14 +11,11 @@ when connected is false
     then CONGRATULATE
     and SEND_10_EUROS_COUPON
 
-/* This
-is
-also a
- comment */
+
 
 when amount is 0
     and connected == true
-    and connected not false
+    and connected is not false
     then SEND_SEVERE_NOTIFICATION
     and SEND_SEVERE_EMAIL
 
@@ -25,7 +25,7 @@ when life != enjoyable
     and SEND_UNRELATED_ADVERTISEMENT
 
 when amount is 0.1
-    and disconnected not false
+    and disconnected is not false
     then LOG_NOT_DISCONNECTED
     and LOG_CONNECTED
 

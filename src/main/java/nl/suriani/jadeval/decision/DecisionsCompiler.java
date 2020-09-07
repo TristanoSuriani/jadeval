@@ -1,52 +1,48 @@
 package nl.suriani.jadeval.decision;
 
-import nl.suriani.jadeval.common.Facts;
+import nl.suriani.jadeval.common.condition.BooleanEqualityCondition;
+import nl.suriani.jadeval.common.condition.Condition;
+import nl.suriani.jadeval.common.condition.NumericEqualityCondition;
+import nl.suriani.jadeval.common.condition.TextEqualityCondition;
 import nl.suriani.jadeval.common.internal.value.BooleanValue;
 import nl.suriani.jadeval.common.internal.value.EmptyValue;
 import nl.suriani.jadeval.common.internal.value.FactValue;
 import nl.suriani.jadeval.common.internal.value.NumericValue;
+import nl.suriani.jadeval.common.internal.value.SymbolTable;
 import nl.suriani.jadeval.common.internal.value.TextValue;
-import nl.suriani.jadeval.decision.condition.Condition;
-import nl.suriani.jadeval.decision.condition.ConditionFactory;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 class DecisionsCompiler extends DecisionsBaseListener {
-	private final Facts facts;
-	private final ConditionFactory conditionFactory;
+	private final DecisionsConditionFactory conditionFactory;
 
-	private DecisionResults results;
-	private List<Boolean> currentResolvedConditions;
+	private List<Condition> currentConditions;
 	private List<String> currentResponses;
-	private String ruleDescription;
-	private Map<String, FactValue> constantsScope;
+	private String currentRuleDescription;
+	private List<Decision> decisions;
 
-	public DecisionsCompiler(Facts facts, ConditionFactory conditionFactory) {
-		this.facts = facts;
+	private SymbolTable constantsScope;
+
+	public DecisionsCompiler(DecisionsConditionFactory conditionFactory) {
 		this.conditionFactory = conditionFactory;
-		this.results = new DecisionResults();
-		this.constantsScope = new HashMap<>();
-		initializeCurrentResultsAndEvents();
+		this.decisions = new ArrayList<>();
+		this.constantsScope = new SymbolTable();
+		initializeCurrentState();
 	}
 
 	@Override
-	public void enterAssignment(DecisionsParser.AssignmentContext ctx) {
-		String constantName = ctx.getChild(1).getText();
+	public void enterConstantDefinition(DecisionsParser.ConstantDefinitionContext ctx) {
+		String constantName = ctx.getChild(0).getText();
 
 		if (!(constantsScopeLookup(constantName) instanceof EmptyValue)) {
 			throw new IllegalStateException("The constant " + constantName + "is already defined and cannot be redefined");
 		}
 
-		ParseTree valueContext = ctx.getChild(3);
+		ParseTree valueContext = ctx.getChild(2);
 		if (valueContext instanceof DecisionsParser.NumericValueContext) {
 			constantsScopeUpdate(constantName, (DecisionsParser.NumericValueContext) valueContext);
 		} else if (valueContext instanceof DecisionsParser.BooleanValueContext) {
@@ -54,13 +50,6 @@ class DecisionsCompiler extends DecisionsBaseListener {
 		} else if (valueContext instanceof DecisionsParser.TextValueContext) {
 			constantsScopeUpdate(constantName, (DecisionsParser.TextValueContext) valueContext);
 		}
-
-		super.enterAssignment(ctx);
-	}
-
-	@Override
-	public void enterDecisionStatement(DecisionsParser.DecisionStatementContext ctx) {
-		initializeCurrentResultsAndEvents();
 	}
 
 	@Override
@@ -69,106 +58,42 @@ class DecisionsCompiler extends DecisionsBaseListener {
 				.map(ParseTree::getText)
 				.collect(Collectors.toList());
 
-		ruleDescription = String.join(" ", wordsInDescription);
+		currentRuleDescription = String.join(" ", wordsInDescription);
 	}
 
 	@Override
 	public void enterNumericEqualityCondition(DecisionsParser.NumericEqualityConditionContext ctx) {
-		String factName = ctx.getChild(0).getText();
-		String equalitySymbol = ctx.getChild(1).getText();
-
-		NumericValue expectedValue = new NumericValue(BigDecimal.valueOf(Double.parseDouble(ctx.getChild(2).getText())));
-		boolean result = resolveNumericEquality(factName, equalitySymbol, expectedValue);
-
-		currentResolvedConditions.add(result);
-	}
-
-	private Boolean resolveNumericEquality(String factName, String equalitySymbol, NumericValue expectedValue) {
-		return facts.getFact(factName)
-				.filter(factValue -> factValue instanceof NumericValue)
-				.map(factValue -> (NumericValue) factValue)
-				.map(factValue -> conditionFactory.make(factValue, expectedValue, equalitySymbol))
-				.map(Condition::solve)
-				.orElse(false);
+		NumericEqualityCondition condition = conditionFactory.make(ctx);
+		currentConditions.add(condition);
 	}
 
 	@Override
 	public void enterBooleanEqualityCondition(DecisionsParser.BooleanEqualityConditionContext ctx) {
-		String factName = ctx.getChild(0).getText();
-		String equalitySymbol = ctx.getChild(1).getText();
-
-		BooleanValue expectedValue = new BooleanValue(Boolean.valueOf(ctx.getChild(2).getText()));
-		boolean result = resolveBooleanEquality(factName, equalitySymbol, expectedValue);
-
-		currentResolvedConditions.add(result);
-	}
-
-	private Boolean resolveBooleanEquality(String factName, String equalitySymbol, BooleanValue expectedValue) {
-		return facts.getFact(factName)
-				.filter(factValue -> factValue instanceof BooleanValue)
-				.map(factValue -> (BooleanValue) factValue)
-				.map(factValue -> conditionFactory.make(factValue, expectedValue, equalitySymbol))
-				.map(Condition::solve)
-				.orElse(false);
+		BooleanEqualityCondition condition = conditionFactory.make(ctx);
+		currentConditions.add(condition);
 	}
 
 	@Override
 	public void enterTextEqualityCondition(DecisionsParser.TextEqualityConditionContext ctx) {
-		String factName = ctx.getChild(0).getText();
-		String equalitySymbol = ctx.getChild(1).getText();
-
-		TextValue expectedValue = new TextValue(ctx.getChild(2).getText());
-		boolean result = resolveTextEquality(factName, equalitySymbol, expectedValue);
-
-		currentResolvedConditions.add(result);
-	}
-
-	private Boolean resolveTextEquality(String factName, String equalitySymbol, TextValue expectedValue) {
-		return facts.getFact(factName)
-				.filter(factValue -> factValue instanceof TextValue)
-				.map(factValue -> (TextValue) factValue)
-				.map(factValue -> conditionFactory.make(factValue, expectedValue, equalitySymbol))
-				.map(Condition::solve)
-				.orElse(false);
+		TextEqualityCondition condition = conditionFactory.make(ctx);
+		currentConditions.add(condition);
 	}
 
 	@Override
 	public void enterConstantEqualityCondition(DecisionsParser.ConstantEqualityConditionContext ctx) {
-		String factName = ctx.getChild(0).getText();
-		String equalitySymbol = ctx.getChild(1).getText();
-		DecisionsParser.ConstantValueContext constantValueContext = (DecisionsParser.ConstantValueContext) ctx.getChild(2);
+		Condition condition = conditionFactory.make(constantsScope, ctx);
+		currentConditions.add(condition);
+	}
 
-		FactValue expectedValue = constantsScopeLookup(constantValueContext.getText());
-		if (expectedValue instanceof EmptyValue) {
-			throw new IllegalStateException(constantValueContext.getText() + " is undefined");
-		}
-
-		if ((expectedValue instanceof BooleanValue || expectedValue instanceof TextValue)
-			&& hasANumericOnlyEqualitySymbol(ctx)) {
-			throw new IllegalStateException("Symbol " + equalitySymbol + " not allowed with " + expectedValue.getClass().getName());
-		}
-
-		if (expectedValue instanceof NumericValue) {
-			currentResolvedConditions.add(resolveNumericEquality(factName, equalitySymbol, (NumericValue) expectedValue));
-		} else if (expectedValue instanceof BooleanValue) {
-			currentResolvedConditions.add(resolveBooleanEquality(factName, equalitySymbol, (BooleanValue) expectedValue));
-		} else if (expectedValue instanceof TextValue) {
-			currentResolvedConditions.add(resolveTextEquality(factName, equalitySymbol, (TextValue) expectedValue));
-		}
+	@Override
+	public void exitDecisionStatement(DecisionsParser.DecisionStatementContext ctx) {
+		decisions.add(new Decision(currentRuleDescription, currentConditions, currentResponses));
+		initializeCurrentState();
 	}
 
 	@Override
 	public void enterEventsAggregation(DecisionsParser.EventsAggregationContext ctx) {
 		addToCurrentEventsIfTerminalNode(ctx);
-	}
-
-	@Override
-	public void exitDecisionStatement(DecisionsParser.DecisionStatementContext ctx) {
-		boolean result = currentResolvedConditions.stream()
-				.allMatch(resolvedCondition -> resolvedCondition == true);
-
-		List<String> responses = result ? new ArrayList<>(currentResponses) : new ArrayList<>();
-		results.add(new DecisionResult(ruleDescription, responses));
 	}
 
 	private void addToCurrentEventsIfTerminalNode(DecisionsParser.EventsAggregationContext ctx) {
@@ -177,38 +102,33 @@ class DecisionsCompiler extends DecisionsBaseListener {
 		}
 	}
 
-	private void initializeCurrentResultsAndEvents() {
+	private void initializeCurrentState() {
 		this.currentResponses = new ArrayList<>();
-		this.currentResolvedConditions = new ArrayList<>();
-		this.ruleDescription = "";
+		this.currentConditions = new ArrayList<>();
+		this.currentRuleDescription = "";
 	}
 
 	private FactValue constantsScopeLookup(String name) {
-		return Optional.ofNullable(constantsScope.get(name))
+		return Optional.ofNullable(constantsScope.lookup(name))
 				.orElse(new EmptyValue());
 	}
 
 	private void constantsScopeUpdate(String name, DecisionsParser.NumericValueContext numericValueContext) {
 		NumericValue numericValue = new NumericValue(Double.valueOf(numericValueContext.getText()));
-		constantsScope.put(name, numericValue);
+		constantsScope.update(name, numericValue);
 	}
 
 	private void constantsScopeUpdate(String name, DecisionsParser.BooleanValueContext booleanValueContext) {
 		BooleanValue booleanValue = new BooleanValue(Boolean.valueOf(booleanValueContext.getText()));
-		constantsScope.put(name, booleanValue);
+		constantsScope.update(name, booleanValue);
 	}
 
 	private void constantsScopeUpdate(String name, DecisionsParser.TextValueContext textValueContext) {
 		TextValue textValue = new TextValue(textValueContext.getText());
-		constantsScope.put(name, textValue);
+		constantsScope.update(name, textValue);
 	}
 
-	private boolean hasANumericOnlyEqualitySymbol(DecisionsParser.ConstantEqualityConditionContext ctx) {
-		return Arrays.asList(ctx.GT(), ctx.GTE(), ctx.LT(), ctx.LTE()).stream()
-				.anyMatch(Objects::nonNull);
-	}
-
-	public DecisionResults getResults() {
-		return results;
+	public Decisions compile() {
+		return new Decisions(decisions);
 	}
 }

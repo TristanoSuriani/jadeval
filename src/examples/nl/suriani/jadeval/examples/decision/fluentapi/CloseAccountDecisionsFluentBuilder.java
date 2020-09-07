@@ -1,10 +1,10 @@
 package nl.suriani.jadeval.examples.decision.fluentapi;
 
-import nl.suriani.jadeval.decision.DecisionsBuilder;
+import nl.suriani.jadeval.decision.DecisionsFluentBuilder;
 
 import java.math.BigDecimal;
 
-public class CloseAccountDecisionsBuilder extends DecisionsBuilder {
+class CloseAccountDecisionsFluentBuilder extends DecisionsFluentBuilder {
 	private static final BigDecimal MINIMUM_AGE = BigDecimal.valueOf(18);
 
 	@Override

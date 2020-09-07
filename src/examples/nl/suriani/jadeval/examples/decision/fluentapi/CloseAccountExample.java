@@ -1,17 +1,14 @@
 package nl.suriani.jadeval.examples.decision.fluentapi;
 
-import nl.suriani.jadeval.common.Facts;
 import nl.suriani.jadeval.decision.DecisionResults;
-import nl.suriani.jadeval.decision.Decisions;
 import nl.suriani.jadeval.common.annotation.Fact;
-import nl.suriani.jadeval.decision.FluentDecisions;
+import nl.suriani.jadeval.decision.Decisions;
 
-import java.io.File;
 import java.math.BigDecimal;
 
-public class CloseAccountExample {
+class CloseAccountExample {
 	public static void main(String[] args) {
-		FluentDecisions decisions = new CloseAccountDecisionsBuilder().build();
+		Decisions decisions = new CloseAccountDecisionsFluentBuilder().build();
 		Person person = new Person();
 		person.setAge(19);
 		person.setFirstname("Piet");
