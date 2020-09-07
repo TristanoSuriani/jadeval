@@ -54,12 +54,8 @@ class DecisionsCompiler extends DecisionsBaseListener {
 
 	@Override
 	public void enterRuleDescription(DecisionsParser.RuleDescriptionContext ctx) {
-		List<String> wordsInDescription = ctx.children.subList(1, ctx.getChildCount() -1).stream()
-				.map(ParseTree::getText)
-				.collect(Collectors.toList());
-
-		currentRuleDescription = String.join(" ", wordsInDescription);
-	}
+		currentRuleDescription = ctx.getChild(0).getText().replaceAll("\"", "");
+;	}
 
 	@Override
 	public void enterNumericEqualityCondition(DecisionsParser.NumericEqualityConditionContext ctx) {

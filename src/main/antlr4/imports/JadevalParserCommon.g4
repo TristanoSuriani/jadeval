@@ -40,7 +40,9 @@ constantEqualityCondition     : ID IS constantValue
                               | ID ENDS_WITH textValue
                               ;
 
+ruleDescription  : TEXT ;
+
 numericValue : NUMBER ;
 booleanValue : BOOLEAN ;
 constantValue : CONSTANT ;
-textValue : ID ;
+textValue : ID | TEXT;

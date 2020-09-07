@@ -26,6 +26,7 @@ NUMBER      : [\-]?[0-9]+ ('.' [0-9]+)? ;
 BOOLEAN     : 'true' | 'false';
 CONSTANT    : '$' [a-zA-Z0-9_.]+ ;
 ID          : [a-zA-Z0-9_.]+ ;
+TEXT        : DOUBLE_QUOTES ~["]* DOUBLE_QUOTES ;
 
 DOUBLE_QUOTES  : '"' ;
 

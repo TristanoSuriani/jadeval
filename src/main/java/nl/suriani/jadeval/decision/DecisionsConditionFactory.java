@@ -38,7 +38,7 @@ class DecisionsConditionFactory {
 
 	public TextEqualityCondition make(DecisionsParser.TextEqualityConditionContext ctx) {
 		String factName = ctx.getChild(0).getText();
-		TextValue value = new TextValue(ctx.getChild(2).getText());
+		TextValue value = new TextValue(ctx.getChild(2).getText().replaceAll("\"", ""));
 		TextEqualitySymbol symbol = equalitySymbolFactory.getTextEqualitySymbol(ctx.getChild(1).getText());
 		return new TextEqualityCondition(factName, value, symbol);
 	}

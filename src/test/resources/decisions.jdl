@@ -5,42 +5,45 @@ constants
 
 decisions
 
-"This rule has a description"
-when connected is false
-    and credit > 1234.56                // This is a comment
-    then CONGRATULATE
-    and SEND_10_EUROS_COUPON
+    "This rule has a description"
+    when connected is false
+        and credit > 1234.56                // This is a comment
+        then CONGRATULATE
+        and SEND_10_EUROS_COUPON
 
 
 
-when amount is 0
-    and connected == true
-    and connected is not false
-    then SEND_SEVERE_NOTIFICATION
-    and SEND_SEVERE_EMAIL
+    when amount is 0
+        and connected == true
+        and connected is not false
+        then SEND_SEVERE_NOTIFICATION
+        and SEND_SEVERE_EMAIL
 
-"This rule has a description too"
-when life != enjoyable
-    then SUGGEST_THERAPY
-    and SEND_UNRELATED_ADVERTISEMENT
+    "This rule has a description too"
+    when life != enjoyable
+        then SUGGEST_THERAPY
+        and SEND_UNRELATED_ADVERTISEMENT
 
-when amount is 0.1
-    and disconnected is not false
-    then LOG_NOT_DISCONNECTED
-    and LOG_CONNECTED
+    when amount is 0.1
+        and disconnected is not false
+        then LOG_NOT_DISCONNECTED
+        and LOG_CONNECTED
 
-when amountOfDebt > 0
-    and amount > 1000
-    then SEND_SEVERE_ADVERTISEMENT
+    when amountOfDebt > 0
+        and amount > 1000
+        then SEND_SEVERE_ADVERTISEMENT
 
-when debt is big
-    and life_expectance is short
-    and numberOfPartners <= 1
-    then SEND_COUPON
-    and SUGGEST_THERAPY
-    and CALL_THE_POLICE
+    when debt is big
+        and life_expectance is short
+        and numberOfPartners <= 1
+        then SEND_COUPON
+        and SUGGEST_THERAPY
+        and CALL_THE_POLICE
 
-"Ban user if warned at least 3 times and reported more than 2 times"
-when status is REPORTED and numberOfWarnings >= 3 and timesReported >= 2 then BAN_USER
+    "Ban user if warned at least 3 times and reported more than 2 times"
+    when status is REPORTED and numberOfWarnings >= 3 and timesReported >= 2 then BAN_USER
 
-when connected is $connected then HOUSTON_GOT_PROBLEM
+    when connected is $connected then HOUSTON_GOT_PROBLEM
+    when something is not "Here we have really a lot of text to check when and if something is not worth" then GOT_BIG_TEXT_EXAMPLE
+
+    when name is "Ayeye Brazorf" then GET_A_LIFE
