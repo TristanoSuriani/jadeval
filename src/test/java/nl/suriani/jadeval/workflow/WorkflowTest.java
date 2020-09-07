@@ -2,7 +2,6 @@ package nl.suriani.jadeval.workflow;
 
 import nl.suriani.jadeval.common.Facts;
 import nl.suriani.jadeval.common.annotation.Fact;
-import nl.suriani.jadeval.common.condition.EqualitySymbolFactory;
 import nl.suriani.jadeval.workflow.annotation.State;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,9 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +19,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class WorkflowExecutorTest {
+class WorkflowTest {
 	public static final String PLAYER_1_JOINS = "PLAYER1_JOINS";
 	private static final String PLAYER_2_JOINS = "PLAYER2_JOINS";
 	private static final String PLAYER_1_CHOOSES = "PLAYER1_CHOOSES";
@@ -30,24 +27,18 @@ class WorkflowExecutorTest {
 	private static final String PLAYER_1_SCORES = "PLAYER1_SCORES";
 	private static final String PLAYER_2_SCORES = "PLAYER2_SCORES";
 	private static final String NOBODY_SCORES = "NOBODY_SCORES";
-	private Workflow workflow;
-	private WorkflowCompiler workflowCompiler;
-	private WorkflowConditionFactory conditionFactory;
-	private EqualitySymbolFactory equalitySymbolFactory;
+
 	private StateUpdateEventHandler eventHandler;
-	private WorkflowExecutor executor;
+	private Workflow workflow;
 
 	private final static String USER_EVENT = "userEvent";
 	private final static String SYSTEM_EVENT = "systemEvent";
 
 	@BeforeEach
 	void setUp() {
-		equalitySymbolFactory = new EqualitySymbolFactory();
-		conditionFactory = new WorkflowConditionFactory(equalitySymbolFactory);
-		workflowCompiler = new WorkflowCompiler(conditionFactory);
-		workflow = new Workflow(workflowCompiler, new ArrayList<>());
 		File file = new File("src/test/resources/workflow.jwl");
-		executor = workflow.build(file);
+		workflow = WorkflowBuilder.newFromFile(file)
+				.build();
 		eventHandler = Mockito.mock(StateUpdateEventHandler.class);
 	}
 
@@ -263,55 +254,52 @@ class WorkflowExecutorTest {
 
 	@Test
 	void test_eventHandler_enterState_and_exitState_are_called_1_time() {
-		workflow = new Workflow(workflowCompiler, getEventHandlers());
 		File file = new File("src/test/resources/todo_workflow.jwl");
-		executor = workflow.build(file);
+		workflow = WorkflowBuilder.newFromFile(file)
+					.addStateUpdateEventHandler(eventHandler)
+					.build();
 
 		when(eventHandler.getStateName()).thenReturn("IN_PROGRESS");
 
 		ToDoBoardFacts facts = new ToDoBoardFacts("start", ToDoState.TO_DO);
-		executor.updateState(facts);
+		workflow.updateState(facts);
 		verify(eventHandler, times(1)).enterState(any());
 
 		facts = new ToDoBoardFacts("cancel", ToDoState.IN_PROGRESS);
-		executor.updateState(facts);
+		workflow.updateState(facts);
 		verify(eventHandler, times(1)).exitState(any());
 	}
 
 	@Test
 	void test_condition_is_correctly_processed_when_facts_are_missing() {
-		workflow = new Workflow(workflowCompiler, new ArrayList<>());
 		File file = new File("src/test/resources/todo_workflow.jwl");
-		executor = workflow.build(file);
+		workflow = WorkflowBuilder.newFromFile(file)
+						.build();
 
 		when(eventHandler.getStateName()).thenReturn("IN_PROGRESS");
 
 		ToDoBoardFacts facts = new ToDoBoardFacts(null, ToDoState.TO_DO);
-		executor.updateState(facts);
+		workflow.updateState(facts);
 
 		facts = new ToDoBoardFacts("cancel", ToDoState.IN_PROGRESS);
-		executor.updateState(facts);
+		workflow.updateState(facts);
 	}
 
 	@Test
 	void test_synchronise_state_after_next_state_retrieval() {
-		workflow = new Workflow(workflowCompiler, new ArrayList<>());
 		File file = new File("src/test/resources/todo_workflow.jwl");
-		executor = workflow.build(file);
+		workflow = WorkflowBuilder.newFromFile(file)
+					.build();
 
 		when(eventHandler.getStateName()).thenReturn("IN_PROGRESS");
 
 		ToDoBoardFacts facts = new ToDoBoardFacts("cancel", ToDoState.TO_DO);
-		executor.updateState(facts);
+		workflow.updateState(facts);
 		Assertions.assertEquals(ToDoState.CANCELLED, facts.state);
 	}
 
 	private void assertTransitionEquals(Facts facts, String fromState, String toState) {
-		Assertions.assertEquals(toState, executor.getNextState(fromState, facts));
-	}
-
-	private List<StateUpdateEventHandler<ToDoBoardFacts>> getEventHandlers() {
-		return Collections.singletonList(eventHandler);
+		Assertions.assertEquals(toState, workflow.getNextState(fromState, facts));
 	}
 
 	private class ToDoBoardFacts {

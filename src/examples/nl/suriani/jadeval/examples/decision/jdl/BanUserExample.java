@@ -1,7 +1,7 @@
 package nl.suriani.jadeval.examples.decision.jdl;
 
 import nl.suriani.jadeval.decision.Decisions;
-import nl.suriani.jadeval.common.Facts;
+import nl.suriani.jadeval.decision.DecisionsBuilder;
 import nl.suriani.jadeval.decision.DecisionResults;
 
 import java.util.HashMap;
@@ -14,13 +14,14 @@ class BanUserExample {
 		factsMap.put("numberOfWarnings", 3);
 		factsMap.put("timesReported", 5);
 
-		Decisions decisions = new Decisions();
-		DecisionResults decisionResults = decisions.apply(new Facts(factsMap),
-				"\"Ban user if warned at least 3 times and reported more than 2 times\"",
-				"when status is REPORTED and numberOfWarnings >= 3 and timesReported >= 2 ",
-				"then BAN_USER");
+		String input = "\"Ban user if warned at least 3 times and reported more than 2 times\"" +
+		"when status is REPORTED and numberOfWarnings >= 3 and timesReported >= 2 " +
+				"then BAN_USER";
 
-		System.out.println(decisionResults.getResponses().get(0));
+		Decisions decisions = DecisionsBuilder.newFromString(input).build();
+		DecisionResults results = decisions.apply(factsMap);
+
+		System.out.println(results.getResponses().get(0));
 		// it prints BAN_USER
 	}
 

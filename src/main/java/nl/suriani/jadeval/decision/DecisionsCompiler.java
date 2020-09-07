@@ -1,6 +1,5 @@
 package nl.suriani.jadeval.decision;
 
-import nl.suriani.jadeval.common.Facts;
 import nl.suriani.jadeval.common.condition.BooleanEqualityCondition;
 import nl.suriani.jadeval.common.condition.Condition;
 import nl.suriani.jadeval.common.condition.NumericEqualityCondition;
@@ -14,28 +13,25 @@ import nl.suriani.jadeval.common.internal.value.TextValue;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 class DecisionsCompiler extends DecisionsBaseListener {
-	private final Facts facts;
 	private final DecisionsConditionFactory conditionFactory;
 
-	private DecisionResults results;
-	private List<Boolean> currentResolvedConditions;
+	private List<Condition> currentConditions;
 	private List<String> currentResponses;
-	private String ruleDescription;
+	private String currentRuleDescription;
+	private List<Decision> decisions;
+
 	private SymbolTable constantsScope;
 
-	public DecisionsCompiler(Facts facts, DecisionsConditionFactory conditionFactory) {
-		this.facts = facts;
+	public DecisionsCompiler(DecisionsConditionFactory conditionFactory) {
 		this.conditionFactory = conditionFactory;
-		this.results = new DecisionResults();
+		this.decisions = new ArrayList<>();
 		this.constantsScope = new SymbolTable();
-		initializeCurrentResultsAndEvents();
+		initializeCurrentState();
 	}
 
 	@Override
@@ -57,67 +53,47 @@ class DecisionsCompiler extends DecisionsBaseListener {
 	}
 
 	@Override
-	public void enterDecisionStatement(DecisionsParser.DecisionStatementContext ctx) {
-		initializeCurrentResultsAndEvents();
-	}
-
-	@Override
 	public void enterRuleDescription(DecisionsParser.RuleDescriptionContext ctx) {
 		List<String> wordsInDescription = ctx.children.subList(1, ctx.getChildCount() -1).stream()
 				.map(ParseTree::getText)
 				.collect(Collectors.toList());
 
-		ruleDescription = String.join(" ", wordsInDescription);
+		currentRuleDescription = String.join(" ", wordsInDescription);
 	}
 
 	@Override
 	public void enterNumericEqualityCondition(DecisionsParser.NumericEqualityConditionContext ctx) {
-		String factName = ctx.getChild(0).getText();
-		FactValue expectedFactValue = facts.getFact(factName).orElse(new EmptyValue());
 		NumericEqualityCondition condition = conditionFactory.make(ctx);
-		boolean result = condition.solve(expectedFactValue);
-		currentResolvedConditions.add(result);
+		currentConditions.add(condition);
 	}
 
 	@Override
 	public void enterBooleanEqualityCondition(DecisionsParser.BooleanEqualityConditionContext ctx) {
-		String factName = ctx.getChild(0).getText();
-		FactValue expectedFactValue = facts.getFact(factName).orElse(new EmptyValue());
 		BooleanEqualityCondition condition = conditionFactory.make(ctx);
-		boolean result = condition.solve(expectedFactValue);
-		currentResolvedConditions.add(result);
+		currentConditions.add(condition);
 	}
 
 	@Override
 	public void enterTextEqualityCondition(DecisionsParser.TextEqualityConditionContext ctx) {
-		String factName = ctx.getChild(0).getText();
-		FactValue expectedFactValue = facts.getFact(factName).orElse(new EmptyValue());
 		TextEqualityCondition condition = conditionFactory.make(ctx);
-		boolean result = condition.solve(expectedFactValue);
-		currentResolvedConditions.add(result);
+		currentConditions.add(condition);
 	}
 
 	@Override
 	public void enterConstantEqualityCondition(DecisionsParser.ConstantEqualityConditionContext ctx) {
-		String factName = ctx.getChild(0).getText();
-		FactValue expectedFactValue = facts.getFact(factName).orElse(new EmptyValue());
 		Condition condition = conditionFactory.make(constantsScope, ctx);
-		boolean result = condition.solve(expectedFactValue);
-		currentResolvedConditions.add(result);
+		currentConditions.add(condition);
+	}
+
+	@Override
+	public void exitDecisionStatement(DecisionsParser.DecisionStatementContext ctx) {
+		decisions.add(new Decision(currentRuleDescription, currentConditions, currentResponses));
+		initializeCurrentState();
 	}
 
 	@Override
 	public void enterEventsAggregation(DecisionsParser.EventsAggregationContext ctx) {
 		addToCurrentEventsIfTerminalNode(ctx);
-	}
-
-	@Override
-	public void exitDecisionStatement(DecisionsParser.DecisionStatementContext ctx) {
-		boolean result = currentResolvedConditions.stream()
-				.allMatch(resolvedCondition -> resolvedCondition == true);
-
-		List<String> responses = result ? new ArrayList<>(currentResponses) : new ArrayList<>();
-		results.add(new DecisionResult(ruleDescription, responses));
 	}
 
 	private void addToCurrentEventsIfTerminalNode(DecisionsParser.EventsAggregationContext ctx) {
@@ -126,10 +102,10 @@ class DecisionsCompiler extends DecisionsBaseListener {
 		}
 	}
 
-	private void initializeCurrentResultsAndEvents() {
+	private void initializeCurrentState() {
 		this.currentResponses = new ArrayList<>();
-		this.currentResolvedConditions = new ArrayList<>();
-		this.ruleDescription = "";
+		this.currentConditions = new ArrayList<>();
+		this.currentRuleDescription = "";
 	}
 
 	private FactValue constantsScopeLookup(String name) {
@@ -152,12 +128,7 @@ class DecisionsCompiler extends DecisionsBaseListener {
 		constantsScope.update(name, textValue);
 	}
 
-	private boolean hasANumericOnlyEqualitySymbol(DecisionsParser.ConstantEqualityConditionContext ctx) {
-		return Arrays.asList(ctx.GT(), ctx.GTE(), ctx.LT(), ctx.LTE()).stream()
-				.anyMatch(Objects::nonNull);
-	}
-
-	public DecisionResults getResults() {
-		return results;
+	public Decisions compile() {
+		return new Decisions(decisions);
 	}
 }

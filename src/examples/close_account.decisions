@@ -1,4 +1,5 @@
-set $minimum_age to 18
+constants
+    $minimum_age = 18
 
 when age >= $minimum_age
     and canBeClosed is true

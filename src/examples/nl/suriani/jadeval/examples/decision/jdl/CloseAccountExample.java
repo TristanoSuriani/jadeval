@@ -1,8 +1,8 @@
 package nl.suriani.jadeval.examples.decision.jdl;
 
-import nl.suriani.jadeval.common.Facts;
 import nl.suriani.jadeval.decision.DecisionResults;
 import nl.suriani.jadeval.decision.Decisions;
+import nl.suriani.jadeval.decision.DecisionsBuilder;
 import nl.suriani.jadeval.common.annotation.Fact;
 
 import java.io.File;
@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 
 class CloseAccountExample {
 	public static void main(String[] args) {
-		Decisions decisions = new Decisions();
 		Person person = new Person();
 		person.setAge(19);
 		person.setFirstname("Piet");
@@ -22,8 +21,10 @@ class CloseAccountExample {
 		account.setCanBeClosed(true);
 		account.setDescription("custom");
 
-		DecisionResults results = decisions.apply(new Facts(account, account.getOwner()),
-				new File("src/examples/close_account.decisions"));
+		File file = new File("src/examples/close_account.decisions");
+
+		Decisions decisions = DecisionsBuilder.newFromFile(file).build();
+		DecisionResults results = decisions.apply(person, account);
 
 		results.getResponses().forEach(System.out::println);
 
