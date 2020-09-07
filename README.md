@@ -114,7 +114,7 @@ To import Jadeval simply add this Maven dependency:
 </dependency>
 ````
 
-## Status of the library
+## State of the library
 Jadeval is currently in alpha version. This means that it can change considerably between versions,
 the stability and absence of major bugs in not guaranteed and it should therefore not be used for production code.
 
