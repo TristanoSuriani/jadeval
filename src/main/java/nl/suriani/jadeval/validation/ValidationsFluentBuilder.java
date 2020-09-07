@@ -17,25 +17,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ValidationsFluentBuilder {
-	private List<Validation> decisions;
+	private List<Validation> validations;
 
 	public ValidationsFluentBuilder() {
-		decisions = new ArrayList<>();
+		validations = new ArrayList<>();
 	}
 
 	public Validations build() {
 		compile();
-		return new Validations(decisions);
+		return new Validations(validations);
 	}
 
 	protected abstract void compile();
 
-	protected DDecision decision(String description) {
-		return new DDecision(description);
+	protected VValidation validation(String description) {
+		return new VValidation(description);
 	}
 
-	protected DDecision decision() {
-		return new DDecision("");
+	protected VValidation validation() {
+		return new VValidation("");
 	}
 
 	protected BigDecimal toBigDecimal(int value) {
@@ -54,14 +54,14 @@ public abstract class ValidationsFluentBuilder {
 		return BigDecimal.valueOf(value);
 	}
 
-	protected class DDecision {
+	protected class VValidation {
 		private String description;
 
-		public DDecision(String description) {
+		public VValidation(String description) {
 			this.description = description;
 		}
 
-		public FactName when(String factName) {
+		public FactName isValidWhen(String factName) {
 			return new FactName(description, factName);
 		}
 	}
@@ -156,15 +156,9 @@ public abstract class ValidationsFluentBuilder {
 			return new FactName(description, conditions, factName);
 		}
 
-		public Then then(String response) {
-			conditions.add(getCondition(factName, value));
-			List<String> responses = new ArrayList<>();
-			responses.add(response);
-			return new Then(description, conditions, responses);
-		}
-
-		public Then then(Enum response) {
-			return then(response.name());
+		public void end() {
+			conditions.add(getCondition(this.factName, value));
+			validations.add(new Validation(description, conditions));
 		}
 	}
 	
@@ -324,29 +318,5 @@ public abstract class ValidationsFluentBuilder {
 		}
 	}
 
-	protected class Then {
-		private String description;
-		private List<Condition> conditions;
-		private List<String> responses;
 
-		public Then(String description, List<Condition> conditions, List<String> responses) {
-			this.description = description;
-			this.conditions = conditions;
-			this.responses = responses;
-		}
-
-		public Then and(String response) {
-			responses.add(response);
-			return new Then(description, conditions, responses);
-		}
-
-		public Then and(Enum response) {
-			responses.add(response.name());
-			return new Then(description, conditions, responses);
-		}
-
-		public void end() {
-			decisions.add(new Validation(description, conditions));
-		}
-	}
 }

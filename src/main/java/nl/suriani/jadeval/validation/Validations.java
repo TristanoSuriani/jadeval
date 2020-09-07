@@ -6,6 +6,7 @@ import nl.suriani.jadeval.common.condition.Condition;
 import nl.suriani.jadeval.common.condition.NumericEqualityCondition;
 import nl.suriani.jadeval.common.condition.TextEqualityCondition;
 import nl.suriani.jadeval.common.internal.value.EmptyValue;
+import nl.suriani.jadeval.common.internal.value.FactValue;
 
 import java.util.List;
 import java.util.Map;
@@ -31,18 +32,20 @@ public class Validations {
 
 	private void checkConditions(Validation validation, Facts facts) {
 		validation.getConditions().forEach(condition -> {
-			if (!condition.solve(facts.getFact(condition.getFactName())
-					.orElse(new EmptyValue()))) {
+			FactValue actualValue = facts.getFact(condition.getFactName())
+					.orElse(new EmptyValue());
+			if (!condition.solve(actualValue)) {
 
-				throw new ValidationException(getValidationErrorMessage(validation, condition));
+				throw new ValidationException(getValidationErrorMessage(validation, condition, actualValue));
 			}
 		});
 	}
 
-	private String getValidationErrorMessage(Validation validation, Condition condition) {
+	private String getValidationErrorMessage(Validation validation, Condition condition, FactValue actualValue) {
 		String message = validation.getDescription().equals("") ?
-				"" : "Validation '" + validation.getDescription() + "': ";
-		return message + condition.getComparing() + " " + getSymbol(condition) + condition.getComparing();
+				"" : "Validation '" + validation.getDescription() + "':\n";
+		return message + actualValue.getValue() + " " + getSymbol(condition) + " " + condition.getExpectedValue().getValue() +
+				" (" + condition.getFactName() + ")";
 	}
 
 	private String getSymbol(Condition condition) {

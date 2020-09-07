@@ -6,35 +6,35 @@ import nl.suriani.jadeval.common.internal.value.TextValue;
 public class TextEqualityCondition extends Condition<TextValue> {
 	private TextEqualitySymbol symbol;
 
-	public TextEqualityCondition(String factName, TextValue comparing, TextEqualitySymbol symbol) {
-		super(factName, comparing);
+	public TextEqualityCondition(String factName, TextValue expectedValue, TextEqualitySymbol symbol) {
+		super(factName, expectedValue);
 		this.symbol = symbol;
 	}
 
-	public boolean solve(FactValue comparison) {
-		if (comparison instanceof TextValue) {
-			return solve((TextValue) comparison);
+	public boolean solve(FactValue actualValue) {
+		if (actualValue instanceof TextValue) {
+			return solve((TextValue) actualValue);
 		} else {
 			return false;
 		}
 	}
 
-	private boolean solve(TextValue comparison) {
-		TextValue comparing = getComparing();
+	private boolean solve(TextValue actualValue) {
+		TextValue expectedValue = getExpectedValue();
 		switch (symbol) {
 			case IS:
-				return comparison.getValue().equals(comparing.getValue());
+				return actualValue.getValue().equals(expectedValue.getValue());
 			case IS_NOT:
-				return !comparison.getValue().equals(comparing.getValue());
+				return !actualValue.getValue().equals(expectedValue.getValue());
 
 			case CONTAINS:
-				return comparison.getValue().contains(comparing.getValue());
+				return actualValue.getValue().contains(expectedValue.getValue());
 
 			case STARTS_WITH:
-				return comparison.getValue().startsWith(comparing.getValue());
+				return actualValue.getValue().startsWith(expectedValue.getValue());
 
 			case ENDS_WITH:
-				return comparison.getValue().endsWith(comparing.getValue());
+				return actualValue.getValue().endsWith(expectedValue.getValue());
 
 			default:
 				return false;

@@ -1,10 +1,10 @@
 constants
-    $treshold = 3
+    $threshold = 3
     $maximum_rate = 10
 
 validations
     "The amount cannot be greater than the treshold"
-    valid when amount <= $treshold
+    valid when amount <= $threshold
     // inline comment
     /*
         multiline

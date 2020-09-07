@@ -4,20 +4,20 @@ import nl.suriani.jadeval.common.internal.value.FactValue;
 
 public abstract class Condition<T extends FactValue> {
 	private String factName;
-	private T comparing;
+	private T expectedValue;
 
-	public Condition(String factName, T comparing) {
+	public Condition(String factName, T expectedValue) {
 		this.factName = factName;
-		this.comparing = comparing;
+		this.expectedValue = expectedValue;
 	}
 
-	public abstract boolean solve(FactValue comparison);
+	public abstract boolean solve(FactValue actualValue);
 
 	public String getFactName() {
 		return factName;
 	}
 
-	public T getComparing() {
-		return comparing;
+	public T getExpectedValue() {
+		return expectedValue;
 	}
 }
