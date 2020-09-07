@@ -40,4 +40,8 @@ public class TextEqualityCondition extends Condition<TextValue> {
 				return false;
 		}
 	}
+
+	public TextEqualitySymbol getSymbol() {
+		return symbol;
+	}
 }

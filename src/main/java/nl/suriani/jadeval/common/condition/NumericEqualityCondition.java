@@ -44,4 +44,8 @@ public class NumericEqualityCondition extends Condition<NumericValue> {
 				return false;
 		}
 	}
+
+	public NumericEqualitySymbol getSymbol() {
+		return symbol;
+	}
 }

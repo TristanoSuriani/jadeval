@@ -4,6 +4,10 @@ import nl.suriani.jadeval.common.internal.value.BooleanValue;
 import nl.suriani.jadeval.common.internal.value.FactValue;
 
 public class BooleanEqualityCondition extends Condition<BooleanValue> {
+	public BooleanEqualitySymbol getSymbol() {
+		return symbol;
+	}
+
 	private BooleanEqualitySymbol symbol;
 
 	public BooleanEqualityCondition(String factName, BooleanValue comparing, BooleanEqualitySymbol symbol) {
