@@ -1,13 +1,16 @@
 package nl.suriani.jadeval.decision;
 
 import nl.suriani.jadeval.common.Facts;
+import nl.suriani.jadeval.common.condition.BooleanEqualityCondition;
+import nl.suriani.jadeval.common.condition.NumericEqualityCondition;
+import nl.suriani.jadeval.common.condition.TextEqualityCondition;
 import nl.suriani.jadeval.common.internal.value.BooleanValue;
 import nl.suriani.jadeval.common.internal.value.EmptyValue;
 import nl.suriani.jadeval.common.internal.value.FactValue;
 import nl.suriani.jadeval.common.internal.value.NumericValue;
+import nl.suriani.jadeval.common.internal.value.SymbolTable;
 import nl.suriani.jadeval.common.internal.value.TextValue;
-import nl.suriani.jadeval.decision.condition.Condition;
-import nl.suriani.jadeval.decision.condition.ConditionFactory;
+import nl.suriani.jadeval.common.condition.Condition;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.math.BigDecimal;
@@ -22,19 +25,19 @@ import java.util.stream.Collectors;
 
 class DecisionsCompiler extends DecisionsBaseListener {
 	private final Facts facts;
-	private final ConditionFactory conditionFactory;
+	private final DecisionsConditionFactory conditionFactory;
 
 	private DecisionResults results;
 	private List<Boolean> currentResolvedConditions;
 	private List<String> currentResponses;
 	private String ruleDescription;
-	private Map<String, FactValue> constantsScope;
+	private SymbolTable constantsScope;
 
-	public DecisionsCompiler(Facts facts, ConditionFactory conditionFactory) {
+	public DecisionsCompiler(Facts facts, DecisionsConditionFactory conditionFactory) {
 		this.facts = facts;
 		this.conditionFactory = conditionFactory;
 		this.results = new DecisionResults();
-		this.constantsScope = new HashMap<>();
+		this.constantsScope = new SymbolTable();
 		initializeCurrentResultsAndEvents();
 	}
 
@@ -75,86 +78,37 @@ class DecisionsCompiler extends DecisionsBaseListener {
 	@Override
 	public void enterNumericEqualityCondition(DecisionsParser.NumericEqualityConditionContext ctx) {
 		String factName = ctx.getChild(0).getText();
-		String equalitySymbol = ctx.getChild(1).getText();
-
-		NumericValue expectedValue = new NumericValue(BigDecimal.valueOf(Double.parseDouble(ctx.getChild(2).getText())));
-		boolean result = resolveNumericEquality(factName, equalitySymbol, expectedValue);
-
+		FactValue expectedFactValue = facts.getFact(factName).orElse(new EmptyValue());
+		NumericEqualityCondition condition = conditionFactory.make(ctx);
+		boolean result = condition.solve(expectedFactValue);
 		currentResolvedConditions.add(result);
-	}
-
-	private Boolean resolveNumericEquality(String factName, String equalitySymbol, NumericValue expectedValue) {
-		return facts.getFact(factName)
-				.filter(factValue -> factValue instanceof NumericValue)
-				.map(factValue -> (NumericValue) factValue)
-				.map(factValue -> conditionFactory.make(factValue, expectedValue, equalitySymbol))
-				.map(Condition::solve)
-				.orElse(false);
 	}
 
 	@Override
 	public void enterBooleanEqualityCondition(DecisionsParser.BooleanEqualityConditionContext ctx) {
 		String factName = ctx.getChild(0).getText();
-		String equalitySymbol = ctx.getChild(1).getText();
-
-		BooleanValue expectedValue = new BooleanValue(Boolean.valueOf(ctx.getChild(2).getText()));
-		boolean result = resolveBooleanEquality(factName, equalitySymbol, expectedValue);
-
+		FactValue expectedFactValue = facts.getFact(factName).orElse(new EmptyValue());
+		BooleanEqualityCondition condition = conditionFactory.make(ctx);
+		boolean result = condition.solve(expectedFactValue);
 		currentResolvedConditions.add(result);
-	}
-
-	private Boolean resolveBooleanEquality(String factName, String equalitySymbol, BooleanValue expectedValue) {
-		return facts.getFact(factName)
-				.filter(factValue -> factValue instanceof BooleanValue)
-				.map(factValue -> (BooleanValue) factValue)
-				.map(factValue -> conditionFactory.make(factValue, expectedValue, equalitySymbol))
-				.map(Condition::solve)
-				.orElse(false);
 	}
 
 	@Override
 	public void enterTextEqualityCondition(DecisionsParser.TextEqualityConditionContext ctx) {
 		String factName = ctx.getChild(0).getText();
-		String equalitySymbol = ctx.getChild(1).getText();
-
-		TextValue expectedValue = new TextValue(ctx.getChild(2).getText());
-		boolean result = resolveTextEquality(factName, equalitySymbol, expectedValue);
-
+		FactValue expectedFactValue = facts.getFact(factName).orElse(new EmptyValue());
+		TextEqualityCondition condition = conditionFactory.make(ctx);
+		boolean result = condition.solve(expectedFactValue);
 		currentResolvedConditions.add(result);
-	}
-
-	private Boolean resolveTextEquality(String factName, String equalitySymbol, TextValue expectedValue) {
-		return facts.getFact(factName)
-				.filter(factValue -> factValue instanceof TextValue)
-				.map(factValue -> (TextValue) factValue)
-				.map(factValue -> conditionFactory.make(factValue, expectedValue, equalitySymbol))
-				.map(Condition::solve)
-				.orElse(false);
 	}
 
 	@Override
 	public void enterConstantEqualityCondition(DecisionsParser.ConstantEqualityConditionContext ctx) {
 		String factName = ctx.getChild(0).getText();
-		String equalitySymbol = ctx.getChild(1).getText();
-		DecisionsParser.ConstantValueContext constantValueContext = (DecisionsParser.ConstantValueContext) ctx.getChild(2);
-
-		FactValue expectedValue = constantsScopeLookup(constantValueContext.getText());
-		if (expectedValue instanceof EmptyValue) {
-			throw new IllegalStateException(constantValueContext.getText() + " is undefined");
-		}
-
-		if ((expectedValue instanceof BooleanValue || expectedValue instanceof TextValue)
-			&& hasANumericOnlyEqualitySymbol(ctx)) {
-			throw new IllegalStateException("Symbol " + equalitySymbol + " not allowed with " + expectedValue.getClass().getName());
-		}
-
-		if (expectedValue instanceof NumericValue) {
-			currentResolvedConditions.add(resolveNumericEquality(factName, equalitySymbol, (NumericValue) expectedValue));
-		} else if (expectedValue instanceof BooleanValue) {
-			currentResolvedConditions.add(resolveBooleanEquality(factName, equalitySymbol, (BooleanValue) expectedValue));
-		} else if (expectedValue instanceof TextValue) {
-			currentResolvedConditions.add(resolveTextEquality(factName, equalitySymbol, (TextValue) expectedValue));
-		}
+		FactValue expectedFactValue = facts.getFact(factName).orElse(new EmptyValue());
+		Condition condition = conditionFactory.make(constantsScope, ctx);
+		boolean result = condition.solve(expectedFactValue);
+		currentResolvedConditions.add(result);
 	}
 
 	@Override
@@ -184,23 +138,23 @@ class DecisionsCompiler extends DecisionsBaseListener {
 	}
 
 	private FactValue constantsScopeLookup(String name) {
-		return Optional.ofNullable(constantsScope.get(name))
+		return Optional.ofNullable(constantsScope.lookup(name))
 				.orElse(new EmptyValue());
 	}
 
 	private void constantsScopeUpdate(String name, DecisionsParser.NumericValueContext numericValueContext) {
 		NumericValue numericValue = new NumericValue(Double.valueOf(numericValueContext.getText()));
-		constantsScope.put(name, numericValue);
+		constantsScope.update(name, numericValue);
 	}
 
 	private void constantsScopeUpdate(String name, DecisionsParser.BooleanValueContext booleanValueContext) {
 		BooleanValue booleanValue = new BooleanValue(Boolean.valueOf(booleanValueContext.getText()));
-		constantsScope.put(name, booleanValue);
+		constantsScope.update(name, booleanValue);
 	}
 
 	private void constantsScopeUpdate(String name, DecisionsParser.TextValueContext textValueContext) {
 		TextValue textValue = new TextValue(textValueContext.getText());
-		constantsScope.put(name, textValue);
+		constantsScope.update(name, textValue);
 	}
 
 	private boolean hasANumericOnlyEqualitySymbol(DecisionsParser.ConstantEqualityConditionContext ctx) {

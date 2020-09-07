@@ -73,7 +73,7 @@ class DecisionsTest {
 		/*
 			Matching rule:
 			when amount is 0.1
-				and disconnected not false
+				and disconnected is not false
 				then LOG_NOT_DISCONNECTED
 				and LOG_CONNECTED
 		 */

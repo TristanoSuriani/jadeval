@@ -32,7 +32,7 @@ class WorkflowExecutorTest {
 	private static final String NOBODY_SCORES = "NOBODY_SCORES";
 	private Workflow workflow;
 	private WorkflowCompiler workflowCompiler;
-	private WorkflowConditionFactory workflowConditionFactory;
+	private WorkflowConditionFactory conditionFactory;
 	private EqualitySymbolFactory equalitySymbolFactory;
 	private StateUpdateEventHandler eventHandler;
 	private WorkflowExecutor executor;
@@ -43,8 +43,8 @@ class WorkflowExecutorTest {
 	@BeforeEach
 	void setUp() {
 		equalitySymbolFactory = new EqualitySymbolFactory();
-		workflowConditionFactory = new WorkflowConditionFactory(equalitySymbolFactory);
-		workflowCompiler = new WorkflowCompiler(workflowConditionFactory);
+		conditionFactory = new WorkflowConditionFactory(equalitySymbolFactory);
+		workflowCompiler = new WorkflowCompiler(conditionFactory);
 		workflow = new Workflow(workflowCompiler, new ArrayList<>());
 		File file = new File("src/test/resources/workflow.jwl");
 		executor = workflow.build(file);

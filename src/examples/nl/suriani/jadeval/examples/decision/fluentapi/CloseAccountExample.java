@@ -9,7 +9,7 @@ import nl.suriani.jadeval.decision.FluentDecisions;
 import java.io.File;
 import java.math.BigDecimal;
 
-public class CloseAccountExample {
+class CloseAccountExample {
 	public static void main(String[] args) {
 		FluentDecisions decisions = new CloseAccountDecisionsBuilder().build();
 		Person person = new Person();

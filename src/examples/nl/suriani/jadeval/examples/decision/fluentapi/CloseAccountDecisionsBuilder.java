@@ -4,7 +4,7 @@ import nl.suriani.jadeval.decision.DecisionsBuilder;
 
 import java.math.BigDecimal;
 
-public class CloseAccountDecisionsBuilder extends DecisionsBuilder {
+class CloseAccountDecisionsBuilder extends DecisionsBuilder {
 	private static final BigDecimal MINIMUM_AGE = BigDecimal.valueOf(18);
 
 	@Override

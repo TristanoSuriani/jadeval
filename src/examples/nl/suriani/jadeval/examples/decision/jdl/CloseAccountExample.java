@@ -8,7 +8,7 @@ import nl.suriani.jadeval.common.annotation.Fact;
 import java.io.File;
 import java.math.BigDecimal;
 
-public class CloseAccountExample {
+class CloseAccountExample {
 	public static void main(String[] args) {
 		Decisions decisions = new Decisions();
 		Person person = new Person();
