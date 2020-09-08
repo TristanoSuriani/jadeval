@@ -1,0 +1,7 @@
+validations
+    "The amount of product must be in stock"
+    valid when amount >= 1
+        and itemsInStockGreaterThanAmount is true
+
+    "The order cannot be processed for customers with a blocked account"
+    valid when blockedAccount is false

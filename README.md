@@ -116,12 +116,14 @@ To import Jadeval simply add this Maven dependency:
 
 ## State of the library
 Jadeval is currently in alpha version. This means that it can change considerably between versions,
-the stability and absence of major bugs in not guaranteed and it should therefore not be used for production code.
+the stability and absence of major bugs in not guaranteed, and it should therefore not be used for production code.
 
 ## Roadmap
 The following features are planned for the next releases of Jadeval:
-- Jadeval Validations Language
-- New Java Fluent API for Validations
 - Java Fluent API for Workflows
-- *Jadeval Workbench*, graphical tool to generate and test decisions, validations and workflows.
+- List type
+- Support to compare between facts
+- Support for Empty Value in facts
+- Facts expressions
 - Expand Jadeval's Decisions model
+- *Jadeval Workbench*, graphical tool to generate and test decisions, validations and workflows.
