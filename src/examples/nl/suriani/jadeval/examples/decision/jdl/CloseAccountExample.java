@@ -21,7 +21,7 @@ class CloseAccountExample {
 		account.setCanBeClosed(true);
 		account.setDescription("custom");
 
-		File file = new File("src/examples/close_account.decisions");
+		File file = new File("src/examples/nl/suriani/jadeval/examples/decision/jdl/close_account.jdl");
 		Decisions decisions = DecisionsBuilder.newFromFile(file).build();
 		DecisionResults results = decisions.apply(person, account);
 
