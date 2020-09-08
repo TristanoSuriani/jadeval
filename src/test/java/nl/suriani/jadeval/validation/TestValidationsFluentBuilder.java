@@ -1,7 +1,7 @@
 package nl.suriani.jadeval.validation;
 
 public class TestValidationsFluentBuilder extends ValidationsFluentBuilder {
-	private final static int THRESHOLD = 3;
+	private final static double THRESHOLD = 3;
 	private final static int MAXIMUM_RATE = 10;
 
 	@Override

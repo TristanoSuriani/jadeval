@@ -69,10 +69,10 @@ class ValidationsTest {
 	void testWithFluentBuilder() {
 		Validations validations = new TestValidationsFluentBuilder().build();
 
-		//Exception exception = Assertions.assertThrows(ValidationException.class, () -> {
+		Exception exception = Assertions.assertThrows(ValidationException.class, () -> {
 			validations.apply(this);
-		//});
-		/*Assertions.assertTrue(exception.getMessage().contains("10 LESS_THAN_EQUALS 3.0 (amount)"));
+		});
+		Assertions.assertTrue(exception.getMessage().contains("10 LESS_THAN_EQUALS 3.0 (amount)"));
 
 		amount = 2;
 		age = 31;
@@ -83,6 +83,6 @@ class ValidationsTest {
 
 		operationAllowed = true;
 
-		validations.apply(this);*/
+		validations.apply(this);
 	}
 }
