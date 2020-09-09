@@ -52,7 +52,7 @@ public abstract class WorkflowFluentBuilder<T> {
 	}
 
 	protected class WWorkflow {
-		protected RootStates addRootStates(String... states) {
+		public RootStates addRootStates(String... states) {
 			return new RootStates(states);
 		}
 	}

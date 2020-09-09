@@ -7,7 +7,7 @@ through Java fluent APIs and own domain specific languages for maximum flexibili
 
 ## Main concepts
 ### Decisions
-Business decisions defines or constrains some aspect of business and resolves with a set of responses.
+Business decisions defines or constraints some aspect of business and resolves with a set of responses.
 Think about the sentence:
 ~~~~
 When the customer's age is at least 18 years old and his salary at least 40000 and no previous breaches are found then approve loan
