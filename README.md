@@ -120,7 +120,6 @@ the stability and absence of major bugs in not guaranteed, and it should therefo
 
 ## Roadmap
 The following features are planned for the next releases of Jadeval:
-- Java Fluent API for Workflows
 - List type
 - Support to compare between facts
 - Support for Empty Value in facts
