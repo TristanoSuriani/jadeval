@@ -47,3 +47,5 @@ decisions
     when something is not "Here we have really a lot of text to check when and if something is not worth" then GOT_BIG_TEXT_EXAMPLE
 
     when name is "Ayeye Brazorf" then GET_A_LIFE
+
+    when name is in ["Ayeye", "Brazorf"] then GET_TWO_LIVES

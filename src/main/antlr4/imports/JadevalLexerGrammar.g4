@@ -7,6 +7,8 @@ THEN        : 'then' ;
 AND         : 'and' ;
 
 ISNOT       : '!=' | 'is not' ;
+ISNOTIN       : 'is not in' ;
+ISIN        : 'is in' ;
 IS          : '==' | 'is' ;
 GTE         : '>=' ;
 GT          : '>' ;
@@ -18,6 +20,8 @@ ENDS_WITH   : 'ends with' ;
 
 OPEN_BRACKET    : '{' ;
 CLOSE_BRACKET   : '}' ;
+OPEN_SQUARE_BRACKET : '[' ;
+CLOSE_SQUARE_BRACKET : ']' ;
 
 SET         : 'set' ;
 TO          : 'to' ;

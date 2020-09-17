@@ -49,10 +49,13 @@ conditionExpression   : conditionExpression AND conditionExpression
             | booleanEqualityCondition
             | textEqualityCondition
             | constantEqualityCondition
+            | listEqualityCondition
             ;
 
 constantsDefinition     : 'constants' constantDefinition+ ;
 constantDefinition      : CONSTANT EQUALS (numericValue | booleanValue | textValue) ;
+
+listEqualityCondition       : ID ISIN listValue ;
 
 numericEqualityCondition    : ID IS numericValue
                             | ID ISNOT numericValue
@@ -90,3 +93,8 @@ numericValue : NUMBER ;
 booleanValue : BOOLEAN ;
 constantValue : CONSTANT ;
 textValue : ID | TEXT;
+singleValue    : numericValue
+            | booleanValue
+            | constantValue
+            | textValue ;
+listValue : OPEN_SQUARE_BRACKET (singleValue ','?)+ CLOSE_SQUARE_BRACKET ;
