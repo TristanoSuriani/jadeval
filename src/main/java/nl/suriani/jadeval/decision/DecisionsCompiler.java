@@ -1,5 +1,8 @@
 package nl.suriani.jadeval.decision;
 
+import nl.suriani.jadeval.common.ConditionFactory;
+import nl.suriani.jadeval.common.JadevalBaseListener;
+import nl.suriani.jadeval.common.JadevalParser;
 import nl.suriani.jadeval.common.condition.BooleanEqualityCondition;
 import nl.suriani.jadeval.common.condition.Condition;
 import nl.suriani.jadeval.common.condition.NumericEqualityCondition;
@@ -17,8 +20,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-class DecisionsCompiler extends DecisionsBaseListener {
-	private final DecisionsConditionFactory conditionFactory;
+class DecisionsCompiler extends JadevalBaseListener {
+	private final ConditionFactory conditionFactory;
 
 	private List<Condition> currentConditions;
 	private List<String> currentResponses;
@@ -27,7 +30,7 @@ class DecisionsCompiler extends DecisionsBaseListener {
 
 	private SymbolTable constantsScope;
 
-	public DecisionsCompiler(DecisionsConditionFactory conditionFactory) {
+	public DecisionsCompiler(ConditionFactory conditionFactory) {
 		this.conditionFactory = conditionFactory;
 		this.decisions = new ArrayList<>();
 		this.constantsScope = new SymbolTable();
@@ -35,7 +38,7 @@ class DecisionsCompiler extends DecisionsBaseListener {
 	}
 
 	@Override
-	public void enterConstantDefinition(DecisionsParser.ConstantDefinitionContext ctx) {
+	public void enterConstantDefinition(JadevalParser.ConstantDefinitionContext ctx) {
 		String constantName = ctx.getChild(0).getText();
 
 		if (!(constantsScopeLookup(constantName) instanceof EmptyValue)) {
@@ -43,56 +46,56 @@ class DecisionsCompiler extends DecisionsBaseListener {
 		}
 
 		ParseTree valueContext = ctx.getChild(2);
-		if (valueContext instanceof DecisionsParser.NumericValueContext) {
-			constantsScopeUpdate(constantName, (DecisionsParser.NumericValueContext) valueContext);
-		} else if (valueContext instanceof DecisionsParser.BooleanValueContext) {
-			constantsScopeUpdate(constantName, (DecisionsParser.BooleanValueContext) valueContext);
-		} else if (valueContext instanceof DecisionsParser.TextValueContext) {
-			constantsScopeUpdate(constantName, (DecisionsParser.TextValueContext) valueContext);
+		if (valueContext instanceof JadevalParser.NumericValueContext) {
+			constantsScopeUpdate(constantName, (JadevalParser.NumericValueContext) valueContext);
+		} else if (valueContext instanceof JadevalParser.BooleanValueContext) {
+			constantsScopeUpdate(constantName, (JadevalParser.BooleanValueContext) valueContext);
+		} else if (valueContext instanceof JadevalParser.TextValueContext) {
+			constantsScopeUpdate(constantName, (JadevalParser.TextValueContext) valueContext);
 		}
 	}
 
 	@Override
-	public void enterRuleDescription(DecisionsParser.RuleDescriptionContext ctx) {
+	public void enterRuleDescription(JadevalParser.RuleDescriptionContext ctx) {
 		currentRuleDescription = ctx.getChild(0).getText().replaceAll("\"", "");
 ;	}
 
 	@Override
-	public void enterNumericEqualityCondition(DecisionsParser.NumericEqualityConditionContext ctx) {
+	public void enterNumericEqualityCondition(JadevalParser.NumericEqualityConditionContext ctx) {
 		NumericEqualityCondition condition = conditionFactory.make(ctx);
 		currentConditions.add(condition);
 	}
 
 	@Override
-	public void enterBooleanEqualityCondition(DecisionsParser.BooleanEqualityConditionContext ctx) {
+	public void enterBooleanEqualityCondition(JadevalParser.BooleanEqualityConditionContext ctx) {
 		BooleanEqualityCondition condition = conditionFactory.make(ctx);
 		currentConditions.add(condition);
 	}
 
 	@Override
-	public void enterTextEqualityCondition(DecisionsParser.TextEqualityConditionContext ctx) {
+	public void enterTextEqualityCondition(JadevalParser.TextEqualityConditionContext ctx) {
 		TextEqualityCondition condition = conditionFactory.make(ctx);
 		currentConditions.add(condition);
 	}
 
 	@Override
-	public void enterConstantEqualityCondition(DecisionsParser.ConstantEqualityConditionContext ctx) {
+	public void enterConstantEqualityCondition(JadevalParser.ConstantEqualityConditionContext ctx) {
 		Condition condition = conditionFactory.make(constantsScope, ctx);
 		currentConditions.add(condition);
 	}
 
 	@Override
-	public void exitDecisionStatement(DecisionsParser.DecisionStatementContext ctx) {
+	public void exitDecisionStatement(JadevalParser.DecisionStatementContext ctx) {
 		decisions.add(new Decision(currentRuleDescription, currentConditions, currentResponses));
 		initializeCurrentState();
 	}
 
 	@Override
-	public void enterEventsAggregation(DecisionsParser.EventsAggregationContext ctx) {
+	public void enterEventsAggregation(JadevalParser.EventsAggregationContext ctx) {
 		addToCurrentEventsIfTerminalNode(ctx);
 	}
 
-	private void addToCurrentEventsIfTerminalNode(DecisionsParser.EventsAggregationContext ctx) {
+	private void addToCurrentEventsIfTerminalNode(JadevalParser.EventsAggregationContext ctx) {
 		if (ctx.getChildCount() == 1) {
 			currentResponses.add(ctx.getText());
 		}
@@ -109,17 +112,17 @@ class DecisionsCompiler extends DecisionsBaseListener {
 				.orElse(new EmptyValue());
 	}
 
-	private void constantsScopeUpdate(String name, DecisionsParser.NumericValueContext numericValueContext) {
+	private void constantsScopeUpdate(String name, JadevalParser.NumericValueContext numericValueContext) {
 		NumericValue numericValue = new NumericValue(Double.valueOf(numericValueContext.getText()));
 		constantsScope.update(name, numericValue);
 	}
 
-	private void constantsScopeUpdate(String name, DecisionsParser.BooleanValueContext booleanValueContext) {
+	private void constantsScopeUpdate(String name, JadevalParser.BooleanValueContext booleanValueContext) {
 		BooleanValue booleanValue = new BooleanValue(Boolean.valueOf(booleanValueContext.getText()));
 		constantsScope.update(name, booleanValue);
 	}
 
-	private void constantsScopeUpdate(String name, DecisionsParser.TextValueContext textValueContext) {
+	private void constantsScopeUpdate(String name, JadevalParser.TextValueContext textValueContext) {
 		TextValue textValue = new TextValue(textValueContext.getText());
 		constantsScope.update(name, textValue);
 	}

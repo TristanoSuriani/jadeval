@@ -1,4 +1,4 @@
-lexer grammar JadevalLexer ;
+lexer grammar JadevalLexerGrammar ;
 
 ARROW       : '->' ;
 EQUALS      : '=' ;

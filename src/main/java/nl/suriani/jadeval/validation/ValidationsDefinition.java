@@ -1,5 +1,8 @@
 package nl.suriani.jadeval.validation;
 
+import nl.suriani.jadeval.common.ConditionFactory;
+import nl.suriani.jadeval.common.JadevalLexer;
+import nl.suriani.jadeval.common.JadevalParser;
 import nl.suriani.jadeval.common.condition.EqualitySymbolFactory;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -60,12 +63,12 @@ public class ValidationsDefinition {
 
 	private Validations build(CharStream input) {
 		try {
-			ValidationsLexer javaLexer = new ValidationsLexer(input);
+			JadevalLexer javaLexer = new JadevalLexer(input);
 			CommonTokenStream tokens = new CommonTokenStream(javaLexer);
-			ValidationsParser decisionsParser = new ValidationsParser(tokens);
-			ParseTree tree = decisionsParser.validationsDefinition();
+			JadevalParser JadevalParser = new JadevalParser(tokens);
+			ParseTree tree = JadevalParser.validationsDefinition();
 			EqualitySymbolFactory equalitySymbolFactory = new EqualitySymbolFactory();
-			ValidationsConditionFactory conditionFactory = new ValidationsConditionFactory(equalitySymbolFactory);
+			ConditionFactory conditionFactory = new ConditionFactory(equalitySymbolFactory);
 			ValidationsCompiler decisionsCompiler = new ValidationsCompiler(conditionFactory);
 			ParseTreeWalker walker = new ParseTreeWalker();
 			walker.walk(decisionsCompiler, tree);

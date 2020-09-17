@@ -1,4 +1,4 @@
-package nl.suriani.jadeval.decision;
+package nl.suriani.jadeval.common;
 
 import nl.suriani.jadeval.common.condition.BooleanEqualityCondition;
 import nl.suriani.jadeval.common.condition.BooleanEqualitySymbol;
@@ -15,28 +15,28 @@ import nl.suriani.jadeval.common.internal.value.NumericValue;
 import nl.suriani.jadeval.common.internal.value.SymbolTable;
 import nl.suriani.jadeval.common.internal.value.TextValue;
 
-class DecisionsConditionFactory {
+public class ConditionFactory {
 	private EqualitySymbolFactory equalitySymbolFactory;
 
-	public DecisionsConditionFactory(EqualitySymbolFactory equalitySymbolFactory) {
+	public ConditionFactory(EqualitySymbolFactory equalitySymbolFactory) {
 		this.equalitySymbolFactory = equalitySymbolFactory;
 	}
 
-	public NumericEqualityCondition make(DecisionsParser.NumericEqualityConditionContext ctx) {
+	public NumericEqualityCondition make(JadevalParser.NumericEqualityConditionContext ctx) {
 		String factName = ctx.getChild(0).getText();
 		NumericValue value = new NumericValue(ctx.getChild(2).getText());
 		NumericEqualitySymbol symbol = equalitySymbolFactory.getNumericEqualitySymbol(ctx.getChild(1).getText());
 		return new NumericEqualityCondition(factName, value, symbol);
 	}
 
-	public BooleanEqualityCondition make(DecisionsParser.BooleanEqualityConditionContext ctx) {
+	public BooleanEqualityCondition make(JadevalParser.BooleanEqualityConditionContext ctx) {
 		String factName = ctx.getChild(0).getText();
 		BooleanValue value = new BooleanValue(ctx.getChild(2).getText());
 		BooleanEqualitySymbol symbol = equalitySymbolFactory.getBooleanEqualitySymbol(ctx.getChild(1).getText());
 		return new BooleanEqualityCondition(factName, value, symbol);
 	}
 
-	public TextEqualityCondition make(DecisionsParser.TextEqualityConditionContext ctx) {
+	public TextEqualityCondition make(JadevalParser.TextEqualityConditionContext ctx) {
 		String factName = ctx.getChild(0).getText();
 		TextValue value = new TextValue(ctx.getChild(2).getText().replaceAll("\"", ""));
 		TextEqualitySymbol symbol = equalitySymbolFactory.getTextEqualitySymbol(ctx.getChild(1).getText());
@@ -44,7 +44,7 @@ class DecisionsConditionFactory {
 	}
 
 
-	public Condition make(SymbolTable constantsScope, DecisionsParser.ConstantEqualityConditionContext ctx) {
+	public Condition make(SymbolTable constantsScope, JadevalParser.ConstantEqualityConditionContext ctx) {
 		String factName = ctx.getChild(0).getText();
 		String symbolString = ctx.getChild(1).getText();
 		String constantName = ctx.getChild(2).getText();

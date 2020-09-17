@@ -1,5 +1,8 @@
 package nl.suriani.jadeval.workflow;
 
+import nl.suriani.jadeval.common.ConditionFactory;
+import nl.suriani.jadeval.common.JadevalBaseListener;
+import nl.suriani.jadeval.common.JadevalParser;
 import nl.suriani.jadeval.common.condition.BooleanEqualityCondition;
 import nl.suriani.jadeval.common.condition.Condition;
 import nl.suriani.jadeval.common.condition.NumericEqualityCondition;
@@ -18,7 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class WorkflowCompiler extends WorkflowBaseListener {
+public class WorkflowCompiler extends JadevalBaseListener {
 	private SymbolTable constantsScope;
 	private Set<String> rootStates;
 	private Set<String> intermediateStates;
@@ -30,9 +33,9 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 	private String currentToState;
 	private List<Condition> currentConditions;
 
-	private WorkflowConditionFactory conditionFactory;
+	private ConditionFactory conditionFactory;
 
-	public WorkflowCompiler(WorkflowConditionFactory conditionFactory) {
+	public WorkflowCompiler(ConditionFactory conditionFactory) {
 		constantsScope = new SymbolTable();
 		rootStates = new HashSet<>();
 		intermediateStates = new HashSet<>();
@@ -44,20 +47,20 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 	}
 
 	@Override
-	public void enterConstantDefinition(WorkflowParser.ConstantDefinitionContext ctx) {
+	public void enterConstantDefinition(JadevalParser.ConstantDefinitionContext ctx) {
 		String constantName = ctx.getChild(0).getText();
 		ParseTree valueContext = ctx.getChild(2);
-		if (valueContext instanceof WorkflowParser.NumericValueContext) {
+		if (valueContext instanceof JadevalParser.NumericValueContext) {
 			constantsScope.update(constantName, new NumericValue((valueContext.getText())));
-		} else if (valueContext instanceof WorkflowParser.BooleanValueContext) {
+		} else if (valueContext instanceof JadevalParser.BooleanValueContext) {
 			constantsScope.update(constantName, new BooleanValue(valueContext.getText()));
-		} else if (valueContext instanceof WorkflowParser.TextValueContext) {
+		} else if (valueContext instanceof JadevalParser.TextValueContext) {
 			constantsScope.update(constantName, new TextValue(valueContext.getText()));
 		}
 	}
 
 	@Override
-	public void enterRootStatesDefinition(WorkflowParser.RootStatesDefinitionContext ctx) {
+	public void enterRootStatesDefinition(JadevalParser.RootStatesDefinitionContext ctx) {
 		ctx.children.subList(1, ctx.children.size()).stream()
 				.map(ParseTree::getText)
 				.forEach(rootStates::add);
@@ -66,7 +69,7 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 	}
 
 	@Override
-	public void enterIntermediateStatesDefinition(WorkflowParser.IntermediateStatesDefinitionContext ctx) {
+	public void enterIntermediateStatesDefinition(JadevalParser.IntermediateStatesDefinitionContext ctx) {
 		ctx.children.subList(1, ctx.children.size()).stream()
 				.map(ParseTree::getText)
 				.forEach(intermediateStates::add);
@@ -75,7 +78,7 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 	}
 
 	@Override
-	public void enterFinalStatesDefinition(WorkflowParser.FinalStatesDefinitionContext ctx) {
+	public void enterFinalStatesDefinition(JadevalParser.FinalStatesDefinitionContext ctx) {
 		ctx.children.subList(1, ctx.children.size()).stream()
 				.map(ParseTree::getText)
 				.forEach(finalStates::add);
@@ -92,7 +95,7 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 	}
 
 	@Override
-	public void enterMultipleConditionalTransition(WorkflowParser.MultipleConditionalTransitionContext ctx) {
+	public void enterMultipleConditionalTransition(JadevalParser.MultipleConditionalTransitionContext ctx) {
 
 		List<ParseTree> children = ctx.children;
 		for(ParseTree child: children) {
@@ -110,7 +113,7 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 	}
 
 	@Override
-	public void enterMultipleDirectTransition(WorkflowParser.MultipleDirectTransitionContext ctx) {
+	public void enterMultipleDirectTransition(JadevalParser.MultipleDirectTransitionContext ctx) {
 		List<ParseTree> children = ctx.children;
 		List<String> localFromStates = new ArrayList<>();
 		for(ParseTree child: children) {
@@ -129,7 +132,7 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 	}
 
 	@Override
-	public void enterDirectTransition(WorkflowParser.DirectTransitionContext ctx) {
+	public void enterDirectTransition(JadevalParser.DirectTransitionContext ctx) {
 		String fromState = ctx.getChild(0).getText();
 		String toState = ctx.getChild(2).getText();
 
@@ -138,45 +141,45 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 	}
 
 	@Override
-	public void enterConditionalTransition(WorkflowParser.ConditionalTransitionContext ctx) {
+	public void enterConditionalTransition(JadevalParser.ConditionalTransitionContext ctx) {
 		currentFromState = ctx.getChild(0).getText();
 		currentToState = ctx.getChild(2).getText();
 	}
 
 	@Override
-	public void enterConditionExpression(WorkflowParser.ConditionExpressionContext ctx) {
-		if (ctx.getParent() instanceof WorkflowParser.ConditionalTransitionContext ||
-				ctx.getParent() instanceof WorkflowParser.MultipleConditionalTransitionContext) {
+	public void enterConditionExpression(JadevalParser.ConditionExpressionContext ctx) {
+		if (ctx.getParent() instanceof JadevalParser.ConditionalTransitionContext ||
+				ctx.getParent() instanceof JadevalParser.MultipleConditionalTransitionContext) {
 			currentConditions = new ArrayList<>();
 		}
 	}
 
 	@Override
-	public void enterNumericEqualityCondition(WorkflowParser.NumericEqualityConditionContext ctx) {
+	public void enterNumericEqualityCondition(JadevalParser.NumericEqualityConditionContext ctx) {
 		NumericEqualityCondition condition = conditionFactory.make(ctx);
 		currentConditions.add(condition);
 	}
 
 	@Override
-	public void enterBooleanEqualityCondition(WorkflowParser.BooleanEqualityConditionContext ctx) {
+	public void enterBooleanEqualityCondition(JadevalParser.BooleanEqualityConditionContext ctx) {
 		BooleanEqualityCondition condition = conditionFactory.make(ctx);
 		currentConditions.add(condition);
 	}
 
 	@Override
-	public void enterTextEqualityCondition(WorkflowParser.TextEqualityConditionContext ctx) {
+	public void enterTextEqualityCondition(JadevalParser.TextEqualityConditionContext ctx) {
 		TextEqualityCondition condition = conditionFactory.make(ctx);
 		currentConditions.add(condition);
 	}
 
 	@Override
-	public void enterConstantEqualityCondition(WorkflowParser.ConstantEqualityConditionContext ctx) {
+	public void enterConstantEqualityCondition(JadevalParser.ConstantEqualityConditionContext ctx) {
 		Condition condition = conditionFactory.make(constantsScope, ctx);
 		currentConditions.add(condition);
 	}
 
 	@Override
-	public void exitMultipleConditionalTransition(WorkflowParser.MultipleConditionalTransitionContext ctx) {
+	public void exitMultipleConditionalTransition(JadevalParser.MultipleConditionalTransitionContext ctx) {
 		currentFromStates.forEach(fromState -> transitions.add(new ConditionalTransition(fromState, currentToState, currentConditions)));
 
 		currentFromStates = new ArrayList<>();
@@ -185,7 +188,7 @@ public class WorkflowCompiler extends WorkflowBaseListener {
 	}
 
 	@Override
-	public void exitConditionalTransition(WorkflowParser.ConditionalTransitionContext ctx) {
+	public void exitConditionalTransition(JadevalParser.ConditionalTransitionContext ctx) {
 		transitions.add(new ConditionalTransition(currentFromState, currentToState, currentConditions));
 
 		currentFromState = null;
