@@ -4,6 +4,8 @@ import nl.suriani.jadeval.common.condition.BooleanEqualityCondition;
 import nl.suriani.jadeval.common.condition.BooleanEqualitySymbol;
 import nl.suriani.jadeval.common.condition.Condition;
 import nl.suriani.jadeval.common.condition.EqualitySymbolFactory;
+import nl.suriani.jadeval.common.condition.ListEqualityCondition;
+import nl.suriani.jadeval.common.condition.ListAndValueEqualitySymbol;
 import nl.suriani.jadeval.common.condition.NumericEqualityCondition;
 import nl.suriani.jadeval.common.condition.NumericEqualitySymbol;
 import nl.suriani.jadeval.common.condition.TextEqualityCondition;
@@ -11,36 +13,47 @@ import nl.suriani.jadeval.common.condition.TextEqualitySymbol;
 import nl.suriani.jadeval.common.internal.value.BooleanValue;
 import nl.suriani.jadeval.common.internal.value.EmptyValue;
 import nl.suriani.jadeval.common.internal.value.FactValue;
+import nl.suriani.jadeval.common.internal.value.ListValue;
 import nl.suriani.jadeval.common.internal.value.NumericValue;
 import nl.suriani.jadeval.common.internal.value.SymbolTable;
 import nl.suriani.jadeval.common.internal.value.TextValue;
+import nl.suriani.jadeval.common.internal.value.ValueFactory;
 
 public class ConditionFactory {
 	private EqualitySymbolFactory equalitySymbolFactory;
+	private ValueFactory valueFactory;
 
-	public ConditionFactory(EqualitySymbolFactory equalitySymbolFactory) {
+	public ConditionFactory(EqualitySymbolFactory equalitySymbolFactory, ValueFactory valueFactory) {
 		this.equalitySymbolFactory = equalitySymbolFactory;
+		this.valueFactory = valueFactory;
 	}
 
 	public NumericEqualityCondition make(JadevalParser.NumericEqualityConditionContext ctx) {
 		String factName = ctx.getChild(0).getText();
-		NumericValue value = new NumericValue(ctx.getChild(2).getText());
+		NumericValue value = valueFactory.make((JadevalParser.NumericValueContext) ctx.getChild(2));
 		NumericEqualitySymbol symbol = equalitySymbolFactory.getNumericEqualitySymbol(ctx.getChild(1).getText());
 		return new NumericEqualityCondition(factName, value, symbol);
 	}
 
 	public BooleanEqualityCondition make(JadevalParser.BooleanEqualityConditionContext ctx) {
 		String factName = ctx.getChild(0).getText();
-		BooleanValue value = new BooleanValue(ctx.getChild(2).getText());
+		BooleanValue value = valueFactory.make((JadevalParser.BooleanValueContext) ctx.getChild(2));
 		BooleanEqualitySymbol symbol = equalitySymbolFactory.getBooleanEqualitySymbol(ctx.getChild(1).getText());
 		return new BooleanEqualityCondition(factName, value, symbol);
 	}
 
 	public TextEqualityCondition make(JadevalParser.TextEqualityConditionContext ctx) {
 		String factName = ctx.getChild(0).getText();
-		TextValue value = new TextValue(ctx.getChild(2).getText().replaceAll("\"", ""));
+		TextValue value = valueFactory.make((JadevalParser.TextValueContext) ctx.getChild(2));
 		TextEqualitySymbol symbol = equalitySymbolFactory.getTextEqualitySymbol(ctx.getChild(1).getText());
 		return new TextEqualityCondition(factName, value, symbol);
+	}
+
+	public ListEqualityCondition make(JadevalParser.ListEqualityConditionContext ctx) {
+		String factName = ctx.getChild(0).getText();
+		ListValue value = valueFactory.make((JadevalParser.ListValueContext) ctx.getChild(2));
+		ListAndValueEqualitySymbol symbol = equalitySymbolFactory.getListEqualitySymbol(ctx.getChild(1).getText());
+		return new ListEqualityCondition(factName, value, symbol);
 	}
 
 
@@ -61,6 +74,5 @@ public class ConditionFactory {
 		else {
 			throw new IllegalStateException("Impossible to instantiate condition with constant " + constantName);
 		}
-
 	}
 }

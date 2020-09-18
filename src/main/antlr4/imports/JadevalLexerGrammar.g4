@@ -6,8 +6,8 @@ WHEN        : 'when' ;
 THEN        : 'then' ;
 AND         : 'and' ;
 
-ISNOT       : '!=' | 'is not' ;
 ISNOTIN       : 'is not in' ;
+ISNOT       : '!=' | 'is not' ;
 ISIN        : 'is in' ;
 IS          : '==' | 'is' ;
 GTE         : '>=' ;
@@ -15,8 +15,11 @@ GT          : '>' ;
 LTE         : '<=' ;
 LT          : '<' ;
 CONTAINS    : 'contains' ;
+DOES_NOT_CONTAIN    : 'does not contain' ;
 STARTS_WITH : 'starts with' ;
+DOES_NOT_START__WITH : 'does not start with' ;
 ENDS_WITH   : 'ends with' ;
+DOES_NOT_END_WITH   : 'does not with' ;
 
 OPEN_BRACKET    : '{' ;
 CLOSE_BRACKET   : '}' ;

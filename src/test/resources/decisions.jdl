@@ -11,8 +11,6 @@ decisions
         then CONGRATULATE
         and SEND_10_EUROS_COUPON
 
-
-
     when amount is 0
         and connected == true
         and connected is not false
@@ -46,6 +44,24 @@ decisions
     when connected is $connected then HOUSTON_GOT_PROBLEM
     when something is not "Here we have really a lot of text to check when and if something is not worth" then GOT_BIG_TEXT_EXAMPLE
 
+    "1"
     when name is "Ayeye Brazorf" then GET_A_LIFE
 
+    "2"
     when name is in ["Ayeye", "Brazorf"] then GET_TWO_LIVES
+
+    "3"
+    when list contains 1 then GET_N_LIVES
+
+    "4"
+    when list contains true then GET_N_LIVES
+
+    "5"
+    when list contains element then GET_N_LIVES
+
+    "6"
+    when list contains $connected then GET_N_LIVES
+
+    "7"
+    when thing is in [1, true, "Ayeye", $connected] then GET_Z
+

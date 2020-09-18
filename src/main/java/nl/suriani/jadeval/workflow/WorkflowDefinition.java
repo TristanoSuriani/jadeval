@@ -4,6 +4,7 @@ import nl.suriani.jadeval.common.ConditionFactory;
 import nl.suriani.jadeval.common.JadevalLexer;
 import nl.suriani.jadeval.common.JadevalParser;
 import nl.suriani.jadeval.common.condition.EqualitySymbolFactory;
+import nl.suriani.jadeval.common.internal.value.ValueFactory;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -28,7 +29,8 @@ public class WorkflowDefinition<T> {
 	}
 
 	public WorkflowDefinition(List<StateUpdateEventHandler<T>> eventHandlers) {
-		this.workflowCompiler = new WorkflowCompiler(new ConditionFactory(new EqualitySymbolFactory()));
+		ValueFactory valueFactory = new ValueFactory();
+		this.workflowCompiler = new WorkflowCompiler(new ConditionFactory(new EqualitySymbolFactory(), valueFactory), valueFactory);
 		this.eventHandlers = eventHandlers;
 	}
 

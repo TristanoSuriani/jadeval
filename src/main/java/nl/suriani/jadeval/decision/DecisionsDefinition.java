@@ -4,6 +4,7 @@ import nl.suriani.jadeval.common.ConditionFactory;
 import nl.suriani.jadeval.common.JadevalLexer;
 import nl.suriani.jadeval.common.JadevalParser;
 import nl.suriani.jadeval.common.condition.EqualitySymbolFactory;
+import nl.suriani.jadeval.common.internal.value.ValueFactory;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -68,7 +69,8 @@ public class DecisionsDefinition {
 			JadevalParser JadevalParser = new JadevalParser(tokens);
 			ParseTree tree = JadevalParser.decisionsDefinition();
 			EqualitySymbolFactory equalitySymbolFactory = new EqualitySymbolFactory();
-			ConditionFactory conditionFactory = new ConditionFactory(equalitySymbolFactory);
+			ValueFactory valueFactory = new ValueFactory();
+			ConditionFactory conditionFactory = new ConditionFactory(equalitySymbolFactory, valueFactory);
 			DecisionsCompiler decisionsCompiler = new DecisionsCompiler(conditionFactory);
 			ParseTreeWalker walker = new ParseTreeWalker();
 			walker.walk(decisionsCompiler, tree);

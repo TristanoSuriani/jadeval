@@ -5,6 +5,7 @@ import nl.suriani.jadeval.common.JadevalBaseListener;
 import nl.suriani.jadeval.common.JadevalParser;
 import nl.suriani.jadeval.common.condition.BooleanEqualityCondition;
 import nl.suriani.jadeval.common.condition.Condition;
+import nl.suriani.jadeval.common.condition.ListEqualityCondition;
 import nl.suriani.jadeval.common.condition.NumericEqualityCondition;
 import nl.suriani.jadeval.common.condition.TextEqualityCondition;
 import nl.suriani.jadeval.common.internal.value.BooleanValue;
@@ -13,6 +14,7 @@ import nl.suriani.jadeval.common.internal.value.FactValue;
 import nl.suriani.jadeval.common.internal.value.NumericValue;
 import nl.suriani.jadeval.common.internal.value.SymbolTable;
 import nl.suriani.jadeval.common.internal.value.TextValue;
+import nl.suriani.jadeval.common.internal.value.ValueFactory;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import java.util.Optional;
 
 class ValidationsCompiler extends JadevalBaseListener {
 	private final ConditionFactory conditionFactory;
+	private final ValueFactory valueFactory;
 
 	private List<Condition> currentConditions;
 	private String currentRuleDescription;
@@ -28,8 +31,9 @@ class ValidationsCompiler extends JadevalBaseListener {
 
 	private SymbolTable constantsScope;
 
-	public ValidationsCompiler(ConditionFactory conditionFactory) {
+	public ValidationsCompiler(ConditionFactory conditionFactory, ValueFactory valueFactory) {
 		this.conditionFactory = conditionFactory;
+		this.valueFactory = valueFactory;
 		this.decisions = new ArrayList<>();
 		this.constantsScope = new SymbolTable();
 		initializeCurrentState();
@@ -77,6 +81,12 @@ class ValidationsCompiler extends JadevalBaseListener {
 	}
 
 	@Override
+	public void enterListEqualityCondition(JadevalParser.ListEqualityConditionContext ctx) {
+		ListEqualityCondition condition = conditionFactory.make(ctx);
+		currentConditions.add(condition);
+	}
+
+	@Override
 	public void enterConstantEqualityCondition(JadevalParser.ConstantEqualityConditionContext ctx) {
 		Condition condition = conditionFactory.make(constantsScope, ctx);
 		currentConditions.add(condition);
@@ -109,7 +119,7 @@ class ValidationsCompiler extends JadevalBaseListener {
 	}
 
 	private void constantsScopeUpdate(String name, JadevalParser.TextValueContext textValueContext) {
-		TextValue textValue = new TextValue(textValueContext.getText());
+		TextValue textValue = new TextValue(textValueContext.getText().replaceAll("\"", ""));
 		constantsScope.update(name, textValue);
 	}
 

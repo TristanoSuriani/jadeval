@@ -5,6 +5,7 @@ import nl.suriani.jadeval.common.JadevalBaseListener;
 import nl.suriani.jadeval.common.JadevalParser;
 import nl.suriani.jadeval.common.condition.BooleanEqualityCondition;
 import nl.suriani.jadeval.common.condition.Condition;
+import nl.suriani.jadeval.common.condition.ListEqualityCondition;
 import nl.suriani.jadeval.common.condition.NumericEqualityCondition;
 import nl.suriani.jadeval.common.condition.TextEqualityCondition;
 import nl.suriani.jadeval.common.internal.value.BooleanValue;
@@ -18,7 +19,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 class DecisionsCompiler extends JadevalBaseListener {
 	private final ConditionFactory conditionFactory;
@@ -58,7 +58,7 @@ class DecisionsCompiler extends JadevalBaseListener {
 	@Override
 	public void enterRuleDescription(JadevalParser.RuleDescriptionContext ctx) {
 		currentRuleDescription = ctx.getChild(0).getText().replaceAll("\"", "");
-;	}
+	}
 
 	@Override
 	public void enterNumericEqualityCondition(JadevalParser.NumericEqualityConditionContext ctx) {
@@ -75,6 +75,12 @@ class DecisionsCompiler extends JadevalBaseListener {
 	@Override
 	public void enterTextEqualityCondition(JadevalParser.TextEqualityConditionContext ctx) {
 		TextEqualityCondition condition = conditionFactory.make(ctx);
+		currentConditions.add(condition);
+	}
+
+	@Override
+	public void enterListEqualityCondition(JadevalParser.ListEqualityConditionContext ctx) {
+		ListEqualityCondition condition = conditionFactory.make(ctx);
 		currentConditions.add(condition);
 	}
 

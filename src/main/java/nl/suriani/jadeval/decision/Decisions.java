@@ -25,6 +25,11 @@ public class Decisions {
 	private DecisionResults apply(Facts facts) {
 		DecisionResults results = new DecisionResults();
 		decisions.stream()
+				.peek(decision -> {
+					if (decision.getConditions().size() == 0) {
+						throw new IllegalStateException("A decision must always contain conditions");
+					}
+				})
 				.map(decision -> new DecisionResult(decision.getDescription(), getResponses(decision, facts)))
 				.forEach(results::add);
 

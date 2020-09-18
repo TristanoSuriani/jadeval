@@ -5,12 +5,11 @@ import nl.suriani.jadeval.common.JadevalBaseListener;
 import nl.suriani.jadeval.common.JadevalParser;
 import nl.suriani.jadeval.common.condition.BooleanEqualityCondition;
 import nl.suriani.jadeval.common.condition.Condition;
+import nl.suriani.jadeval.common.condition.ListEqualityCondition;
 import nl.suriani.jadeval.common.condition.NumericEqualityCondition;
 import nl.suriani.jadeval.common.condition.TextEqualityCondition;
-import nl.suriani.jadeval.common.internal.value.BooleanValue;
-import nl.suriani.jadeval.common.internal.value.NumericValue;
 import nl.suriani.jadeval.common.internal.value.SymbolTable;
-import nl.suriani.jadeval.common.internal.value.TextValue;
+import nl.suriani.jadeval.common.internal.value.ValueFactory;
 import nl.suriani.jadeval.workflow.internal.transition.ConditionalTransition;
 import nl.suriani.jadeval.workflow.internal.transition.DirectTransition;
 import nl.suriani.jadeval.workflow.internal.transition.Transition;
@@ -34,8 +33,9 @@ public class WorkflowCompiler extends JadevalBaseListener {
 	private List<Condition> currentConditions;
 
 	private ConditionFactory conditionFactory;
+	private ValueFactory valueFactory;
 
-	public WorkflowCompiler(ConditionFactory conditionFactory) {
+	public WorkflowCompiler(ConditionFactory conditionFactory, ValueFactory valueFactory) {
 		constantsScope = new SymbolTable();
 		rootStates = new HashSet<>();
 		intermediateStates = new HashSet<>();
@@ -44,19 +44,14 @@ public class WorkflowCompiler extends JadevalBaseListener {
 		transitions = new ArrayList<>();
 		currentFromStates = new ArrayList<>();
 		this.conditionFactory = conditionFactory;
+		this.valueFactory = valueFactory;
 	}
 
 	@Override
 	public void enterConstantDefinition(JadevalParser.ConstantDefinitionContext ctx) {
 		String constantName = ctx.getChild(0).getText();
 		ParseTree valueContext = ctx.getChild(2);
-		if (valueContext instanceof JadevalParser.NumericValueContext) {
-			constantsScope.update(constantName, new NumericValue((valueContext.getText())));
-		} else if (valueContext instanceof JadevalParser.BooleanValueContext) {
-			constantsScope.update(constantName, new BooleanValue(valueContext.getText()));
-		} else if (valueContext instanceof JadevalParser.TextValueContext) {
-			constantsScope.update(constantName, new TextValue(valueContext.getText()));
-		}
+		constantsScope.update(constantName, valueFactory.make(valueContext));
 	}
 
 	@Override
@@ -169,6 +164,12 @@ public class WorkflowCompiler extends JadevalBaseListener {
 	@Override
 	public void enterTextEqualityCondition(JadevalParser.TextEqualityConditionContext ctx) {
 		TextEqualityCondition condition = conditionFactory.make(ctx);
+		currentConditions.add(condition);
+	}
+
+	@Override
+	public void enterListEqualityCondition(JadevalParser.ListEqualityConditionContext ctx) {
+		ListEqualityCondition condition = conditionFactory.make(ctx);
 		currentConditions.add(condition);
 	}
 

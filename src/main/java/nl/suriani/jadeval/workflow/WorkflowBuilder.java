@@ -1,8 +1,5 @@
 package nl.suriani.jadeval.workflow;
 
-import nl.suriani.jadeval.common.ConditionFactory;
-import nl.suriani.jadeval.common.condition.EqualitySymbolFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -36,7 +33,6 @@ public class WorkflowBuilder {
 		}
 
 		public Workflow<T> build() {
-			WorkflowCompiler workflowCompiler = new WorkflowCompiler(new ConditionFactory(new EqualitySymbolFactory()));
 			return new WorkflowDefinition<T>(new ArrayList<>()).build(inputStream);
 		}
 	}
