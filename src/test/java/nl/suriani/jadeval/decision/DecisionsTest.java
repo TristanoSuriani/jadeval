@@ -35,12 +35,20 @@ class DecisionsTest {
 	@Fact
 	private double credit;
 
+	@Fact
+	private String thing;
+
+	@Fact(qualifier = "list")
+	private List<String> someList;
+
 	@BeforeEach
 	void setUp() {
 		amount = 0.1;
 		disconnected = true;
 		connected = true;
 		credit = 2000.01;
+		thing = "Ayeye";
+		someList = Arrays.asList("1", "element", "stuff");
 	}
 
 	@Test
@@ -86,8 +94,8 @@ class DecisionsTest {
 		List<String> responses = resultsTable.getResponses();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
 		assertEquals("This rule has a description too", resultsTable.getResults().get(2).getDescription());
-		assertEquals(3, responses.size());
-		assertLinesMatch(responses, Arrays.asList("LOG_NOT_DISCONNECTED", "LOG_CONNECTED", "HOUSTON_GOT_PROBLEM"));
+		assertEquals(4, responses.size());
+		assertLinesMatch(responses, Arrays.asList("LOG_NOT_DISCONNECTED", "LOG_CONNECTED", "HOUSTON_GOT_PROBLEM", "GET_Z"));
 	}
 
 	@Test

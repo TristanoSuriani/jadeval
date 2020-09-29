@@ -15,12 +15,12 @@ public class TextEqualityCondition extends Condition<TextValue> {
 	public boolean solve(FactValue actualValue) {
 		if (actualValue instanceof TextValue) {
 			return solve((TextValue) actualValue);
-		} else if (actualValue instanceof ListValue){
+		} else if (actualValue instanceof ListValue) {
 			switch (symbol) {
 				case CONTAINS:
-					return ((ListValue) actualValue).getValue().contains(getExpectedValue());
+					return ((ListValue) actualValue).contains(getExpectedValue());
 				case DOES_NOT_CONTAIN:
-					return !((ListValue) actualValue).getValue().contains(getExpectedValue());
+					return !((ListValue) actualValue).contains(getExpectedValue());
 				default:
 					return false;
 			}

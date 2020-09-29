@@ -4,6 +4,7 @@ import nl.suriani.jadeval.common.annotation.Fact;
 import nl.suriani.jadeval.common.internal.value.BooleanValue;
 import nl.suriani.jadeval.common.internal.value.EmptyValue;
 import nl.suriani.jadeval.common.internal.value.FactValue;
+import nl.suriani.jadeval.common.internal.value.ListValue;
 import nl.suriani.jadeval.common.internal.value.NumericValue;
 import nl.suriani.jadeval.common.internal.value.TextValue;
 
@@ -140,6 +141,12 @@ public class Facts {
 
 		if (value instanceof BigDecimal) {
 			return new NumericValue((BigDecimal) value);
+		}
+
+		if (value instanceof List) {
+			return new ListValue(((List<?>) value).stream()
+				.map(this::getFact)
+					.collect(Collectors.toList()));
 		}
 		
 		return new EmptyValue();

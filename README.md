@@ -120,7 +120,7 @@ the stability and absence of major bugs in not guaranteed, and it should therefo
 
 ## Roadmap
 The following features are planned for the next releases of Jadeval:
-- List type
+- Jadeval XML DSL
 - Support to compare between facts
 - Support for Empty Value in facts
 - Facts expressions

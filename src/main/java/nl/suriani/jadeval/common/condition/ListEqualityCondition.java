@@ -1,5 +1,6 @@
 package nl.suriani.jadeval.common.condition;
 
+import nl.suriani.jadeval.common.internal.value.EmptyValue;
 import nl.suriani.jadeval.common.internal.value.FactValue;
 import nl.suriani.jadeval.common.internal.value.ListValue;
 
@@ -15,10 +16,14 @@ public class ListEqualityCondition extends Condition<ListValue> {
 	public boolean solve(FactValue actualValue) {
 		switch (symbol) {
 			case IS_IN:
-				return getExpectedValue().getValue().contains(actualValue);
+				return actualValue instanceof EmptyValue ?
+						false :
+						getExpectedValue().getValue().contains(actualValue);
 
 			case IS_NOT_IN:
-				return !getExpectedValue().getValue().contains(actualValue);
+				return actualValue instanceof EmptyValue ?
+						true :
+						!getExpectedValue().getValue().contains(actualValue);
 		}
 		return false;
 	}
