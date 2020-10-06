@@ -27,7 +27,8 @@ public abstract class WorkflowFluentBuilder<T> {
 	private List<String> _intermediateStates;
 	private List<String> _finalStates;
 	private List<String> _allStates;
-	private List<StateUpdateEventHandler<T>> _eventHandlers;
+	private TransitionAttemptedEventHandler<T> _transitionAttemptedEventHandler;
+	private List<StateUpdateEventHandler<T>> _stateUpdateEventHandlers;
 	
 	public WorkflowFluentBuilder() {
 		init();
@@ -36,7 +37,10 @@ public abstract class WorkflowFluentBuilder<T> {
 	private void init() {
 		_transitions = new ArrayList<>();
 		_allStates = new ArrayList<>();
-		_eventHandlers = new ArrayList<>();
+		_stateUpdateEventHandlers = new ArrayList<>();
+		_transitionAttemptedEventHandler = (context -> {
+			// do nothing
+		});
 	}
 
 	public abstract void compile();
@@ -44,7 +48,7 @@ public abstract class WorkflowFluentBuilder<T> {
 	public Workflow<T> build() {
 		init();
 		compile();
-		return new Workflow<>(_transitions, new HashSet<>(_allStates), _eventHandlers);
+		return new Workflow<>(_transitions, new HashSet<>(_allStates), _transitionAttemptedEventHandler, _stateUpdateEventHandlers);
 	}
 
 	protected WWorkflow defineWorkflow() {
@@ -121,6 +125,10 @@ public abstract class WorkflowFluentBuilder<T> {
 
 		public void end() {
 			_transitions.add(new DirectTransition(fromState, toState));
+		}
+
+		public AddTransitionAttemptedEventHandler addTransitionAttemptedEventHandler(TransitionAttemptedEventHandler eventHandler) {
+			return new AddTransitionAttemptedEventHandler(eventHandler);
 		}
 
 		public AddStateUpdateEventHandler addStateUpdateEventHandler(StateUpdateEventHandler eventHandler) {
@@ -397,10 +405,24 @@ public abstract class WorkflowFluentBuilder<T> {
 		}
 	}
 
+	protected class AddTransitionAttemptedEventHandler {
+
+		public AddTransitionAttemptedEventHandler(TransitionAttemptedEventHandler eventHandler) {
+			_transitionAttemptedEventHandler = eventHandler;
+		}
+
+		public AddStateUpdateEventHandler addStateUpdateEventHandler(StateUpdateEventHandler eventHandler) {
+			return new AddStateUpdateEventHandler(eventHandler);
+		}
+
+		public void end() {
+		}
+	}
+
 	protected class AddStateUpdateEventHandler {
 
 		public AddStateUpdateEventHandler(StateUpdateEventHandler eventHandler) {
-			_eventHandlers.add(eventHandler);
+			_stateUpdateEventHandlers.add(eventHandler);
 		}
 
 		public AddStateUpdateEventHandler addStateUpdateEventHandler(StateUpdateEventHandler eventHandler) {

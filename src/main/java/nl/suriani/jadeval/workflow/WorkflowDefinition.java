@@ -21,27 +21,30 @@ import java.util.List;
 public class WorkflowDefinition<T> {
 	private final static CharStreamRetriever charStreamRetriever = new CharStreamRetriever();
 	private WorkflowCompiler workflowCompiler;
-	private List<StateUpdateEventHandler<T>> eventHandlers;
+	private TransitionAttemptedEventHandler<T> transitionAttemptedEventHandler;
+	private List<StateUpdateEventHandler<T>> stateUpdateEventHandlers;
 
-	WorkflowDefinition(WorkflowCompiler workflowCompiler, List<StateUpdateEventHandler<T>> eventHandlers) {
+	WorkflowDefinition(WorkflowCompiler workflowCompiler, TransitionAttemptedEventHandler<T> transitionAttemptedEventHandler, List<StateUpdateEventHandler<T>> stateUpdateEventHandlers) {
 		this.workflowCompiler = workflowCompiler;
-		this.eventHandlers = eventHandlers;
+		this.transitionAttemptedEventHandler = transitionAttemptedEventHandler;
+		this.stateUpdateEventHandlers = stateUpdateEventHandlers;
 	}
 
-	public WorkflowDefinition(List<StateUpdateEventHandler<T>> eventHandlers) {
+	public WorkflowDefinition(TransitionAttemptedEventHandler<T> transitionAttemptedEventHandler, List<StateUpdateEventHandler<T>> stateUpdateEventHandlers) {
 		ValueFactory valueFactory = new ValueFactory();
 		this.workflowCompiler = new WorkflowCompiler(new ConditionFactory(new EqualitySymbolFactory(), valueFactory), valueFactory);
-		this.eventHandlers = eventHandlers;
+		this.transitionAttemptedEventHandler = transitionAttemptedEventHandler;
+		this.stateUpdateEventHandlers = stateUpdateEventHandlers;
 	}
 
 	public Workflow build(File file) {
 		compile(file);
-		return new Workflow(workflowCompiler.getTransitions(), workflowCompiler.getAllStates(), eventHandlers);
+		return new Workflow(workflowCompiler.getTransitions(), workflowCompiler.getAllStates(), transitionAttemptedEventHandler, stateUpdateEventHandlers);
 	}
 
 	public Workflow build(InputStream inputStream) {
 		compile(inputStream);
-		return new Workflow(workflowCompiler.getTransitions(), workflowCompiler.getAllStates(), eventHandlers);
+		return new Workflow(workflowCompiler.getTransitions(), workflowCompiler.getAllStates(), transitionAttemptedEventHandler, stateUpdateEventHandlers);
 	}
 
 	private void compile(File file) {

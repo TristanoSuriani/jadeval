@@ -7,7 +7,7 @@ decisionsDefinition   : constantsDefinition? decisionStatements
                         | constantsDefinition? decisionStatement+
                         ;
 
-decisionStatements      : 'decisions' decisionStatement+ ;
+decisionStatements      : 'decisions'? decisionStatement+ ;
 decisionStatement       : (ruleDescription)? WHEN conditionExpression THEN eventsAggregation ;
 
 

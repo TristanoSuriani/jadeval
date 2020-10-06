@@ -125,4 +125,3 @@ The following features are planned for the next releases of Jadeval:
 - Support for Empty Value in facts
 - Facts expressions
 - Expand Jadeval's Decisions model
-- *Jadeval Workbench*, graphical tool to generate and test decisions, validations and workflows.

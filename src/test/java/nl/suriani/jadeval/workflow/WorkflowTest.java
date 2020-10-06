@@ -37,7 +37,7 @@ class WorkflowTest {
 	@BeforeEach
 	void setUp() {
 		File file = new File("src/test/resources/workflow.jwl");
-		workflow = WorkflowBuilder.newFromFile(file)
+		workflow = WorkflowBuilder.fromFile(file)
 				.build();
 		eventHandler = Mockito.mock(StateUpdateEventHandler.class);
 	}
@@ -255,7 +255,7 @@ class WorkflowTest {
 	@Test
 	void test_eventHandler_enterState_and_exitState_are_called_1_time() {
 		File file = new File("src/test/resources/todo_workflow.jwl");
-		workflow = WorkflowBuilder.newFromFile(file)
+		workflow = WorkflowBuilder.fromFile(file)
 					.addStateUpdateEventHandler(eventHandler)
 					.build();
 
@@ -273,7 +273,7 @@ class WorkflowTest {
 	@Test
 	void test_condition_is_correctly_processed_when_facts_are_missing() {
 		File file = new File("src/test/resources/todo_workflow.jwl");
-		workflow = WorkflowBuilder.newFromFile(file)
+		workflow = WorkflowBuilder.fromFile(file)
 						.build();
 
 		when(eventHandler.getStateName()).thenReturn("IN_PROGRESS");
@@ -288,7 +288,7 @@ class WorkflowTest {
 	@Test
 	void test_synchronise_state_after_next_state_retrieval() {
 		File file = new File("src/test/resources/todo_workflow.jwl");
-		workflow = WorkflowBuilder.newFromFile(file)
+		workflow = WorkflowBuilder.fromFile(file)
 					.build();
 
 		when(eventHandler.getStateName()).thenReturn("IN_PROGRESS");
