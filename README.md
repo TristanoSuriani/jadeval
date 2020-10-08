@@ -1,9 +1,9 @@
 # Jadeval
-### Just A DEcision and VAlidation Library (and actually other things too)
+### It was Just A DEcision and VAlidation Library (but now it's much more than that)
 
 ## Introduction
-Jadeval is an open source library that allows to define business decisions, validations and workflows, 
-through Java fluent APIs and own domain specific languages for maximum flexibility.
+Jadeval is lightweight open source library that allows to define fact based complex computational models as business decisions, validations and workflows (more is coming), 
+through its own domain specific language for maximum flexibility.
 
 ## Main concepts
 ### Decisions
@@ -27,8 +27,6 @@ Think about the sentence:
 ~~~~
 When the customer's last name is unknown stop the process and notify the error
 ~~~~
-[Jadeval Validations Fluent API](docs/Validations.md) allows to define validations like this one with a declarative approach. Follow the link for examples.
-
 
 ### Workflows
 A workflow consists of an orchestrated and repeatable pattern of activity. Elements of a workflow include states, 
@@ -120,8 +118,13 @@ the stability and absence of major bugs in not guaranteed, and it should therefo
 
 ## Roadmap
 The following features are planned for the next releases of Jadeval:
+- State machine definition language
+- Automatic scan of resource definition files
 - Jadeval XML DSL
 - Support to compare between facts
 - Support for Empty Value in facts
 - Facts expressions
-- Expand Jadeval's Decisions model
+- Translation of semantic models to diagrams in DOT language for integration with Graphviz.
+- Several improvements to stability and APIs
+- Jadeval Extensions API?
+

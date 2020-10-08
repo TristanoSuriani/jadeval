@@ -67,7 +67,7 @@ class DecisionsTest {
 				then CONGRATULATE
 				and SEND_10_EUROS_COUPON
 		* */
-		decisions = DecisionsBuilder.newFromFile(file).build();
+		decisions = DecisionsBuilder.fromFile(file).build();
 		DecisionResults resultsTable = decisions.apply(factsMap);
 
 		List<String> responses = resultsTable.getResponses();
@@ -88,7 +88,7 @@ class DecisionsTest {
 				then LOG_NOT_DISCONNECTED
 				and LOG_CONNECTED
 		 */
-		decisions = DecisionsBuilder.newFromFile(new File(fileName)).build();
+		decisions = DecisionsBuilder.fromFile(new File(fileName)).build();
 		DecisionResults resultsTable = decisions.apply(this);
 
 		List<String> responses = resultsTable.getResponses();
@@ -114,7 +114,7 @@ class DecisionsTest {
 		factsMap.put("debt", "big");
 		factsMap.put("life_expectance", "short");
 		factsMap.put("numberOfPartners", 1);
-		decisions = DecisionsBuilder.newFromInputStream(inputStream).build();
+		decisions = DecisionsBuilder.fromInputStream(inputStream).build();
 		DecisionResults resultsTable = decisions.apply(factsMap);
 		List<String> responses = resultsTable.getResponses();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());

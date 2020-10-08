@@ -45,29 +45,8 @@ class ValidationsTest {
 
 	@Test
 	void testWithJVL() {
-		Validations validations = ValidationsBuilder.newFromFile(new File("src/test/resources/validations.jvl"))
+		Validations validations = ValidationsBuilder.fromFile(new File("src/test/resources/validations.jvl"))
 				.build();
-
-		Exception exception = Assertions.assertThrows(ValidationException.class, () -> {
-			validations.apply(this);
-		});
-		Assertions.assertTrue(exception.getMessage().contains("10 LESS_THAN_EQUALS 3.0 (amount)"));
-
-		amount = 2;
-		age = 31;
-		exception = Assertions.assertThrows(ValidationException.class, () -> {
-			validations.apply(this);
-		});
-		Assertions.assertTrue(exception.getMessage().contains("false IS true (operationAllowed)"));
-
-		operationAllowed = true;
-
-		validations.apply(this);
-	}
-
-	@Test
-	void testWithFluentBuilder() {
-		Validations validations = new TestValidationsFluentBuilder().build();
 
 		Exception exception = Assertions.assertThrows(ValidationException.class, () -> {
 			validations.apply(this);

@@ -139,29 +139,3 @@ validations
     "The order cannot be processed for customers with a blocked account"
     valid when blockedAccount is false
 ````
-
-## Jadeval Validation Fluent Builder
-It is possible to define the same rules with a Java fluent builder, as follows:
-````java
-public class OrderValidationsBuilder extends ValidationsFluentBuilder {
-	@Override
-	protected void compile() {
-		validation("The amount of product must be in stock")
-				.isValidWhen("amount")
-				.greatherThanEquals(toBigDecimal(1))
-				.and("itemsInStockGreaterThanAmount")
-				.is(true)
-				.end();
-
-		validation("The order cannot be processed for customers with a blocked account")
-				.isValidWhen("blockedAccount")
-				.is(false)
-				.end();
-	}
-}
-````
-The following code illustrates how to instantiate the object _validations_ by using the fluent builder instead of a Jadeval Validation Language file:
-````
-Validations validations = new OrderValidationsBuilder().build();
-````
-Check [here](src/examples/nl/suriani/jadeval/examples/validation/fluentapi) for the complete code.

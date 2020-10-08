@@ -8,26 +8,26 @@ import java.io.InputStream;
 
 public class ValidationsBuilder {
 
-	public static <T> NewFromInputStream<T> newFromFile(File file) {
+	public static <T> fromInputStream<T> fromFile(File file) {
 		try {
-			return new NewFromInputStream(new FileInputStream(file));
+			return new fromInputStream(new FileInputStream(file));
 		} catch (FileNotFoundException fileNotFoundException) {
 			throw new IllegalArgumentException(fileNotFoundException);
 		}
 	}
 
-	public static <T> NewFromInputStream<T> newFromInputStream(InputStream inputStream) {
-		return new NewFromInputStream<>(inputStream);
+	public static <T> fromInputStream<T> fromInputStream(InputStream inputStream) {
+		return new fromInputStream<>(inputStream);
 	}
 
-	public static <T> NewFromInputStream<T> newFromString(String input) {
-		return new NewFromInputStream<>(new ByteArrayInputStream(input.getBytes()));
+	public static <T> fromInputStream<T> newFromString(String input) {
+		return new fromInputStream<>(new ByteArrayInputStream(input.getBytes()));
 	}
 
-	public static class NewFromInputStream<T> {
+	public static class fromInputStream<T> {
 		private InputStream inputStream;
 
-		private NewFromInputStream(InputStream inputStream) {
+		private fromInputStream(InputStream inputStream) {
 			this.inputStream = inputStream;
 		}
 

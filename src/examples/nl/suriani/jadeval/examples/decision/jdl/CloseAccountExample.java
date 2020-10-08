@@ -22,7 +22,7 @@ class CloseAccountExample {
 		account.setDescription("custom");
 
 		File file = new File("src/examples/nl/suriani/jadeval/examples/decision/jdl/close_account.jdl");
-		Decisions decisions = DecisionsBuilder.newFromFile(file).build();
+		Decisions decisions = DecisionsBuilder.fromFile(file).build();
 		DecisionResults results = decisions.apply(person, account);
 
 		results.getResponses().forEach(System.out::println);

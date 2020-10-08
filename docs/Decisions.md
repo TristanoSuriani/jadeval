@@ -137,35 +137,3 @@ when customStuff == custom
     and amount >= 0
     then DEFAULT_DESCRIPTION
 ~~~~
-
-## Jadeval Decisions Fluent Builder
-It is possible to define the same rules with a Java fluent builder, as follows:
-
-````java
-public class CloseAccountDecisionsBuilder extends DecisionsBuilder {
-    private static final BigDecimal MINIMUM_AGE = BigDecimal.valueOf(18);
-    
-    @Override
-    protected void compile() {
-        decision()
-            .when("age")
-            .greatherThanEquals(MINIMUM_AGE)
-            .and("amount")
-            .greatherThan(toBigDecimal(0))
-            .then("CLOSE_ACCOUNT")
-            .and("SEND_CONFIRMATION_LETTER")
-            .end();
-    
-        decision()
-            .when("customStuff")
-            .is("custom")
-            .then("DEFAULT_DESCRIPTION")
-            .end();
-    }
-}
-````
-The following code illustrates how to instantiate the object _decisions_ by using the fluent builder instead of a Jadeval Decision Language file:
-````
-Decisions decisions = new CloseAccountDecisionsBuilder().build();
-````
-Check [here](src/examples/nl/suriani/jadeval/examples/decision/fluentapi/) for the complete code.

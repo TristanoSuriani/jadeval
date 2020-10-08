@@ -67,5 +67,3 @@ The actual fact values are provided to the library as Java objects.
 
 **Example**
 Check [here](src/examples/nl/suriani/jadeval/examples/workflow/jwl/) for the complete code.
-
-Example coming soon

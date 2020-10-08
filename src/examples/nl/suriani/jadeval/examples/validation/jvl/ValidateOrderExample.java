@@ -1,7 +1,6 @@
 package nl.suriani.jadeval.examples.validation.jvl;
 
 import nl.suriani.jadeval.common.annotation.Fact;
-import nl.suriani.jadeval.examples.validation.fluentapi.OrderValidationsBuilder;
 import nl.suriani.jadeval.validation.ValidationException;
 import nl.suriani.jadeval.validation.Validations;
 import nl.suriani.jadeval.validation.ValidationsBuilder;
@@ -11,7 +10,7 @@ import java.io.File;
 class ValidateOrderExample {
 	public static void main(String[] args) {
 		File file = new File("src/examples/nl/suriani/jadeval/examples/validation/jvl/validate_order.jvl");
-		Validations validations = ValidationsBuilder.newFromFile(file).build();
+		Validations validations = ValidationsBuilder.fromFile(file).build();
 
 		Product product1 = new Product(10);
 		Account account1 = new Account(false);
