@@ -32,7 +32,7 @@ public class ValidationsBuilder {
 		}
 
 		public Validations build() {
-			return new ValidationsDefinition().build(inputStream);
+			return new ValidationsLoader().build(inputStream);
 		}
 	}
 }

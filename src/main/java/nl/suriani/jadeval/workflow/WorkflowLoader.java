@@ -18,19 +18,19 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
-public class WorkflowDefinition<T> {
+public class WorkflowLoader<T> {
 	private final static CharStreamRetriever charStreamRetriever = new CharStreamRetriever();
 	private WorkflowCompiler workflowCompiler;
 	private TransitionAttemptedEventHandler<T> transitionAttemptedEventHandler;
 	private List<StateUpdateEventHandler<T>> stateUpdateEventHandlers;
 
-	WorkflowDefinition(WorkflowCompiler workflowCompiler, TransitionAttemptedEventHandler<T> transitionAttemptedEventHandler, List<StateUpdateEventHandler<T>> stateUpdateEventHandlers) {
+	WorkflowLoader(WorkflowCompiler workflowCompiler, TransitionAttemptedEventHandler<T> transitionAttemptedEventHandler, List<StateUpdateEventHandler<T>> stateUpdateEventHandlers) {
 		this.workflowCompiler = workflowCompiler;
 		this.transitionAttemptedEventHandler = transitionAttemptedEventHandler;
 		this.stateUpdateEventHandlers = stateUpdateEventHandlers;
 	}
 
-	public WorkflowDefinition(TransitionAttemptedEventHandler<T> transitionAttemptedEventHandler, List<StateUpdateEventHandler<T>> stateUpdateEventHandlers) {
+	public WorkflowLoader(TransitionAttemptedEventHandler<T> transitionAttemptedEventHandler, List<StateUpdateEventHandler<T>> stateUpdateEventHandlers) {
 		ValueFactory valueFactory = new ValueFactory();
 		this.workflowCompiler = new WorkflowCompiler(new ConditionFactory(new EqualitySymbolFactory(), valueFactory), valueFactory);
 		this.transitionAttemptedEventHandler = transitionAttemptedEventHandler;

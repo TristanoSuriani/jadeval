@@ -39,7 +39,7 @@ public class WorkflowBuilder {
 			TransitionAttemptedEventHandler<T> defaultTransitionAttemptedEventHandler = (context) -> {
 				// do nothing
 			};
-			return new WorkflowDefinition<T>(defaultTransitionAttemptedEventHandler, new ArrayList<>()).build(inputStream);
+			return new WorkflowLoader<T>(defaultTransitionAttemptedEventHandler, new ArrayList<>()).build(inputStream);
 		}
 	}
 
@@ -57,7 +57,7 @@ public class WorkflowBuilder {
 		}
 
 		public Workflow<T> build() {
-			return new WorkflowDefinition<T>(eventHandler, new ArrayList<>()).build(inputStream);
+			return new WorkflowLoader<T>(eventHandler, new ArrayList<>()).build(inputStream);
 		}
 	}
 
@@ -85,7 +85,7 @@ public class WorkflowBuilder {
 		}
 
 		public Workflow<T> build() {
-			return new WorkflowDefinition<T>(transitionAttemptedEventHandler, eventHandlers).build(inputStream);
+			return new WorkflowLoader<T>(transitionAttemptedEventHandler, eventHandlers).build(inputStream);
 		}
 	}
 }

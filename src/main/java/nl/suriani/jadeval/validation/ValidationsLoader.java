@@ -22,8 +22,8 @@ import java.util.logging.Logger;
 /**
  * Runner for sets of decisions
  */
-public class ValidationsDefinition {
-	private final static Logger logger = Logger.getLogger(ValidationsDefinition.class.getName());
+public class ValidationsLoader {
+	private final static Logger logger = Logger.getLogger(ValidationsLoader.class.getName());
 	private final static CharStreamRetriever charStreamRetriever = new CharStreamRetriever();
 
 	/**
