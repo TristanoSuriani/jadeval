@@ -3,11 +3,11 @@ grammar Jadeval;
 import JadevalLexerGrammar;
 
 // Decisions
-decisionsDefinition   : constantsDefinition? decisionStatements
+decisionsDefinition   : 'decisions'? constantsDefinition? decisionStatements
                         | constantsDefinition? decisionStatement+
                         ;
 
-decisionStatements      : 'decisions'? decisionStatement+ ;
+decisionStatements      : 'rules'? decisionStatement+ ;
 decisionStatement       : (ruleDescription)? WHEN conditionExpression THEN eventsAggregation ;
 
 
@@ -16,21 +16,25 @@ eventsAggregation   : eventsAggregation AND eventsAggregation
                     ;
 
 // Validations
-validationsDefinition   : constantsDefinition? validationStatements
+validationsDefinition   : 'validations'? constantsDefinition? validationStatements
                         | constantsDefinition? validationStatement+
                         ;
 
-validationStatements      : 'validations' validationStatement+ ;
+validationStatements      : 'rules'? validationStatement+ ;
 validationStatement       : (ruleDescription)? 'valid' WHEN conditionExpression ;
 
 // Workflows
-workflowDefinition      :   constantsDefinition? rootStatesDefinition intermediateStatesDefinition? finalStatesDefinition
+workflowDefinition      :   'workflow'? constantsDefinition? rootStatesDefinition intermediateStatesDefinition? finalStatesDefinition
                             transitionsDefinition
-                         ;
+                        ;
+
+stateMachineDefinition  : 'state machine'? constantsDefinition? genericStatesDefinition transitionsDefinition
+                        ;
 
 rootStatesDefinition            : 'root states' ID+ ;
 intermediateStatesDefinition    : 'intermediate states' ID+ ;
 finalStatesDefinition           : 'final states' ID+ ;
+genericStatesDefinition         : 'states' ID+ ;
 transitionsDefinition           : 'transitions' transitionDefinition+ ;
 transitionDefinition            : multipleConditionalTransition
                                 | multipleDirectTransition

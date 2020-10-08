@@ -1,67 +1,68 @@
-constants
-    $maximum_amount = 3
-    $connected = true
-    $greeting = hello
-
 decisions
 
-    "This rule has a description"
-    when connected is false
-        and credit > 1234.56                // This is a comment
-        then CONGRATULATE
-        and SEND_10_EUROS_COUPON
+    constants
+        $maximum_amount = 3
+        $connected = true
+        $greeting = hello
 
-    when amount is 0
-        and connected == true
-        and connected is not false
-        then SEND_SEVERE_NOTIFICATION
-        and SEND_SEVERE_EMAIL
+    rules
+        "This rule has a description"
+        when connected is false
+            and credit > 1234.56                // This is a comment
+            then CONGRATULATE
+            and SEND_10_EUROS_COUPON
 
-    "This rule has a description too"
-    when life != enjoyable
-        then SUGGEST_THERAPY
-        and SEND_UNRELATED_ADVERTISEMENT
+        when amount is 0
+            and connected == true
+            and connected is not false
+            then SEND_SEVERE_NOTIFICATION
+            and SEND_SEVERE_EMAIL
 
-    when amount is 0.1
-        and disconnected is not false
-        then LOG_NOT_DISCONNECTED
-        and LOG_CONNECTED
+        "This rule has a description too"
+        when life != enjoyable
+            then SUGGEST_THERAPY
+            and SEND_UNRELATED_ADVERTISEMENT
 
-    when amountOfDebt > 0
-        and amount > 1000
-        then SEND_SEVERE_ADVERTISEMENT
+        when amount is 0.1
+            and disconnected is not false
+            then LOG_NOT_DISCONNECTED
+            and LOG_CONNECTED
 
-    when debt is big
-        and life_expectance is short
-        and numberOfPartners <= 1
-        then SEND_COUPON
-        and SUGGEST_THERAPY
-        and CALL_THE_POLICE
+        when amountOfDebt > 0
+            and amount > 1000
+            then SEND_SEVERE_ADVERTISEMENT
 
-    "Ban user if warned at least 3 times and reported more than 2 times"
-    when status is REPORTED and numberOfWarnings >= 3 and timesReported >= 2 then BAN_USER
+        when debt is big
+            and life_expectance is short
+            and numberOfPartners <= 1
+            then SEND_COUPON
+            and SUGGEST_THERAPY
+            and CALL_THE_POLICE
 
-    when connected is $connected then HOUSTON_GOT_PROBLEM
-    when something is not "Here we have really a lot of text to check when and if something is not worth" then GOT_BIG_TEXT_EXAMPLE
+        "Ban user if warned at least 3 times and reported more than 2 times"
+        when status is REPORTED and numberOfWarnings >= 3 and timesReported >= 2 then BAN_USER
 
-    "1"
-    when name is "Ayeye Brazorf" then GET_A_LIFE
+        when connected is $connected then HOUSTON_GOT_PROBLEM
+        when something is not "Here we have really a lot of text to check when and if something is not worth" then GOT_BIG_TEXT_EXAMPLE
 
-    "2"
-    when name is in ["Ayeye", "Brazorf"] then GET_TWO_LIVES
+        "1"
+        when name is "Ayeye Brazorf" then GET_A_LIFE
 
-    "3"
-    when list contains 1 then GET_N_LIVES
+        "2"
+        when name is in ["Ayeye", "Brazorf"] then GET_TWO_LIVES
 
-    "4"
-    when list contains true then GET_N_LIVES
+        "3"
+        when list contains 1 then GET_N_LIVES
 
-    "5"
-    when list contains element then GET_N_LIVES
+        "4"
+        when list contains true then GET_N_LIVES
 
-    "6"
-    when list contains $connected then GET_N_LIVES
+        "5"
+        when list contains element then GET_N_LIVES
 
-    "7"
-    when thing is in [1, true, "Ayeye", $connected] then GET_Z
+        "6"
+        when list contains $connected then GET_N_LIVES
+
+        "7"
+        when thing is in [1, true, "Ayeye", $connected] then GET_Z
 

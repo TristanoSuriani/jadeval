@@ -102,6 +102,32 @@ transitions
     CardsDiscarded -> ChosenCardFromOpponentDeck when sumOfCardsInBothDecks > 1
 ~~~~
 
+### State machines
+A state machine is similar to a workflow, with a couple of differences:
+- there are no distinction between root, intermediate and final states
+- the state machine does not need to end in a specific state. It doesn't need to end at all.
+- there is no 'play until pause' mechanism. It is possible to move only one step at a time, regardless of the transition being
+conditional or direct.
+
+[Jadeval State machine Definition Language](docs/StateMachine.md) allows to formally define state machines.
+Hereby an example of a state machine:
+~~~~
+state machine
+    constants
+        $daysToNewSprint = 3
+
+    states
+        sprintPlanningPrepared, storyPointsAssigned, sprintGoalDefined, oldSprintClosed, newSprintStarted, sprintInProgress
+
+    transitions
+        sprintPlanningPrepared -> storyPointsAssigned when activity is assignStoryPoints
+        storyPointsAssigned -> sprintGoalDefined when activity is defineSprintGoal
+        sprintGoalDefined -> oldSprintClosed when activity is closeOldSprint
+        oldSprintClosed -> newSprintStarted when activity is startNewSprint and sprintApprovedByPO is true
+        newSprintStarted -> sprintInProgress
+        sprintInProgress -> sprintPlanningPrepared when activity is prepareSprintPlanning and daysToNewSprint == $daysToNewSprint
+~~~~
+
 ## Import Jadeval in your project with Maven
 To import Jadeval simply add this Maven dependency:
 ````xml

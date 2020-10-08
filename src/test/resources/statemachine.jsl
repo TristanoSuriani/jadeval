@@ -1,0 +1,14 @@
+state machine
+    constants
+        $daysToNewSprint = 3
+
+    states
+        sprintPlanningPrepared, storyPointsAssigned, sprintGoalDefined, oldSprintClosed, newSprintStarted, sprintInProgress
+
+    transitions
+        sprintPlanningPrepared -> storyPointsAssigned when activity is assignStoryPoints
+        storyPointsAssigned -> sprintGoalDefined when activity is defineSprintGoal
+        sprintGoalDefined -> oldSprintClosed when activity is closeOldSprint
+        oldSprintClosed -> newSprintStarted when activity is startNewSprint and sprintApprovedByPO is true
+        newSprintStarted -> sprintInProgress
+        sprintInProgress -> sprintPlanningPrepared when activity is prepareSprintPlanning and daysToNewSprint == $daysToNewSprint

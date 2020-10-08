@@ -11,7 +11,7 @@ class GrunLauncher {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		new TestRig(DECISIONS_ARGUMENTS).process();
+		new TestRig(VALIDATIONS_ARGUMENTS).process();
 
 		// Suspends the thread in order to allow the TestRig GUI to keep running.
 		Thread.currentThread().suspend();
@@ -28,6 +28,10 @@ class GrunLauncher {
 	// *************** Validations ***************
 	private static final String VALIDATIONS_TEST_FILE = "validations.jvl";
 	private static final String VALIDATIONS_ROOT_RULE = "validationsDefinition";
+
+	// *************** State machine ***************
+	private static final String STATE_MACHINE_TEST_FILE = "statemachine.jsl";
+	private static final String STATE_MACHINE_ROOT_RULE = "stateMachineDefinition";
 
 	// *************** Common ***************
 	private static final String GRAMMAR_CLASS = "nl.suriani.jadeval.common.Jadeval";
@@ -47,6 +51,11 @@ class GrunLauncher {
 
 	private static final String[] VALIDATIONS_ARGUMENTS = new String[]{GRAMMAR_CLASS, VALIDATIONS_ROOT_RULE,
 			FOLDER_TEST_FILE.concat(VALIDATIONS_TEST_FILE),
+			OPTIONS
+	};
+
+	private static final String[] STATE_MACHINE_ARGUMENTS = new String[]{GRAMMAR_CLASS, STATE_MACHINE_ROOT_RULE,
+			FOLDER_TEST_FILE.concat(STATE_MACHINE_TEST_FILE),
 			OPTIONS
 	};
 

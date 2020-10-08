@@ -1,18 +1,20 @@
-constants
-    $threshold = 3
-    $maximum_rate = 10
-
 validations
-    "The amount cannot be greater than the treshold"
-    valid when amount <= $threshold
-    // inline comment
-    /*
-        multiline
-        * comment *
-        */
 
-    valid when age >= 18 and deposit >= 2000
-    valid when code contains NLBANK and code starts with "123" and code ends with "000" and age > 30
-    valid when code is not empty and operationAllowed is true
-    valid when status is not 1
-    valid when rate <= $maximum_rate and operationAllowed is true
+    constants
+        $threshold = 3
+        $maximum_rate = 10
+
+    rules
+        "The amount cannot be greater than the treshold"
+        valid when amount <= $threshold
+        // inline comment
+        /*
+            multiline
+            * comment *
+            */
+
+        valid when age >= 18 and deposit >= 2000
+        valid when code contains NLBANK and code starts with "123" and code ends with "000" and age > 30
+        valid when code is not empty and operationAllowed is true
+        valid when status is not 1
+        valid when rate <= $maximum_rate and operationAllowed is true
