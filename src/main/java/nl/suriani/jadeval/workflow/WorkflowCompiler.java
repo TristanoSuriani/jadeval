@@ -180,4 +180,12 @@ public class WorkflowCompiler extends JadevalBaseListener {
 		currentToState = null;
 		currentConditions = new ArrayList<>();
 	}
+
+	public List<Transition> getTransitions() {
+		return null;
+	}
+
+	public Set<String> getAllStates() {
+		return null;
+	}
 }

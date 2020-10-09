@@ -19,4 +19,20 @@ public class JadevalModel {
 		this.transitionSet = transitionSet;
 		this.ruleSet = new RuleSet();
 	}
+
+	public JadevalModelType getModelType() {
+		return modelType;
+	}
+
+	public RuleSet getRuleSet() {
+		return ruleSet;
+	}
+
+	public TransitionSet getTransitionSet() {
+		return transitionSet;
+	}
+
+	public StateSet getStateSet() {
+		return stateSet;
+	}
 }

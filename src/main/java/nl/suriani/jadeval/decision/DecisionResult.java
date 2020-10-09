@@ -7,7 +7,7 @@ public final class DecisionResult {
 	private final String description;
 	private final List<String> responses;
 
-	DecisionResult(String description, List<String> responses) {
+	public DecisionResult(String description, List<String> responses) {
 		this.description = description;
 		this.responses = responses;
 	}

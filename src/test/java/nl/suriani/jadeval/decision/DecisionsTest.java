@@ -1,12 +1,12 @@
 package nl.suriani.jadeval.decision;
 
-import nl.suriani.jadeval.common.Facts;
+import nl.suriani.jadeval.JadevalExecutor;
+import nl.suriani.jadeval.JadevalLoader;
+import nl.suriani.jadeval.JadevalModel;
 import nl.suriani.jadeval.common.annotation.Fact;
-import org.codehaus.plexus.util.StringInputStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 
 class DecisionsTest {
 
-	private Decisions decisions;
+	private Decisions model;
 
 	@Fact
 	private double amount;
@@ -67,8 +67,35 @@ class DecisionsTest {
 				then CONGRATULATE
 				and SEND_10_EUROS_COUPON
 		* */
-		decisions = DecisionsBuilder.fromFile(file).build();
-		DecisionResults resultsTable = decisions.apply(factsMap);
+		model = DecisionsBuilder.fromFile(file).build();
+		DecisionResults resultsTable = model.apply(factsMap);
+
+		List<String> responses = resultsTable.getResponses();
+		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
+		assertEquals("This rule has a description too", resultsTable.getResults().get(2).getDescription());
+		assertEquals(2, responses.size());
+		assertLinesMatch(responses, Arrays.asList("CONGRATULATE", "SEND_10_EUROS_COUPON"));
+	}
+
+	@Test
+	void runFromFileNewLoader() {
+		String fileName = "src/test/resources/decisions.jdl";
+		File file = new File(fileName);
+		Map<String, Object> factsMap = new HashMap<>();
+		factsMap.put("connected", false);
+		factsMap.put("credit", 2000);
+
+		/*
+			Matching rule:
+			"This rule has a description"
+			when connected is false
+				and credit > 1234.56                // This is a comment
+				then CONGRATULATE
+				and SEND_10_EUROS_COUPON
+		* */
+		JadevalModel model = new JadevalLoader().load(file);
+		System.out.println();
+		DecisionResults resultsTable = new JadevalExecutor(model).applyDecisions(factsMap);
 
 		List<String> responses = resultsTable.getResponses();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
@@ -88,8 +115,8 @@ class DecisionsTest {
 				then LOG_NOT_DISCONNECTED
 				and LOG_CONNECTED
 		 */
-		decisions = DecisionsBuilder.fromFile(new File(fileName)).build();
-		DecisionResults resultsTable = decisions.apply(this);
+		model = DecisionsBuilder.fromFile(new File(fileName)).build();
+		DecisionResults resultsTable = model.apply(this);
 
 		List<String> responses = resultsTable.getResponses();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
@@ -114,8 +141,8 @@ class DecisionsTest {
 		factsMap.put("debt", "big");
 		factsMap.put("life_expectance", "short");
 		factsMap.put("numberOfPartners", 1);
-		decisions = DecisionsBuilder.fromInputStream(inputStream).build();
-		DecisionResults resultsTable = decisions.apply(factsMap);
+		model = DecisionsBuilder.fromInputStream(inputStream).build();
+		DecisionResults resultsTable = model.apply(factsMap);
 		List<String> responses = resultsTable.getResponses();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
 		assertEquals("This rule has a description too", resultsTable.getResults().get(2).getDescription());
@@ -126,8 +153,8 @@ class DecisionsTest {
 	@Test
 	void runFromString() {
 		String string = "\"description.\"\n\n\n\n\nwhen connected is true and credit > 1234.56 then CONGRATULATE /*multilinecommentBut123132RQRQInline!!!~\\*/and SEND_10_EUROS_COUPON//Comment!@#@%!";
-		decisions = DecisionsBuilder.newFromString(string).build();
-		DecisionResults resultsTable = decisions.apply(this, new ByteArrayInputStream(string.getBytes()));
+		model = DecisionsBuilder.newFromString(string).build();
+		DecisionResults resultsTable = model.apply(this, new ByteArrayInputStream(string.getBytes()));
 
 		List<String> responses = resultsTable.getResponses();
 		assertEquals(1, resultsTable.getResults().size());

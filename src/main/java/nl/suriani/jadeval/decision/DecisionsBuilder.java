@@ -32,7 +32,7 @@ public class DecisionsBuilder {
 		}
 
 		public Decisions build() {
-			return new DecisionsDefinition().build(inputStream);
+			return new DecisionsLoader().build(inputStream);
 		}
 	}
 }
