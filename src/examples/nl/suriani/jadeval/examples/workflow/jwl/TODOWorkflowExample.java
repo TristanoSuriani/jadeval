@@ -1,10 +1,5 @@
 package nl.suriani.jadeval.examples.workflow.jwl;
 
-import nl.suriani.jadeval.common.annotation.Fact;
-import nl.suriani.jadeval.workflow.annotation.State;
-
-import java.io.File;
-
 public class TODOWorkflowExample {
 	/*public static void main(String[] args) {
 		File file = new File("src/examples/nl/suriani/jadeval/examples/workflow/jwl/todo_workflow_example.jwl");

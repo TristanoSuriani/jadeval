@@ -1,10 +1,12 @@
 package nl.suriani.jadeval;
 
-import nl.suriani.jadeval.common.ConditionFactory;
+import nl.suriani.jadeval.parser.JadevalInterpreter;
+import nl.suriani.jadeval.parser.ConditionFactory;
 import nl.suriani.jadeval.common.JadevalLexer;
 import nl.suriani.jadeval.common.JadevalParser;
-import nl.suriani.jadeval.common.condition.EqualitySymbolFactory;
-import nl.suriani.jadeval.common.internal.value.ValueFactory;
+import nl.suriani.jadeval.symbols.EqualitySymbolFactory;
+import nl.suriani.jadeval.symbols.value.ValueFactory;
+import nl.suriani.jadeval.models.JadevalModel;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;

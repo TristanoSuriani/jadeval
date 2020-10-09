@@ -1,9 +1,9 @@
 package nl.suriani.jadeval.examples.decision.jdl;
 
-import nl.suriani.jadeval.JadevalExecutor;
+import nl.suriani.jadeval.execution.JadevalExecutor;
 import nl.suriani.jadeval.JadevalLoader;
-import nl.suriani.jadeval.JadevalModel;
-import nl.suriani.jadeval.decision.DecisionResults;
+import nl.suriani.jadeval.models.JadevalModel;
+import nl.suriani.jadeval.execution.decision.DecisionResults;
 
 import java.util.HashMap;
 import java.util.Map;

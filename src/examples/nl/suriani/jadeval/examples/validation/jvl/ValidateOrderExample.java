@@ -1,10 +1,10 @@
 package nl.suriani.jadeval.examples.validation.jvl;
 
-import nl.suriani.jadeval.JadevalExecutor;
+import nl.suriani.jadeval.execution.JadevalExecutor;
 import nl.suriani.jadeval.JadevalLoader;
-import nl.suriani.jadeval.JadevalModel;
-import nl.suriani.jadeval.common.annotation.Fact;
-import nl.suriani.jadeval.validation.ValidationException;
+import nl.suriani.jadeval.models.JadevalModel;
+import nl.suriani.jadeval.annotation.Fact;
+import nl.suriani.jadeval.execution.validation.ValidationException;
 
 import java.io.File;
 
