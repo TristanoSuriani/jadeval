@@ -1,6 +1,12 @@
-package nl.suriani.jadeval.symbols.value;
+package nl.suriani.jadeval.parser;
 
 import nl.suriani.jadeval.common.JadevalParser;
+import nl.suriani.jadeval.symbols.value.BooleanValue;
+import nl.suriani.jadeval.symbols.value.EmptyValue;
+import nl.suriani.jadeval.symbols.value.FactValue;
+import nl.suriani.jadeval.symbols.value.ListValue;
+import nl.suriani.jadeval.symbols.value.NumericValue;
+import nl.suriani.jadeval.symbols.value.TextValue;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.stream.Collectors;

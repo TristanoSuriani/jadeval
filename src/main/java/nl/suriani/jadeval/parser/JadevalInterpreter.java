@@ -13,7 +13,6 @@ import nl.suriani.jadeval.symbols.value.FactValue;
 import nl.suriani.jadeval.symbols.value.NumericValue;
 import nl.suriani.jadeval.symbols.value.SymbolTable;
 import nl.suriani.jadeval.symbols.value.TextValue;
-import nl.suriani.jadeval.symbols.value.ValueFactory;
 import nl.suriani.jadeval.models.JadevalModel;
 import nl.suriani.jadeval.models.JadevalModelType;
 import nl.suriani.jadeval.models.Rule;

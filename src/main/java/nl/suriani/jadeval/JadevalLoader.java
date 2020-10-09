@@ -5,7 +5,7 @@ import nl.suriani.jadeval.parser.ConditionFactory;
 import nl.suriani.jadeval.common.JadevalLexer;
 import nl.suriani.jadeval.common.JadevalParser;
 import nl.suriani.jadeval.symbols.EqualitySymbolFactory;
-import nl.suriani.jadeval.symbols.value.ValueFactory;
+import nl.suriani.jadeval.parser.ValueFactory;
 import nl.suriani.jadeval.models.JadevalModel;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;

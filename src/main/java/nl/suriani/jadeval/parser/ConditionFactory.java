@@ -18,7 +18,6 @@ import nl.suriani.jadeval.symbols.value.ListValue;
 import nl.suriani.jadeval.symbols.value.NumericValue;
 import nl.suriani.jadeval.symbols.value.SymbolTable;
 import nl.suriani.jadeval.symbols.value.TextValue;
-import nl.suriani.jadeval.symbols.value.ValueFactory;
 
 public class ConditionFactory {
 	private EqualitySymbolFactory equalitySymbolFactory;
