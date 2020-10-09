@@ -2,6 +2,12 @@ grammar Jadeval;
 
 import JadevalLexerGrammar;
 
+jadevalProgram      : decisionsDefinition
+                    | validationsDefinition
+                    | workflowDefinition
+                    | stateMachineDefinition
+                    ;
+
 // Decisions
 decisionsDefinition   : 'decisions'? constantsDefinition? decisionStatements
                         | constantsDefinition? decisionStatement+

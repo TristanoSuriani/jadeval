@@ -25,7 +25,6 @@ public class WorkflowCompiler extends JadevalBaseListener {
 	private Set<String> rootStates;
 	private Set<String> intermediateStates;
 	private Set<String> finalStates;
-	private Set<String> allStates;
 	private List<Transition> transitions;
 	private String currentFromState;
 	private List<String> currentFromStates;
@@ -40,7 +39,6 @@ public class WorkflowCompiler extends JadevalBaseListener {
 		rootStates = new HashSet<>();
 		intermediateStates = new HashSet<>();
 		finalStates = new HashSet<>();
-		allStates = new HashSet<>();
 		transitions = new ArrayList<>();
 		currentFromStates = new ArrayList<>();
 		this.conditionFactory = conditionFactory;
@@ -59,8 +57,6 @@ public class WorkflowCompiler extends JadevalBaseListener {
 		ctx.children.subList(1, ctx.children.size()).stream()
 				.map(ParseTree::getText)
 				.forEach(rootStates::add);
-
-		allStates.addAll(rootStates);
 	}
 
 	@Override
@@ -68,8 +64,6 @@ public class WorkflowCompiler extends JadevalBaseListener {
 		ctx.children.subList(1, ctx.children.size()).stream()
 				.map(ParseTree::getText)
 				.forEach(intermediateStates::add);
-
-		allStates.addAll(intermediateStates);
 	}
 
 	@Override
@@ -77,16 +71,6 @@ public class WorkflowCompiler extends JadevalBaseListener {
 		ctx.children.subList(1, ctx.children.size()).stream()
 				.map(ParseTree::getText)
 				.forEach(finalStates::add);
-
-
-		allStates.addAll(finalStates);
-		if (duplicatedStatesCheckFails()) {
-			throw new IllegalStateException("A state can only be either root or intermediate or final");
-		}
-	}
-
-	private boolean duplicatedStatesCheckFails() {
-		return allStates.size() < (rootStates.size() + intermediateStates.size() + finalStates.size());
 	}
 
 	@Override
@@ -195,29 +179,5 @@ public class WorkflowCompiler extends JadevalBaseListener {
 		currentFromState = null;
 		currentToState = null;
 		currentConditions = new ArrayList<>();
-	}
-
-	private boolean isRootState(String state) {
-		return rootStates.contains(state);
-	}
-
-	private boolean isIntermediateState(String state) {
-		return intermediateStates.contains(state);
-	}
-
-	private boolean isFinalState(String state) {
-		return finalStates.contains(state);
-	}
-
-	private boolean isAState(String state) {
-		return allStates.contains(state);
-	}
-
-	public List<Transition> getTransitions() {
-		return transitions;
-	}
-
-	public Set<String> getAllStates() {
-		return allStates;
 	}
 }
