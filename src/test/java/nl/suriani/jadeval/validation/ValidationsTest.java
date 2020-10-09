@@ -1,5 +1,8 @@
 package nl.suriani.jadeval.validation;
 
+import nl.suriani.jadeval.JadevalExecutor;
+import nl.suriani.jadeval.JadevalLoader;
+import nl.suriani.jadeval.JadevalModel;
 import nl.suriani.jadeval.common.annotation.Fact;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,23 +48,22 @@ class ValidationsTest {
 
 	@Test
 	void testWithJVL() {
-		Validations validations = ValidationsBuilder.fromFile(new File("src/test/resources/validations.jvl"))
-				.build();
-
+		JadevalModel model = new JadevalLoader().load(new File("src/test/resources/validations.jvl"));
+		JadevalExecutor jadevalExecutor = new JadevalExecutor(model);
 		Exception exception = Assertions.assertThrows(ValidationException.class, () -> {
-			validations.apply(this);
+			jadevalExecutor.applyValidations(this);
 		});
 		Assertions.assertTrue(exception.getMessage().contains("10 LESS_THAN_EQUALS 3.0 (amount)"));
 
 		amount = 2;
 		age = 31;
 		exception = Assertions.assertThrows(ValidationException.class, () -> {
-			validations.apply(this);
+			jadevalExecutor.applyValidations(this);
 		});
 		Assertions.assertTrue(exception.getMessage().contains("false IS true (operationAllowed)"));
 
 		operationAllowed = true;
 
-		validations.apply(this);
+		jadevalExecutor.applyValidations(this);
 	}
 }

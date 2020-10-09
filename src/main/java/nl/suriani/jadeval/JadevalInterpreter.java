@@ -130,6 +130,12 @@ public class JadevalInterpreter extends JadevalBaseListener {
 	}
 
 	@Override
+	public void exitValidationStatement(JadevalParser.ValidationStatementContext ctx) {
+		rules.add(new Rule(currentRuleDescription, currentConditions, currentResponses));
+		initializeCurrentState();
+	}
+
+	@Override
 	public void enterEventsAggregation(JadevalParser.EventsAggregationContext ctx) {
 		addToCurrentEventsIfTerminalNode(ctx);
 	}

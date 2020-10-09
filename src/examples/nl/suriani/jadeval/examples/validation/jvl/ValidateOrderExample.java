@@ -1,22 +1,24 @@
 package nl.suriani.jadeval.examples.validation.jvl;
 
+import nl.suriani.jadeval.JadevalExecutor;
+import nl.suriani.jadeval.JadevalLoader;
+import nl.suriani.jadeval.JadevalModel;
 import nl.suriani.jadeval.common.annotation.Fact;
 import nl.suriani.jadeval.validation.ValidationException;
-import nl.suriani.jadeval.validation.Validations;
-import nl.suriani.jadeval.validation.ValidationsBuilder;
 
 import java.io.File;
 
 class ValidateOrderExample {
 	public static void main(String[] args) {
 		File file = new File("src/examples/nl/suriani/jadeval/examples/validation/jvl/validate_order.jvl");
-		Validations validations = ValidationsBuilder.fromFile(file).build();
+		JadevalModel model = new JadevalLoader().load(file);
+		JadevalExecutor jadevalExecutor = new JadevalExecutor(model);
 
 		Product product1 = new Product(10);
 		Account account1 = new Account(false);
 		Order order1 = new Order(2, product1, account1);
 
-		validations.apply(new OrderValidationContext(order1));
+		jadevalExecutor.applyValidations(new OrderValidationContext(order1));
 		// This validation succeeds.
 
 		Product product2 = new Product(10);
@@ -24,7 +26,7 @@ class ValidateOrderExample {
 		Order order2 = new Order(11, product2, account2);
 
 		try {
-			validations.apply(new OrderValidationContext(order2));
+			jadevalExecutor.applyValidations(new OrderValidationContext(order2));
 		} catch (ValidationException validationException) {
 			System.out.println(validationException.getMessage());
 		}
@@ -38,7 +40,7 @@ class ValidateOrderExample {
 		Order order3 = new Order(0, product3, account3);
 
 		try {
-			validations.apply(new OrderValidationContext(order3));
+			jadevalExecutor.applyValidations(new OrderValidationContext(order3));
 		} catch (ValidationException validationException) {
 			System.out.println(validationException.getMessage());
 		}
@@ -51,7 +53,7 @@ class ValidateOrderExample {
 		Account account4 = new Account(true);
 		Order order4 = new Order(1, product3, account4);
 		try {
-			validations.apply(new OrderValidationContext(order4));
+			jadevalExecutor.applyValidations(new OrderValidationContext(order4));
 		} catch (ValidationException validationException) {
 			System.out.println(validationException.getMessage());
 		}

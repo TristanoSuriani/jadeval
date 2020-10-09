@@ -44,7 +44,7 @@ public class JadevalLoader {
 			JadevalLexer javaLexer = new JadevalLexer(input);
 			CommonTokenStream tokens = new CommonTokenStream(javaLexer);
 			JadevalParser JadevalParser = new JadevalParser(tokens);
-			ParseTree tree = JadevalParser.decisionsDefinition();
+			ParseTree tree = JadevalParser.jadevalProgram();
 			EqualitySymbolFactory equalitySymbolFactory = new EqualitySymbolFactory();
 			ValueFactory valueFactory = new ValueFactory();
 			ConditionFactory conditionFactory = new ConditionFactory(equalitySymbolFactory, valueFactory);
