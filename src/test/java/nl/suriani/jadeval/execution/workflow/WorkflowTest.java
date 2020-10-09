@@ -3,7 +3,6 @@ package nl.suriani.jadeval.execution.workflow;
 import nl.suriani.jadeval.execution.JadevalExecutor;
 import nl.suriani.jadeval.JadevalLoader;
 import nl.suriani.jadeval.models.JadevalModel;
-import nl.suriani.jadeval.execution.WorkflowDelegate;
 import nl.suriani.jadeval.annotation.Fact;
 import nl.suriani.jadeval.annotation.State;
 import org.junit.jupiter.api.Assertions;

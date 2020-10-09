@@ -1,5 +1,8 @@
 package nl.suriani.jadeval.execution;
 
+import nl.suriani.jadeval.execution.decision.DecisionsDelegate;
+import nl.suriani.jadeval.execution.validation.ValidationsDelegate;
+import nl.suriani.jadeval.execution.workflow.WorkflowDelegate;
 import nl.suriani.jadeval.execution.workflow.WorkflowOptions;
 import nl.suriani.jadeval.symbols.value.Facts;
 import nl.suriani.jadeval.models.JadevalModel;

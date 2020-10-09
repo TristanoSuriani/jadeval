@@ -1,11 +1,9 @@
-package nl.suriani.jadeval.execution;
+package nl.suriani.jadeval.execution.decision;
 
 import nl.suriani.jadeval.symbols.value.Facts;
 import nl.suriani.jadeval.symbols.value.EmptyValue;
 import nl.suriani.jadeval.models.JadevalModel;
 import nl.suriani.jadeval.models.Rule;
-import nl.suriani.jadeval.execution.decision.DecisionResult;
-import nl.suriani.jadeval.execution.decision.DecisionResults;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +15,7 @@ public class DecisionsDelegate {
 		this.model = model;
 	}
 
-	DecisionResults apply(Facts facts) {
+	public DecisionResults apply(Facts facts) {
 		DecisionResults results = new DecisionResults();
 		model.getRuleSet().getRules().stream()
 				.map(decision -> new DecisionResult(decision.getDescription(), getResponses(decision, facts)))

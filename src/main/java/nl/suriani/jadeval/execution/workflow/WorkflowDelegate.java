@@ -1,10 +1,8 @@
-package nl.suriani.jadeval.execution;
+package nl.suriani.jadeval.execution.workflow;
 
-import nl.suriani.jadeval.execution.workflow.WorkflowOptions;
 import nl.suriani.jadeval.symbols.value.Facts;
 import nl.suriani.jadeval.models.condition.Condition;
 import nl.suriani.jadeval.models.JadevalModel;
-import nl.suriani.jadeval.execution.workflow.StateUpdateEventHandler;
 import nl.suriani.jadeval.annotation.State;
 import nl.suriani.jadeval.models.shared.transition.ConditionalTransition;
 import nl.suriani.jadeval.models.shared.transition.DirectTransition;

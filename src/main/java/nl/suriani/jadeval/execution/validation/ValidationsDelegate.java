@@ -1,4 +1,4 @@
-package nl.suriani.jadeval.execution;
+package nl.suriani.jadeval.execution.validation;
 
 import nl.suriani.jadeval.symbols.value.Facts;
 import nl.suriani.jadeval.models.condition.BooleanEqualityCondition;
@@ -9,7 +9,6 @@ import nl.suriani.jadeval.symbols.value.EmptyValue;
 import nl.suriani.jadeval.symbols.value.FactValue;
 import nl.suriani.jadeval.models.JadevalModel;
 import nl.suriani.jadeval.models.Rule;
-import nl.suriani.jadeval.execution.validation.ValidationException;
 
 public class ValidationsDelegate {
 	private JadevalModel model;
@@ -18,7 +17,7 @@ public class ValidationsDelegate {
 		this.model = model;
 	}
 
-	void apply(Facts facts) {
+	public void apply(Facts facts) {
 		model.getRuleSet().getRules().forEach(rule -> checkConditions(rule, facts));
 	}
 
