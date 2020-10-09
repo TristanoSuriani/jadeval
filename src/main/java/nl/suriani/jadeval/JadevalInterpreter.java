@@ -156,6 +156,13 @@ public class JadevalInterpreter extends JadevalBaseListener {
 	}
 
 	@Override
+	public void enterGenericStatesDefinition(JadevalParser.GenericStatesDefinitionContext ctx) {
+		ctx.children.subList(1, ctx.children.size()).stream()
+				.map(ParseTree::getText)
+				.forEach(genericStates::add);
+	}
+
+	@Override
 	public void enterMultipleConditionalTransition(JadevalParser.MultipleConditionalTransitionContext ctx) {
 
 		List<ParseTree> children = ctx.children;
