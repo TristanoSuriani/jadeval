@@ -1,8 +1,9 @@
 package nl.suriani.jadeval.examples.decision.jdl;
 
+import nl.suriani.jadeval.JadevalExecutor;
+import nl.suriani.jadeval.JadevalLoader;
+import nl.suriani.jadeval.JadevalModel;
 import nl.suriani.jadeval.decision.DecisionResults;
-import nl.suriani.jadeval.decision.Decisions;
-import nl.suriani.jadeval.decision.DecisionsBuilder;
 import nl.suriani.jadeval.common.annotation.Fact;
 
 import java.io.File;
@@ -22,8 +23,8 @@ class CloseAccountExample {
 		account.setDescription("custom");
 
 		File file = new File("src/examples/nl/suriani/jadeval/examples/decision/jdl/close_account.jdl");
-		Decisions decisions = DecisionsBuilder.fromFile(file).build();
-		DecisionResults results = decisions.apply(person, account);
+		JadevalModel model = new JadevalLoader().load(file);
+		DecisionResults results = new JadevalExecutor(model).applyDecisions(person, account);
 
 		results.getResponses().forEach(System.out::println);
 

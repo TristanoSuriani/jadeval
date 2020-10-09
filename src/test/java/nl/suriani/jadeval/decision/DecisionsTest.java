@@ -21,8 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 
 class DecisionsTest {
 
-	private Decisions model;
-
 	@Fact
 	private double amount;
 
@@ -41,6 +39,8 @@ class DecisionsTest {
 	@Fact(qualifier = "list")
 	private List<String> someList;
 
+	private static final String FILE_NAME = "src/test/resources/decisions.jdl";
+
 	@BeforeEach
 	void setUp() {
 		amount = 0.1;
@@ -53,34 +53,7 @@ class DecisionsTest {
 
 	@Test
 	void runFromFile() {
-		String fileName = "src/test/resources/decisions.jdl";
-		File file = new File(fileName);
-		Map<String, Object> factsMap = new HashMap<>();
-		factsMap.put("connected", false);
-		factsMap.put("credit", 2000);
-
-		/*
-			Matching rule:
-			"This rule has a description"
-			when connected is false
-				and credit > 1234.56                // This is a comment
-				then CONGRATULATE
-				and SEND_10_EUROS_COUPON
-		* */
-		model = DecisionsBuilder.fromFile(file).build();
-		DecisionResults resultsTable = model.apply(factsMap);
-
-		List<String> responses = resultsTable.getResponses();
-		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
-		assertEquals("This rule has a description too", resultsTable.getResults().get(2).getDescription());
-		assertEquals(2, responses.size());
-		assertLinesMatch(responses, Arrays.asList("CONGRATULATE", "SEND_10_EUROS_COUPON"));
-	}
-
-	@Test
-	void runFromFileNewLoader() {
-		String fileName = "src/test/resources/decisions.jdl";
-		File file = new File(fileName);
+		File file = new File(FILE_NAME);
 		Map<String, Object> factsMap = new HashMap<>();
 		factsMap.put("connected", false);
 		factsMap.put("credit", 2000);
@@ -94,7 +67,6 @@ class DecisionsTest {
 				and SEND_10_EUROS_COUPON
 		* */
 		JadevalModel model = new JadevalLoader().load(file);
-		System.out.println();
 		DecisionResults resultsTable = new JadevalExecutor(model).applyDecisions(factsMap);
 
 		List<String> responses = resultsTable.getResponses();
@@ -106,8 +78,6 @@ class DecisionsTest {
 
 	@Test
 	void runFromFileNameAndAnnotedFacts() {
-		String fileName = "src/test/resources/decisions.jdl";
-
 		/*
 			Matching rule:
 			when amount is 0.1
@@ -115,8 +85,8 @@ class DecisionsTest {
 				then LOG_NOT_DISCONNECTED
 				and LOG_CONNECTED
 		 */
-		model = DecisionsBuilder.fromFile(new File(fileName)).build();
-		DecisionResults resultsTable = model.apply(this);
+		JadevalModel model = new JadevalLoader().load(new File(FILE_NAME));
+		DecisionResults resultsTable = new JadevalExecutor(model).applyDecisions(this);
 
 		List<String> responses = resultsTable.getResponses();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
@@ -127,8 +97,7 @@ class DecisionsTest {
 
 	@Test
 	void runFromInputStream() throws FileNotFoundException {
-		String fileName = "src/test/resources/decisions.jdl";
-		File file = new File(fileName);
+		File file = new File(FILE_NAME);
 		FileInputStream inputStream = new FileInputStream(file);
 		/*
 			Matching rule:
@@ -141,8 +110,8 @@ class DecisionsTest {
 		factsMap.put("debt", "big");
 		factsMap.put("life_expectance", "short");
 		factsMap.put("numberOfPartners", 1);
-		model = DecisionsBuilder.fromInputStream(inputStream).build();
-		DecisionResults resultsTable = model.apply(factsMap);
+		JadevalModel model = new JadevalLoader().load(file);
+		DecisionResults resultsTable = new JadevalExecutor(model).applyDecisions(factsMap);
 		List<String> responses = resultsTable.getResponses();
 		assertEquals("This rule has a description", resultsTable.getResults().get(0).getDescription());
 		assertEquals("This rule has a description too", resultsTable.getResults().get(2).getDescription());
@@ -153,8 +122,8 @@ class DecisionsTest {
 	@Test
 	void runFromString() {
 		String string = "\"description.\"\n\n\n\n\nwhen connected is true and credit > 1234.56 then CONGRATULATE /*multilinecommentBut123132RQRQInline!!!~\\*/and SEND_10_EUROS_COUPON//Comment!@#@%!";
-		model = DecisionsBuilder.newFromString(string).build();
-		DecisionResults resultsTable = model.apply(this, new ByteArrayInputStream(string.getBytes()));
+		JadevalModel model = new JadevalLoader().load(new ByteArrayInputStream(string.getBytes()));
+		DecisionResults resultsTable = new JadevalExecutor(model).applyDecisions(this);
 
 		List<String> responses = resultsTable.getResponses();
 		assertEquals(1, resultsTable.getResults().size());

@@ -1,7 +1,8 @@
 package nl.suriani.jadeval.examples.decision.jdl;
 
-import nl.suriani.jadeval.decision.Decisions;
-import nl.suriani.jadeval.decision.DecisionsBuilder;
+import nl.suriani.jadeval.JadevalExecutor;
+import nl.suriani.jadeval.JadevalLoader;
+import nl.suriani.jadeval.JadevalModel;
 import nl.suriani.jadeval.decision.DecisionResults;
 
 import java.util.HashMap;
@@ -18,8 +19,8 @@ class BanUserExample {
 		"when status is REPORTED and numberOfWarnings >= 3 and timesReported >= 2 " +
 				"then BAN_USER";
 
-		Decisions decisions = DecisionsBuilder.newFromString(input).build();
-		DecisionResults results = decisions.apply(factsMap);
+		JadevalModel model = new JadevalLoader().load(input);
+		DecisionResults results = new JadevalExecutor(model).applyDecisions(factsMap);
 
 		System.out.println(results.getResponses().get(0));
 		// it prints BAN_USER
