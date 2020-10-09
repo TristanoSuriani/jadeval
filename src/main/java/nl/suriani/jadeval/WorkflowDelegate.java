@@ -1,32 +1,39 @@
-package nl.suriani.jadeval.workflow;
+package nl.suriani.jadeval;
 
 import nl.suriani.jadeval.common.Facts;
 import nl.suriani.jadeval.common.condition.Condition;
+import nl.suriani.jadeval.workflow.StateUpdateEventHandler;
 import nl.suriani.jadeval.workflow.annotation.State;
 import nl.suriani.jadeval.workflow.internal.transition.ConditionalTransition;
 import nl.suriani.jadeval.workflow.internal.transition.DirectTransition;
-import nl.suriani.jadeval.workflow.internal.transition.Transition;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-public class Workflow<CONTEXT> {
-	private List<Transition> transitions;
-	private Set<String> availableStates;
-	private TransitionAttemptedEventHandler<CONTEXT> transitionAttemptedEventHandler;
-	private List<StateUpdateEventHandler<CONTEXT>> eventHandlers;
+public class WorkflowDelegate {
+	private JadevalModel model;
+	private WorkflowOptions options;
 
-	Workflow(List<Transition> transitions, Set<String> availableStates, TransitionAttemptedEventHandler<CONTEXT> transitionAttemptedEventHandler, List<StateUpdateEventHandler<CONTEXT>> eventHandlers) {
-		this.transitions = transitions;
-		this.availableStates = availableStates;
-		this.eventHandlers = eventHandlers;
-		this.transitionAttemptedEventHandler = transitionAttemptedEventHandler;
+	public WorkflowDelegate(JadevalModel model, WorkflowOptions options) {
+		this.model = model;
+		this.options = options;
 	}
 
-	public void executeUntilPause(CONTEXT context) {
+	public void apply(Object context) {
+		switch (options.getExecutionType()) {
+			case ONE_TRANSITION_PER_TIME:
+				updateState(context);
+				break;
+
+			case UNTIL_PAUSE:
+				executeUntilPause(context);
+				break;
+		}
+	}
+
+	private void executeUntilPause(Object context) {
 		Field stateField = getStateField(context);
 		String stateNameBeforeUpdate = getStateName(context, stateField);
 		updateState(context);
@@ -36,7 +43,8 @@ public class Workflow<CONTEXT> {
 		}
 	}
 
-	public void updateState(CONTEXT context) {
+	private void updateState(Object context) {
+		List<String> availableStates = model.getStateSet().getStates();
 		Field stateField = getStateField(context);
 		stateField.setAccessible(true);
 		String stateName = getStateName(context, stateField);
@@ -44,11 +52,11 @@ public class Workflow<CONTEXT> {
 		if (!availableStates.contains(stateName)) {
 			throw new IllegalArgumentException("Invalid state " + stateName + ". It must be one of the following states:\n" + availableStates);
 		}
-		transitionAttemptedEventHandler.handle(context);
+		options.getTransitionAttemptedEventHandler().handle(context);
 		String nextState = getNextState(stateName, new Facts(context));
 		if (!stateName.equals(nextState)) {
 			synchroniseState(stateField, context, nextState);
-
+			List<StateUpdateEventHandler> eventHandlers = options.getStateUpdateEventHandlers();
 			eventHandlers.stream()
 					.filter(eventHandler -> eventHandler.getStateName().equals(stateName))
 					.forEach(eventHandler -> eventHandler.exitState(context));
@@ -60,15 +68,15 @@ public class Workflow<CONTEXT> {
 		stateField.setAccessible(false);
 	}
 
-	private boolean isNextTransitionDirect(CONTEXT context) {
+	private boolean isNextTransitionDirect(Object context) {
 		String stateName = getStateName(context, getStateField(context));
-		return transitions.stream()
+		return model.getTransitionSet().getTransitions().stream()
 				.filter(transition -> transition instanceof DirectTransition)
 				.map(transition -> (DirectTransition) transition)
 				.anyMatch(transitions -> transitions.getFromState().equals(stateName));
 	}
 
-	private String getStateName(CONTEXT context, Field stateField) {
+	private String getStateName(Object context, Field stateField) {
 		try {
 			if (stateField == null) {
 				throw new IllegalArgumentException("No @State annotation present in given object, cannot determine current state");
@@ -86,14 +94,14 @@ public class Workflow<CONTEXT> {
 		}
 	}
 
-	private Field getStateField(CONTEXT context) {
+	private Field getStateField(Object context) {
 		return Arrays.asList(context.getClass().getDeclaredFields()).stream()
 				.filter(field -> field.isAnnotationPresent(State.class))
 				.findFirst()
 				.orElse(null);
 	}
 
-	void synchroniseState(Field stateField, CONTEXT context, String nextState) {
+	void synchroniseState(Field stateField, Object context, String nextState) {
 		try {
 			if (stateField.get(context) instanceof String) {
 				stateField.set(context, nextState);
@@ -106,7 +114,7 @@ public class Workflow<CONTEXT> {
 	}
 
 	public String getNextState(String current, Facts facts) {
-		return transitions.stream()
+		return model.getTransitionSet().getTransitions().stream()
 				.filter(transition -> !(transition instanceof ConditionalTransition))
 				.map(transition -> (DirectTransition) transition)
 				.filter(transition -> transition.getFromState().equals(current))
@@ -116,7 +124,7 @@ public class Workflow<CONTEXT> {
 	}
 
 	private String getNextStateFromConditionalTransitions(String current, Facts facts) {
-		List<ConditionalTransition> currentStateTransitions = transitions.stream()
+		List<ConditionalTransition> currentStateTransitions = model.getTransitionSet().getTransitions().stream()
 				.filter(transition -> transition instanceof ConditionalTransition)
 				.map(transition -> (ConditionalTransition) transition)
 				.filter(transition -> transition.getFromState().equals(current))
@@ -124,8 +132,8 @@ public class Workflow<CONTEXT> {
 
 		for (ConditionalTransition transition: currentStateTransitions) {
 			if (transition.getConditions().stream()
-				.map(condition -> isConditionSatisfied(condition, facts))
-				.allMatch(result -> result == true)) {
+					.map(condition -> isConditionSatisfied(condition, facts))
+					.allMatch(result -> result == true)) {
 				return transition.getToState();
 			}
 		}

@@ -1,14 +1,12 @@
 package nl.suriani.jadeval.examples.workflow.jwl;
 
 import nl.suriani.jadeval.common.annotation.Fact;
-import nl.suriani.jadeval.workflow.Workflow;
-import nl.suriani.jadeval.workflow.WorkflowBuilder;
 import nl.suriani.jadeval.workflow.annotation.State;
 
 import java.io.File;
 
 public class TODOWorkflowExample {
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		File file = new File("src/examples/nl/suriani/jadeval/examples/workflow/jwl/todo_workflow_example.jwl");
 		Workflow<TODOWorkflowContext> workflow = WorkflowBuilder.<TODOWorkflowContext>fromFile(file).build();
 
@@ -24,13 +22,13 @@ public class TODOWorkflowExample {
 		workflow.updateState(context);
 		System.out.println(context.getState());
 
-		/*
+		/_____*
 			It prints:
 
 			inProgress
 			completed
 			completed
-		 */
+		 *____/
 	}
 
 	private static class TODOWorkflowContext {
@@ -52,5 +50,5 @@ public class TODOWorkflowExample {
 		public String getAction() {
 			return action;
 		}
-	}
+	}*/
 }
