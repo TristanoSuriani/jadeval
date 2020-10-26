@@ -64,5 +64,4 @@ In this condition statement **flagged**, **amountInfractions** and **amountDebt*
  **is**, **>** and **>=** are equality operators.
 The actual fact values are provided to the library as Java objects.
 
-**Example**
-Check [here](src/examples/nl/suriani/jadeval/examples/workflow/jwl/) for the complete code.
+**Example:** Check [here](src/examples/nl/suriani/jadeval/examples/workflow/jwl/) for example code.
