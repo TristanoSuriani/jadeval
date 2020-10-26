@@ -52,4 +52,4 @@ In this decision statement **flagged**, **amountInfractions** and **amountDebt**
  **is**, **>** and **>=** are equality operators.
 The actual fact values are provided to the library as Java objects.
 
-**Example:** Check [here](src/examples/nl/suriani/jadeval/examples/decisions/jdl/) for example code.
+**Example:** Check [here](/src/examples/nl/suriani/jadeval/examples/decision/jdl/) for example code.
