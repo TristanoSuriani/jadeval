@@ -1,5 +1,4 @@
 # Jadeval
-It is possible to define validations using Jadeval's Validations Language or through the fluent builder.
 
 ## Jadeval Validation Language
 
@@ -54,58 +53,59 @@ Check [here](src/examples/nl/suriani/jadeval/examples/validation/jvl/) for the c
 
 ````java
 class ValidateOrderExample {
-	public static void main(String[] args) {
-		File file = new File("src/examples/nl/suriani/jadeval/examples/validation/jvl/validate_order.jvl");
-		Validations validations = ValidationsBuilder.newFromFile(file).build();
+    public static void main(String[] args) {
+        File file = new File("src/examples/nl/suriani/jadeval/examples/validation/jvl/validate_order.jvl");
+        JadevalModel model = new JadevalLoader().load(file);
+        JadevalExecutor jadevalExecutor = new JadevalExecutor(model);
 
-		Product product1 = new Product(10);
-		Account account1 = new Account(false);
-		Order order1 = new Order(2, product1, account1);
+        Product product1 = new Product(10);
+        Account account1 = new Account(false);
+        Order order1 = new Order(2, product1, account1);
 
-		validations.apply(new OrderValidationContext(order1));
-		// This validation succeeds.
+        jadevalExecutor.applyValidations(new OrderValidationContext(order1));
+        // This validation succeeds.
 
-		Product product2 = new Product(10);
-		Account account2 = new Account(false);
-		Order order2 = new Order(11, product2, account2);
+        Product product2 = new Product(10);
+        Account account2 = new Account(false);
+        Order order2 = new Order(11, product2, account2);
 
-		try {
-			validations.apply(new OrderValidationContext(order2));
-		} catch (ValidationException validationException) {
-			System.out.println(validationException.getMessage());
-		}
-		/* This validation fails and prints:
-			Validation 'The amount of product must be in stock':
-			false IS true (itemsInStockGreaterThanAmount)
-		 */
+        try {
+            jadevalExecutor.applyValidations(new OrderValidationContext(order2));
+        } catch (ValidationException validationException) {
+            System.out.println(validationException.getMessage());
+        }
+        /* This validation fails and prints:
+            Validation 'The amount of product must be in stock':
+            false IS true (itemsInStockGreaterThanAmount)
+         */
 
-		Product product3 = new Product(10);
-		Account account3 = new Account(false);
-		Order order3 = new Order(0, product3, account3);
+        Product product3 = new Product(10);
+        Account account3 = new Account(false);
+        Order order3 = new Order(0, product3, account3);
 
-		try {
-			validations.apply(new OrderValidationContext(order3));
-		} catch (ValidationException validationException) {
-			System.out.println(validationException.getMessage());
-		}
-		/* This validation fails and prints:
-			Validation 'The amount of product must be in stock':
-			0 GREATER_THAN_EQUALS 1.0 (amount)
-		 */
+        try {
+            jadevalExecutor.applyValidations(new OrderValidationContext(order3));
+        } catch (ValidationException validationException) {
+            System.out.println(validationException.getMessage());
+        }
+        /* This validation fails and prints:
+            Validation 'The amount of product must be in stock':
+            0 GREATER_THAN_EQUALS 1.0 (amount)
+         */
 
-		Product product4 = new Product(10);
-		Account account4 = new Account(true);
-		Order order4 = new Order(1, product4, account4);
-		try {
-			validations.apply(new OrderValidationContext(order4));
-		} catch (ValidationException validationException) {
-			System.out.println(validationException.getMessage());
-		}
-		/* This validation fails and prints:
-			Validation 'The order cannot be processed for customers with a blocked account':
-			true IS false (blockedAccount)
-		 */
-	}
+        Product product4 = new Product(10);
+        Account account4 = new Account(true);
+        Order order4 = new Order(1, product3, account4);
+        try {
+            jadevalExecutor.applyValidations(new OrderValidationContext(order4));
+        } catch (ValidationException validationException) {
+            System.out.println(validationException.getMessage());
+        }
+        /* This validation fails and prints:
+            Validation 'The order cannot be processed for customers with a blocked account':
+            true IS false (blockedAccount)
+         */
+    }
     // ...
 }
 ````

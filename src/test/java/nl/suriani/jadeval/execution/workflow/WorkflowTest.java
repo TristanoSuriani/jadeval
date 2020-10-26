@@ -15,13 +15,13 @@ class WorkflowTest {
 
 	private JadevalModel model;
 	private WorkflowOptions workflowOptions;
-	private WorkflowDelegate workflowDelegate;
+	private WorkflowDelegate<ToDoBoardFacts> workflowDelegate;
 
 	@BeforeEach
 	void setUp() {
 		File file = new File("src/test/resources/todo_workflow.jwl");
 		model = new JadevalLoader().load(file);
-		workflowOptions = new WorkflowOptionsBuilder().build();
+		workflowOptions = new WorkflowOptionsBuilder<ToDoBoardFacts>().build();
 		workflowDelegate = new JadevalExecutor(model).workflow(workflowOptions);
 	}
 	/*

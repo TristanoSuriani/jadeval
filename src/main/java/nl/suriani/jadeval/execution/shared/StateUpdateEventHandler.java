@@ -1,4 +1,4 @@
-package nl.suriani.jadeval.execution.workflow;
+package nl.suriani.jadeval.execution.shared;
 
 public interface StateUpdateEventHandler<T> {
 	void enterState(T object);

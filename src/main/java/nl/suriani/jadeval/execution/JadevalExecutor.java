@@ -1,6 +1,8 @@
 package nl.suriani.jadeval.execution;
 
 import nl.suriani.jadeval.execution.decision.DecisionsDelegate;
+import nl.suriani.jadeval.execution.statemachine.StateMachineDelegate;
+import nl.suriani.jadeval.execution.statemachine.StateMachineOptions;
 import nl.suriani.jadeval.execution.validation.ValidationsDelegate;
 import nl.suriani.jadeval.execution.workflow.WorkflowDelegate;
 import nl.suriani.jadeval.execution.workflow.WorkflowOptions;
@@ -33,8 +35,12 @@ public class JadevalExecutor {
 		applyValidations(new Facts(factsMap));
 	}
 
-	public WorkflowDelegate workflow(WorkflowOptions workflowOptions) {
-		return new WorkflowDelegate(model, workflowOptions);
+	public <T> WorkflowDelegate<T> workflow(WorkflowOptions<T> workflowOptions) {
+		return new WorkflowDelegate<T>(model, workflowOptions);
+	}
+
+	public <T> StateMachineDelegate<T> stateMachine(StateMachineOptions<T> stateMachineOptions) {
+		return new StateMachineDelegate<T>(model, stateMachineOptions);
 	}
 
 	private DecisionResults applyDecisions(Facts facts) {

@@ -1,48 +1,29 @@
-package nl.suriani.jadeval.execution.workflow;
+package nl.suriani.jadeval.execution.statemachine;
 
-import nl.suriani.jadeval.execution.shared.StateUpdateEventHandler;
-import nl.suriani.jadeval.symbols.value.Facts;
-import nl.suriani.jadeval.models.condition.Condition;
-import nl.suriani.jadeval.models.JadevalModel;
 import nl.suriani.jadeval.annotation.State;
+import nl.suriani.jadeval.execution.shared.StateUpdateEventHandler;
+import nl.suriani.jadeval.models.JadevalModel;
+import nl.suriani.jadeval.models.condition.Condition;
 import nl.suriani.jadeval.models.shared.transition.ConditionalTransition;
 import nl.suriani.jadeval.models.shared.transition.DirectTransition;
+import nl.suriani.jadeval.symbols.value.Facts;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
-public class WorkflowDelegate<T> {
+public class StateMachineDelegate<T> {
 	private JadevalModel model;
-	private WorkflowOptions<T> options;
+	private StateMachineOptions<T> options;
 
-	public WorkflowDelegate(JadevalModel model, WorkflowOptions options) {
+	public StateMachineDelegate(JadevalModel model, StateMachineOptions<T> options) {
 		this.model = model;
 		this.options = options;
 	}
 
 	public void apply(T context) {
-		switch (options.getExecutionType()) {
-			case ONE_TRANSITION_PER_TIME:
-				updateState(context);
-				break;
-
-			case UNTIL_PAUSE:
-				executeUntilPause(context);
-				break;
-		}
-	}
-
-	private void executeUntilPause(T context) {
-		Field stateField = getStateField(context);
-		String stateNameBeforeUpdate = getStateName(context, stateField);
 		updateState(context);
-		String stateNameAfterUpdate = getStateName(context, stateField);
-		if (!stateNameBeforeUpdate.equals(stateNameAfterUpdate) && isNextTransitionDirect(context)) {
-			executeUntilPause(context);
-		}
 	}
 
 	private void updateState(T context) {
@@ -70,15 +51,7 @@ public class WorkflowDelegate<T> {
 		stateField.setAccessible(false);
 	}
 
-	private boolean isNextTransitionDirect(Object context) {
-		String stateName = getStateName(context, getStateField(context));
-		return model.getTransitionSet().getTransitions().stream()
-				.filter(transition -> transition instanceof DirectTransition)
-				.map(transition -> (DirectTransition) transition)
-				.anyMatch(transitions -> transitions.getFromState().equals(stateName));
-	}
-
-	private String getStateName(Object context, Field stateField) {
+	private String getStateName(T context, Field stateField) {
 		try {
 			if (stateField == null) {
 				throw new IllegalArgumentException("No @State annotation present in given object, cannot determine current state");
@@ -96,14 +69,14 @@ public class WorkflowDelegate<T> {
 		}
 	}
 
-	private Field getStateField(Object context) {
+	private Field getStateField(T context) {
 		return Arrays.asList(context.getClass().getDeclaredFields()).stream()
 				.filter(field -> field.isAnnotationPresent(State.class))
 				.findFirst()
 				.orElse(null);
 	}
 
-	void synchroniseState(Field stateField, Object context, String nextState) {
+	void synchroniseState(Field stateField, T context, String nextState) {
 		try {
 			if (stateField.get(context) instanceof String) {
 				stateField.set(context, nextState);

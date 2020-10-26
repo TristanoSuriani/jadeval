@@ -1,29 +1,45 @@
 package nl.suriani.jadeval.examples.workflow.jwl;
 
-public class TODOWorkflowExample {
-	/*public static void main(String[] args) {
-		File file = new File("src/examples/nl/suriani/jadeval/examples/workflow/jwl/todo_workflow_example.jwl");
-		Workflow<TODOWorkflowContext> workflow = WorkflowBuilder.<TODOWorkflowContext>fromFile(file).build();
+import nl.suriani.jadeval.JadevalLoader;
+import nl.suriani.jadeval.annotation.Fact;
+import nl.suriani.jadeval.annotation.State;
+import nl.suriani.jadeval.execution.JadevalExecutor;
+import nl.suriani.jadeval.execution.workflow.WorkflowDelegate;
+import nl.suriani.jadeval.execution.workflow.WorkflowOptions;
+import nl.suriani.jadeval.execution.workflow.WorkflowOptionsBuilder;
+import nl.suriani.jadeval.models.JadevalModel;
 
+import java.io.File;
+
+public class TODOWorkflowExample {
+	public static void main(String[] args) {
+		File file = new File("src/examples/nl/suriani/jadeval/examples/workflow/jwl/todo_workflow_example.jwl");
+
+		JadevalModel model = new JadevalLoader().load(file);
+		JadevalExecutor executor = new JadevalExecutor(model);
 		TODOWorkflowContext context = new TODOWorkflowContext("todo", "start");
-		workflow.updateState(context);
+		WorkflowOptions<TODOWorkflowContext> options = new WorkflowOptionsBuilder<TODOWorkflowContext>().build();
+
+		WorkflowDelegate<TODOWorkflowContext> stateMachineDelegate = executor.workflow(options);
+		stateMachineDelegate.apply(context);
+
 		System.out.println(context.getState());
 
 		context = new TODOWorkflowContext("inProgress", "complete");
-		workflow.updateState(context);
+		stateMachineDelegate.apply(context);
 		System.out.println(context.getState());
 
 		context = new TODOWorkflowContext("completed", "start");
-		workflow.updateState(context);
+		stateMachineDelegate.apply(context);
 		System.out.println(context.getState());
 
-		/_____*
+		/*
 			It prints:
 
 			inProgress
 			completed
 			completed
-		 *____/
+		 */
 	}
 
 	private static class TODOWorkflowContext {
@@ -45,5 +61,5 @@ public class TODOWorkflowExample {
 		public String getAction() {
 			return action;
 		}
-	}*/
+	}
 }

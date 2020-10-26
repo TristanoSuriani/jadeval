@@ -1,0 +1,13 @@
+states
+    todo, inProgress, onHold, inProgress, completed
+
+transitions
+    todo -> inProgress when action is start
+    todo -> cancelled when action is cancel
+
+    inProgress -> onHold when action is impediment
+    inProgress -> cancelled when action is cancel
+    inProgress -> completed when action is complete
+
+    onHold -> inProgress when action is removeImpediment
+    onHold -> cancelled when action is cancel

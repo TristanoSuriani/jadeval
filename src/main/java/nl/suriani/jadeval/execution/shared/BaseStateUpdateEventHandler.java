@@ -1,4 +1,4 @@
-package nl.suriani.jadeval.execution.workflow;
+package nl.suriani.jadeval.execution.shared;
 
 public abstract class BaseStateUpdateEventHandler<T> implements StateUpdateEventHandler<T> {
 	private String stateName;

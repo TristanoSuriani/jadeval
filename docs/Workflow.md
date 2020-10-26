@@ -1,5 +1,4 @@
 # Jadeval
-It is possible to define validations using Jadeval's Validations Language or through the fluent builder.
 
 ## Jadeval Workflow Definition Language
 

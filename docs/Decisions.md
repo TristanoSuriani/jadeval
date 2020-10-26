@@ -1,5 +1,4 @@
 # Jadeval
-It is possible to define decisions using Jadeval's Decisions Language or through the fluent API.
 
 ## Jadeval Decision Language
 
@@ -63,25 +62,25 @@ class CloseAccountExample {
         person.setAge(19);
         person.setFirstname("Piet");
         person.setLastname("de Haan");
-    
+
         Account account = new Account();
         account.setOwner(person);
         account.setAmount(BigDecimal.valueOf(1234.56));
         account.setCanBeClosed(true);
         account.setDescription("custom");
-    
-        File file = new File("src/examples/close_account.jdl");
-        Decisions decisions = DecisionsBuilder.newFromFile(file).build();
-        DecisionResults results = decisions.apply(person, account);
-    
+
+        File file = new File("src/examples/nl/suriani/jadeval/examples/decision/jdl/close_account.jdl");
+        JadevalModel model = new JadevalLoader().load(file);
+        DecisionResults results = new JadevalExecutor(model).applyDecisions(person, account);
+
         results.getResponses().forEach(System.out::println);
-    
+
         /* It prints:
             CLOSE_ACCOUNT
             SEND_CONFIRMATION_LETTER
             DEFAULT_DESCRIPTION
          */
-    }   
+    }
     // .....
 }
 ````

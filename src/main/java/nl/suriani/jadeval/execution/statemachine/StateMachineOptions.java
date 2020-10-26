@@ -1,19 +1,17 @@
-package nl.suriani.jadeval.execution.workflow;
+package nl.suriani.jadeval.execution.statemachine;
 
 import nl.suriani.jadeval.execution.shared.StateUpdateEventHandler;
 import nl.suriani.jadeval.execution.shared.TransitionAttemptedEventHandler;
 
 import java.util.List;
 
-public class WorkflowOptions<T> {
+public class StateMachineOptions<T> {
 	private TransitionAttemptedEventHandler<T> transitionAttemptedEventHandler;
 	private List<StateUpdateEventHandler<T>> stateUpdateEventHandlers;
-	private WorkflowExecutionType executionType;
 
-	WorkflowOptions(TransitionAttemptedEventHandler<T> transitionAttemptedEventHandler, List<StateUpdateEventHandler<T>> stateUpdateEventHandlers, WorkflowExecutionType executionType) {
+	StateMachineOptions(TransitionAttemptedEventHandler<T> transitionAttemptedEventHandler, List<StateUpdateEventHandler<T>> stateUpdateEventHandlers) {
 		this.transitionAttemptedEventHandler = transitionAttemptedEventHandler;
 		this.stateUpdateEventHandlers = stateUpdateEventHandlers;
-		this.executionType = executionType;
 	}
 
 	public TransitionAttemptedEventHandler<T> getTransitionAttemptedEventHandler() {
@@ -22,9 +20,5 @@ public class WorkflowOptions<T> {
 
 	public List<StateUpdateEventHandler<T>> getStateUpdateEventHandlers() {
 		return stateUpdateEventHandlers;
-	}
-
-	public WorkflowExecutionType getExecutionType() {
-		return executionType;
 	}
 }

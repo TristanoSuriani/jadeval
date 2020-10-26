@@ -59,6 +59,7 @@ public class JadevalInterpreter extends JadevalBaseListener {
 		rootStates = new ArrayList<>();
 		intermediateStates = new ArrayList<>();
 		finalStates = new ArrayList<>();
+		genericStates = new ArrayList<>();
 		transitions = new ArrayList<>();
 		currentFromStates = new ArrayList<>();
 		this.symbolTable = new SymbolTable();
