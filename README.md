@@ -16,7 +16,7 @@ When the customer's age is at least 18 years old and his salary at least 40000 a
 In this example the customer's age, his salary and the presence of previous breaches are the facts that are used to take
  the decision and 'approve loan' is the response.
  
-[Jadeval Decisions Language](docs/Decisions.md) allows to define this decision in almost plain English: 
+[Jadeval Decision Language](docs/Decision.md) allows to define this decision in almost plain English: 
 ~~~~
 when customerAge >= 18 and hisSalary >= 40000 and foundPreviousBreaches is false then APPROVE_LOAN
 ~~~~
@@ -27,6 +27,8 @@ Think about the sentence:
 ~~~~
 When the customer's last name is unknown stop the process and notify the error
 ~~~~
+
+[Jadeval Validation Language](docs/Validation.md) allows to define this decision in almost plain English: 
 
 ### Workflows
 A workflow consists of an orchestrated and repeatable pattern of activity. Elements of a workflow include states, 
