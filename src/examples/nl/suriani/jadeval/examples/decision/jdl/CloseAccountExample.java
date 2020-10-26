@@ -1,5 +1,6 @@
 package nl.suriani.jadeval.examples.decision.jdl;
 
+import nl.suriani.jadeval.annotation.ContainsFacts;
 import nl.suriani.jadeval.execution.JadevalExecutor;
 import nl.suriani.jadeval.JadevalLoader;
 import nl.suriani.jadeval.models.JadevalModel;
@@ -24,7 +25,7 @@ class CloseAccountExample {
 
 		File file = new File("src/examples/nl/suriani/jadeval/examples/decision/jdl/close_account.jdl");
 		JadevalModel model = new JadevalLoader().load(file);
-		DecisionResults results = new JadevalExecutor(model).applyDecisions(person, account);
+		DecisionResults results = new JadevalExecutor(model).decision().apply(account);
 
 		results.getResponses().forEach(System.out::println);
 
@@ -36,6 +37,7 @@ class CloseAccountExample {
 	}
 
 	public static class Account {
+		@ContainsFacts
 		private Person owner;
 
 		@Fact

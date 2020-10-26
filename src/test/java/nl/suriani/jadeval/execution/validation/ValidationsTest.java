@@ -48,19 +48,19 @@ class ValidationsTest {
 		JadevalModel model = new JadevalLoader().load(new File("src/test/resources/validations.jvl"));
 		JadevalExecutor jadevalExecutor = new JadevalExecutor(model);
 		Exception exception = Assertions.assertThrows(ValidationException.class, () -> {
-			jadevalExecutor.applyValidations(this);
+			jadevalExecutor.validation().apply(this);
 		});
 		Assertions.assertTrue(exception.getMessage().contains("10 LESS_THAN_EQUALS 3.0 (amount)"));
 
 		amount = 2;
 		age = 31;
 		exception = Assertions.assertThrows(ValidationException.class, () -> {
-			jadevalExecutor.applyValidations(this);
+			jadevalExecutor.validation().apply(this);
 		});
 		Assertions.assertTrue(exception.getMessage().contains("false IS true (operationAllowed)"));
 
 		operationAllowed = true;
 
-		jadevalExecutor.applyValidations(this);
+		jadevalExecutor.validation().apply(this);
 	}
 }

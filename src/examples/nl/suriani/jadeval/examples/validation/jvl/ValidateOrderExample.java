@@ -1,5 +1,6 @@
 package nl.suriani.jadeval.examples.validation.jvl;
 
+import nl.suriani.jadeval.annotation.ContainsFacts;
 import nl.suriani.jadeval.execution.JadevalExecutor;
 import nl.suriani.jadeval.JadevalLoader;
 import nl.suriani.jadeval.models.JadevalModel;
@@ -18,7 +19,7 @@ class ValidateOrderExample {
 		Account account1 = new Account(false);
 		Order order1 = new Order(2, product1, account1);
 
-		jadevalExecutor.applyValidations(new OrderValidationContext(order1));
+		jadevalExecutor.validation().apply(new OrderValidationContext(order1));
 		// This validation succeeds.
 
 		Product product2 = new Product(10);
@@ -26,7 +27,7 @@ class ValidateOrderExample {
 		Order order2 = new Order(11, product2, account2);
 
 		try {
-			jadevalExecutor.applyValidations(new OrderValidationContext(order2));
+			jadevalExecutor.validation().apply((new OrderValidationContext(order2)));
 		} catch (ValidationException validationException) {
 			System.out.println(validationException.getMessage());
 		}
@@ -40,7 +41,7 @@ class ValidateOrderExample {
 		Order order3 = new Order(0, product3, account3);
 
 		try {
-			jadevalExecutor.applyValidations(new OrderValidationContext(order3));
+			jadevalExecutor.validation().apply((new OrderValidationContext(order3)));
 		} catch (ValidationException validationException) {
 			System.out.println(validationException.getMessage());
 		}
@@ -53,7 +54,7 @@ class ValidateOrderExample {
 		Account account4 = new Account(true);
 		Order order4 = new Order(1, product3, account4);
 		try {
-			jadevalExecutor.applyValidations(new OrderValidationContext(order4));
+			jadevalExecutor.validation().apply((new OrderValidationContext(order4)));
 		} catch (ValidationException validationException) {
 			System.out.println(validationException.getMessage());
 		}
@@ -64,8 +65,13 @@ class ValidateOrderExample {
 	}
 
 	static class Order {
+		@Fact
 		private int amount;
+
+		@ContainsFacts
 		private Product product;
+
+		@ContainsFacts
 		private Account account;
 
 		// and other stuff
@@ -95,6 +101,7 @@ class ValidateOrderExample {
 	}
 
 	static class Product {
+		@Fact
 		private int itemsInStock;
 
 		// and other stuff
@@ -109,6 +116,7 @@ class ValidateOrderExample {
 	}
 
 	static class Account {
+		@Fact(qualifier = "blockedAccount")
 		private boolean blocked;
 
 		// and other stuff
@@ -123,18 +131,14 @@ class ValidateOrderExample {
 	}
 
 	static class OrderValidationContext {
-		@Fact
-		private int amount;
-
-		@Fact
-		private boolean blockedAccount;
+		@ContainsFacts
+		private Order order;
 
 		@Fact
 		private boolean itemsInStockGreaterThanAmount;
 
 		public OrderValidationContext(Order order) {
-			this.amount = order.getAmount();
-			this.blockedAccount = order.getAccount().isBlocked();
+			this.order = order;
 			this.itemsInStockGreaterThanAmount = order.getProduct().getItemsInStock() >= order.getAmount();
 		}
 	}

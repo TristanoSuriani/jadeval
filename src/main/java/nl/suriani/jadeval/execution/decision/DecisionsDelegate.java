@@ -8,14 +8,15 @@ import nl.suriani.jadeval.models.Rule;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DecisionsDelegate {
+public class DecisionsDelegate<T> {
 	private JadevalModel model;
 
 	public DecisionsDelegate(JadevalModel model) {
 		this.model = model;
 	}
 
-	public DecisionResults apply(Facts facts) {
+	public DecisionResults apply(T context) {
+		Facts facts = new Facts(context);
 		DecisionResults results = new DecisionResults();
 		model.getRuleSet().getRules().stream()
 				.map(decision -> new DecisionResult(decision.getDescription(), getResponses(decision, facts)))

@@ -10,14 +10,15 @@ import nl.suriani.jadeval.symbols.value.FactValue;
 import nl.suriani.jadeval.models.JadevalModel;
 import nl.suriani.jadeval.models.Rule;
 
-public class ValidationsDelegate {
+public class ValidationsDelegate<T> {
 	private JadevalModel model;
 
 	public ValidationsDelegate(JadevalModel model) {
 		this.model = model;
 	}
 
-	public void apply(Facts facts) {
+	public void apply(T context) {
+		Facts facts = new Facts(context);
 		model.getRuleSet().getRules().forEach(rule -> checkConditions(rule, facts));
 	}
 

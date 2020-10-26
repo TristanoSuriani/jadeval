@@ -1,11 +1,13 @@
 package nl.suriani.jadeval.symbols.value;
 
+import nl.suriani.jadeval.annotation.ContainsFacts;
 import nl.suriani.jadeval.annotation.Fact;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,33 +17,45 @@ import java.util.stream.Collectors;
  * Container for collection of facts to be checked against the decision rules
  */
 public class Facts {
-	private List<FactEntry> factEntry;
-
-
-	/**
-	 * @param objectMap A map that contains a series of facts
-	 */
-	public Facts(Map<String, Object> objectMap) {
-		List<FactEntry> factEntries = getFactEntriesFromMap(objectMap);
-		this.factEntry = factEntries;
-	}
+	private List<FactEntry> factEntries;
 
 	/**
-	 * @param objects An object that contains a series of facts annotated with Fact
+	 * @param context An object that contains a series of facts annotated with Fact
 	 */
-	public Facts(Object... objects) {
-		List<FactEntry> factEntries = getFactEntriesFromAnnotatedObjects(objects);
-		checkThatFactsAreNotAmbiguous(factEntries);
-		this.factEntry = factEntries;
+	public Facts(Object context) {
+		if (context == null) {
+			factEntries = new ArrayList<>();
+		} else {
+			List<FactEntry> factEntries = iterateAndRetrieveFacts(context);
+			checkThatFactsAreNotAmbiguous(factEntries);
+			this.factEntries = factEntries;
+		}
 	}
-	
+
+	private List<FactEntry> iterateAndRetrieveFacts(Object object) {
+		List<FactEntry> factEntries = getFactEntriesFromAnnotatedObject(object);
+		List factHolders = retrieveFactsHolders(object);
+		if (factHolders.size() == 0) {
+			return new ArrayList<>(factEntries);
+		} else {
+			List<FactEntry> entriesFromFactsHolders = (List<FactEntry>) factHolders.stream()
+					.flatMap(factsHolder -> iterateAndRetrieveFacts(factsHolder).stream())
+					.collect(Collectors.toList());
+			List<FactEntry> result = new ArrayList<>(factEntries);
+			if (entriesFromFactsHolders.size() > 0) {
+				result.addAll(entriesFromFactsHolders);
+			}
+			return result;
+		}
+	}
+
 	/**
 	 * Checks if a fact with the given named exists in the current instance
 	 * @param factName The fact's name, not null.
 	 * @return result of the check
 	 */
 	public boolean contains(String factName) {
-		return factEntry.stream()
+		return factEntries.stream()
 				.anyMatch(fact -> fact.getFactName().equals(factName));
 	}
 
@@ -51,7 +65,7 @@ public class Facts {
 	 * @return fact value object
 	 */
 	public Optional<FactValue> getFact(String factName) {
-		return factEntry.stream()
+		return factEntries.stream()
 				.filter(factEntry -> factEntry.getFactName().equals(factName))
 				.map(FactEntry::getFactValue)
 				.findFirst();
@@ -65,21 +79,6 @@ public class Facts {
 			throw new IllegalArgumentException("Violation: found more than one fact with the same name");
 		}
 	}
-	
-	private List<FactEntry> getFactEntriesFromMap(Map<String, Object> objectMap) {
-		return objectMap.entrySet().stream()
-				.map(keyValuePair -> new FactEntry(keyValuePair.getKey(), getFact(keyValuePair.getValue())))
-				.filter(factEntry -> !(factEntry.getFactValue() instanceof EmptyValue))
-				.collect(Collectors.toList());
-	}
-
-	private List<FactEntry> getFactEntriesFromAnnotatedObjects(Object... objects) {
-		List<FactEntry> factEntries = new ArrayList<>();
-		for (Object object: objects) {
-			factEntries.addAll(getFactEntriesFromAnnotatedObject(object));
-		}
-		return factEntries;
-	}
 
 	private List<FactEntry> getFactEntriesFromAnnotatedObject(Object object) {
 		List<FactEntry> currentFactEntries = Arrays.stream(object.getClass().getDeclaredFields())
@@ -90,6 +89,20 @@ public class Facts {
 				.filter(factEntry -> factEntry.getFactValue() != null)
 				.collect(Collectors.toList());
 		return currentFactEntries;
+	}
+
+	private List retrieveFactsHolders(Object object) {
+		return Arrays.stream(object.getClass().getDeclaredFields())
+			.filter(field -> field.isAnnotationPresent(ContainsFacts.class))
+			.peek(field -> field.setAccessible(true))
+			.map(field -> {
+				try {
+					return field.get(object);
+				} catch (Exception exception) {
+					throw new RuntimeException(exception);
+				}
+			})
+			.collect(Collectors.toList());
 	}
 
 	private FactValue getValueFromField(Field field, Object object) {
