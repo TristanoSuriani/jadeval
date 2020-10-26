@@ -149,7 +149,6 @@ the stability and absence of major bugs in not guaranteed, and it should therefo
 
 ## Roadmap
 The following features are planned for the next releases of Jadeval:
-- State machine definition language
 - Automatic scan of resource definition files
 - Jadeval XML DSL
 - Support to compare between facts
