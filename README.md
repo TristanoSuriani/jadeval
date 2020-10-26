@@ -25,10 +25,13 @@ when customerAge >= 18 and hisSalary >= 40000 and foundPreviousBreaches is false
 Validations constrant aspects of business and resolves either without a response (sucess) or a validation exception (failure).
 Think about the sentence:
 ~~~~
-When the customer's last name is unknown stop the process and notify the error
+When the customer's account is blocked stop the process and notify the error
 ~~~~
 
 [Jadeval Validation Language](docs/Validation.md) allows to define this decision in almost plain English: 
+~~~~
+valid when accountStatus is not blocked
+~~~~
 
 ### Workflows
 A workflow consists of an orchestrated and repeatable pattern of activity. Elements of a workflow include states, 
