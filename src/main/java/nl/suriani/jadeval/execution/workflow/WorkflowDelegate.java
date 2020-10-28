@@ -37,6 +37,7 @@ public class WorkflowDelegate<T> {
 
 	private void executeUntilPause(T context) {
 		Field stateField = getStateField(context);
+		stateField.setAccessible(true);
 		String stateNameBeforeUpdate = getStateName(context, stateField);
 		updateState(context);
 		String stateNameAfterUpdate = getStateName(context, stateField);
