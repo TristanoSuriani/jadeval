@@ -44,6 +44,7 @@ public class WorkflowDelegate<T> {
 		if (!stateNameBeforeUpdate.equals(stateNameAfterUpdate) && isNextTransitionDirect(context)) {
 			executeUntilPause(context);
 		}
+		stateField.setAccessible(false);
 	}
 
 	private void updateState(T context) {
@@ -68,7 +69,6 @@ public class WorkflowDelegate<T> {
 					.filter(eventHandler -> eventHandler.getStateName().equals(nextState))
 					.forEach(eventHandler -> eventHandler.enterState(context));
 		}
-		stateField.setAccessible(false);
 	}
 
 	private boolean isNextTransitionDirect(Object context) {
@@ -81,6 +81,7 @@ public class WorkflowDelegate<T> {
 
 	private String getStateName(Object context, Field stateField) {
 		try {
+			stateField.setAccessible(true);
 			if (stateField == null) {
 				throw new IllegalArgumentException("No @State annotation present in given object, cannot determine current state");
 			}
