@@ -35,7 +35,7 @@ public class StateMachineDelegate<T> {
 		if (!availableStates.contains(stateName)) {
 			throw new IllegalArgumentException("Invalid state " + stateName + ". It must be one of the following states:\n" + availableStates);
 		}
-		options.getTransitionAttemptedEventHandler().handle(context);
+
 		String nextState = getNextState(stateName, new Facts(context));
 		if (!stateName.equals(nextState)) {
 			synchroniseState(stateField, context, nextState);
@@ -48,11 +48,12 @@ public class StateMachineDelegate<T> {
 					.filter(eventHandler -> eventHandler.getStateName().equals(nextState))
 					.forEach(eventHandler -> eventHandler.enterState(context));
 		}
-		stateField.setAccessible(false);
+		options.getTransitionAttemptedEventHandler().handle(context);
 	}
 
 	private String getStateName(T context, Field stateField) {
 		try {
+			stateField.setAccessible(true);
 			if (stateField == null) {
 				throw new IllegalArgumentException("No @State annotation present in given object, cannot determine current state");
 			}

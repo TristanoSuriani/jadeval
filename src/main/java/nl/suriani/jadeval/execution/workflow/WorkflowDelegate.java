@@ -56,7 +56,6 @@ public class WorkflowDelegate<T> {
 		if (!availableStates.contains(stateName)) {
 			throw new IllegalArgumentException("Invalid state " + stateName + ". It must be one of the following states:\n" + availableStates);
 		}
-		options.getTransitionAttemptedEventHandler().handle(context);
 		String nextState = getNextState(stateName, new Facts(context));
 		if (!stateName.equals(nextState)) {
 			synchroniseState(stateField, context, nextState);
@@ -69,6 +68,7 @@ public class WorkflowDelegate<T> {
 					.filter(eventHandler -> eventHandler.getStateName().equals(nextState))
 					.forEach(eventHandler -> eventHandler.enterState(context));
 		}
+		options.getTransitionAttemptedEventHandler().handle(context);
 	}
 
 	private boolean isNextTransitionDirect(Object context) {
