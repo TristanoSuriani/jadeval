@@ -1,24 +1,24 @@
 package nl.suriani.jadeval.execution.statemachine;
 
-import nl.suriani.jadeval.execution.shared.StateUpdateEventHandler;
+import nl.suriani.jadeval.execution.shared.OnStateUpdateContextTransformer;
 import nl.suriani.jadeval.execution.shared.TransitionAttemptedEventHandler;
 
 import java.util.List;
 
 public class StateMachineOptions<T> {
 	private TransitionAttemptedEventHandler<T> transitionAttemptedEventHandler;
-	private List<StateUpdateEventHandler<T>> stateUpdateEventHandlers;
+	private List<OnStateUpdateContextTransformer<T>> onStateUpdateContextTransformers;
 
-	StateMachineOptions(TransitionAttemptedEventHandler<T> transitionAttemptedEventHandler, List<StateUpdateEventHandler<T>> stateUpdateEventHandlers) {
+	StateMachineOptions(TransitionAttemptedEventHandler<T> transitionAttemptedEventHandler, List<OnStateUpdateContextTransformer<T>> onStateUpdateContextTransformers) {
 		this.transitionAttemptedEventHandler = transitionAttemptedEventHandler;
-		this.stateUpdateEventHandlers = stateUpdateEventHandlers;
+		this.onStateUpdateContextTransformers = onStateUpdateContextTransformers;
 	}
 
 	public TransitionAttemptedEventHandler<T> getTransitionAttemptedEventHandler() {
 		return transitionAttemptedEventHandler;
 	}
 
-	public List<StateUpdateEventHandler<T>> getStateUpdateEventHandlers() {
-		return stateUpdateEventHandlers;
+	public List<OnStateUpdateContextTransformer<T>> getStateUpdateEventHandlers() {
+		return onStateUpdateContextTransformers;
 	}
 }

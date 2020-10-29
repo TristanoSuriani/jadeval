@@ -1,18 +1,18 @@
 package nl.suriani.jadeval.execution.workflow;
 
-import nl.suriani.jadeval.execution.shared.StateUpdateEventHandler;
+import nl.suriani.jadeval.execution.shared.OnStateUpdateContextTransformer;
 import nl.suriani.jadeval.execution.shared.TransitionAttemptedEventHandler;
 
 import java.util.List;
 
 public class WorkflowOptions<T> {
 	private TransitionAttemptedEventHandler<T> transitionAttemptedEventHandler;
-	private List<StateUpdateEventHandler<T>> stateUpdateEventHandlers;
+	private List<OnStateUpdateContextTransformer<T>> onStateUpdateContextTransformers;
 	private WorkflowExecutionType executionType;
 
-	WorkflowOptions(TransitionAttemptedEventHandler<T> transitionAttemptedEventHandler, List<StateUpdateEventHandler<T>> stateUpdateEventHandlers, WorkflowExecutionType executionType) {
+	WorkflowOptions(TransitionAttemptedEventHandler<T> transitionAttemptedEventHandler, List<OnStateUpdateContextTransformer<T>> onStateUpdateContextTransformers, WorkflowExecutionType executionType) {
 		this.transitionAttemptedEventHandler = transitionAttemptedEventHandler;
-		this.stateUpdateEventHandlers = stateUpdateEventHandlers;
+		this.onStateUpdateContextTransformers = onStateUpdateContextTransformers;
 		this.executionType = executionType;
 	}
 
@@ -20,8 +20,8 @@ public class WorkflowOptions<T> {
 		return transitionAttemptedEventHandler;
 	}
 
-	public List<StateUpdateEventHandler<T>> getStateUpdateEventHandlers() {
-		return stateUpdateEventHandlers;
+	public List<OnStateUpdateContextTransformer<T>> getStateUpdateEventHandlers() {
+		return onStateUpdateContextTransformers;
 	}
 
 	public WorkflowExecutionType getExecutionType() {

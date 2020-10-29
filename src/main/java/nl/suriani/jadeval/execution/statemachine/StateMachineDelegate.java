@@ -1,7 +1,7 @@
 package nl.suriani.jadeval.execution.statemachine;
 
 import nl.suriani.jadeval.annotation.State;
-import nl.suriani.jadeval.execution.shared.StateUpdateEventHandler;
+import nl.suriani.jadeval.execution.shared.OnStateUpdateContextTransformer;
 import nl.suriani.jadeval.models.JadevalModel;
 import nl.suriani.jadeval.models.condition.Condition;
 import nl.suriani.jadeval.models.shared.transition.ConditionalTransition;
@@ -39,7 +39,7 @@ public class StateMachineDelegate<T> {
 		String nextState = getNextState(stateName, new Facts(context));
 		if (!stateName.equals(nextState)) {
 			synchroniseState(stateField, context, nextState);
-			List<StateUpdateEventHandler<T>> eventHandlers = options.getStateUpdateEventHandlers();
+			List<OnStateUpdateContextTransformer<T>> eventHandlers = options.getStateUpdateEventHandlers();
 			eventHandlers.stream()
 					.filter(eventHandler -> eventHandler.getStateName().equals(stateName))
 					.forEach(eventHandler -> eventHandler.exitState(context));

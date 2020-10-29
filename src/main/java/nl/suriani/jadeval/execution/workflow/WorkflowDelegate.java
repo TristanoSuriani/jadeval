@@ -1,6 +1,6 @@
 package nl.suriani.jadeval.execution.workflow;
 
-import nl.suriani.jadeval.execution.shared.StateUpdateEventHandler;
+import nl.suriani.jadeval.execution.shared.OnStateUpdateContextTransformer;
 import nl.suriani.jadeval.symbols.value.Facts;
 import nl.suriani.jadeval.models.condition.Condition;
 import nl.suriani.jadeval.models.JadevalModel;
@@ -37,42 +37,51 @@ public class WorkflowDelegate<T> {
 	}
 
 	private void executeUntilPause(T context) {
+		T currentContext = context;
 		Field stateField = getStateField(context);
 		stateField.setAccessible(true);
 		boolean canContinue = true;
 		while (canContinue) {
 			String stateNameBeforeUpdate = getStateName(context, stateField);
-			updateState(context);
-			options.getTransitionAttemptedEventHandler().handle(context);
-			String stateNameAfterUpdate = getStateName(context, stateField);
-			if (stateNameBeforeUpdate.equals(stateNameAfterUpdate) || !isNextTransitionDirect(context)) {
+			currentContext = updateState(currentContext);
+			options.getTransitionAttemptedEventHandler().handle(currentContext);
+			String stateNameAfterUpdate = getStateName(currentContext, stateField);
+			if (stateNameBeforeUpdate.equals(stateNameAfterUpdate) || !isNextTransitionDirect(currentContext)) {
 				canContinue = false;
 			}
 		}
 		stateField.setAccessible(false);
 	}
 
-	private void updateState(T context) {
+	private T updateState(T context) {
+		T currentContext = context;
 		List<String> availableStates = model.getStateSet().getStates();
-		Field stateField = getStateField(context);
+		Field stateField = getStateField(currentContext);
 		stateField.setAccessible(true);
-		String stateName = getStateName(context, stateField);
+		String stateName = getStateName(currentContext, stateField);
 
 		if (!availableStates.contains(stateName)) {
 			throw new IllegalArgumentException("Invalid state " + stateName + ". It must be one of the following states:\n" + availableStates);
 		}
-		String nextState = getNextState(stateName, new Facts(context));
+		String nextState = getNextState(stateName, new Facts(currentContext));
 		if (!stateName.equals(nextState)) {
-			synchroniseState(stateField, context, nextState);
-			List<StateUpdateEventHandler<T>> eventHandlers = options.getStateUpdateEventHandlers();
-			eventHandlers.stream()
+			synchroniseState(stateField, currentContext, nextState);
+			List<OnStateUpdateContextTransformer<T>> eventHandlers = options.getStateUpdateEventHandlers();
+			final T exitStateEventHandlerContext = currentContext;
+			currentContext = eventHandlers.stream()
 					.filter(eventHandler -> eventHandler.getStateName().equals(stateName))
-					.forEach(eventHandler -> eventHandler.exitState(context));
+					.map(eventHandler -> eventHandler.exitState(exitStateEventHandlerContext))
+					.reduce((previous, next) -> next)
+					.orElse(currentContext);
 
-			eventHandlers.stream()
-					.filter(eventHandler -> eventHandler.getStateName().equals(nextState))
-					.forEach(eventHandler -> eventHandler.enterState(context));
+			final T enterStateEventHandlerContext = currentContext;
+			currentContext = eventHandlers.stream()
+					.filter(eventHandler -> eventHandler.getStateName().equals(stateName))
+					.map(eventHandler -> eventHandler.enterState(enterStateEventHandlerContext))
+					.reduce((previous, next) -> next)
+					.orElse(currentContext);
 		}
+		return currentContext;
 	}
 
 	private boolean isNextTransitionDirect(Object context) {
