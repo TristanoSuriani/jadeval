@@ -27,6 +27,7 @@ public class WorkflowDelegate<T> {
 		switch (options.getExecutionType()) {
 			case ONE_TRANSITION_PER_TIME:
 				updateState(context);
+				options.getTransitionAttemptedEventHandler().handle(context);
 				break;
 
 			case UNTIL_PAUSE:
@@ -38,11 +39,15 @@ public class WorkflowDelegate<T> {
 	private void executeUntilPause(T context) {
 		Field stateField = getStateField(context);
 		stateField.setAccessible(true);
-		String stateNameBeforeUpdate = getStateName(context, stateField);
-		updateState(context);
-		String stateNameAfterUpdate = getStateName(context, stateField);
-		if (!stateNameBeforeUpdate.equals(stateNameAfterUpdate) && isNextTransitionDirect(context)) {
-			executeUntilPause(context);
+		boolean canContinue = true;
+		while (canContinue) {
+			String stateNameBeforeUpdate = getStateName(context, stateField);
+			updateState(context);
+			options.getTransitionAttemptedEventHandler().handle(context);
+			String stateNameAfterUpdate = getStateName(context, stateField);
+			if (stateNameBeforeUpdate.equals(stateNameAfterUpdate) || !isNextTransitionDirect(context)) {
+				canContinue = false;
+			}
 		}
 		stateField.setAccessible(false);
 	}
@@ -68,7 +73,6 @@ public class WorkflowDelegate<T> {
 					.filter(eventHandler -> eventHandler.getStateName().equals(nextState))
 					.forEach(eventHandler -> eventHandler.enterState(context));
 		}
-		options.getTransitionAttemptedEventHandler().handle(context);
 	}
 
 	private boolean isNextTransitionDirect(Object context) {
