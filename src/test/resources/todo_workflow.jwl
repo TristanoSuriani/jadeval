@@ -2,10 +2,10 @@ root states
     TO_DO
 
 intermediate state
-    IN_PROGRESS, ON_HOLD
+    IN_PROGRESS, ON_HOLD, READY_TO_DELETE
 
 final states
-    DONE, CANCELLED
+    DONE, CANCELLED, DELETED
 
 transitions
     TO_DO -> IN_PROGRESS when userAction is start
@@ -17,3 +17,6 @@ transitions
 
     ON_HOLD -> IN_PROGRESS when userAction is removeImpediment
     ON_HOLD -> CANCELLED when userAction is cancel
+
+    { TO_DO, IN_PROGRESS, ON_HOLD } -> READY_TO_DELETE when userAction is delete
+    READY_TO_DELETE -> DELETED

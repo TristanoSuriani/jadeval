@@ -11,7 +11,7 @@ class GrunLauncher {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		new TestRig(STATE_MACHINE_ARGUMENTS).process();
+		new TestRig(WORKFLOW_ARGUMENTS).process();
 
 		// Suspends the thread in order to allow the TestRig GUI to keep running.
 		Thread.currentThread().suspend();
@@ -19,7 +19,7 @@ class GrunLauncher {
 
 	// *************** Test files ***************
 	private static final String DECISIONS_TEST_FILE = "decisions.jdl";
-	private static final String WORKFLOW_TEST_FILE = "workflow.jwl";
+	private static final String WORKFLOW_TEST_FILE = "todo_workflow.jwl";
 	private static final String VALIDATIONS_TEST_FILE = "validations.jvl";
 	private static final String STATE_MACHINE_TEST_FILE = "statemachine.jsl";
 

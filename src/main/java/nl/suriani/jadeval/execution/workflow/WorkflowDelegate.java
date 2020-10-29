@@ -42,11 +42,10 @@ public class WorkflowDelegate<T> {
 		boolean canContinue = true;
 		while (canContinue) {
 			String stateNameBeforeUpdate = getStateName(context, stateField);
-			boolean isNextTransitionDirect = isNextTransitionDirect(stateNameBeforeUpdate);
 			updateState(context);
 			options.getTransitionAttemptedEventHandler().handle(context);
 			String stateNameAfterUpdate = getStateName(context, stateField);
-			if (stateNameBeforeUpdate.equals(stateNameAfterUpdate) || !isNextTransitionDirect) {
+			if (stateNameBeforeUpdate.equals(stateNameAfterUpdate) || !isNextTransitionDirect(context)) {
 				canContinue = false;
 			}
 		}
@@ -76,9 +75,10 @@ public class WorkflowDelegate<T> {
 		}
 	}
 
-	private boolean isNextTransitionDirect(String stateName) {
+	private boolean isNextTransitionDirect(Object context) {
+		String stateName = getStateName(context, getStateField(context));
 		return model.getTransitionSet().getTransitions().stream()
-				.filter(transition -> transition instanceof DirectTransition)
+				.filter(transition -> !(transition instanceof ConditionalTransition))
 				.map(transition -> (DirectTransition) transition)
 				.anyMatch(transitions -> transitions.getFromState().equals(stateName));
 	}

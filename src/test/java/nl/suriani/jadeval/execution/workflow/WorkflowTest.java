@@ -2,12 +2,14 @@ package nl.suriani.jadeval.execution.workflow;
 
 import nl.suriani.jadeval.execution.JadevalExecutor;
 import nl.suriani.jadeval.JadevalLoader;
+import nl.suriani.jadeval.execution.shared.TransitionAttemptedEventHandler;
 import nl.suriani.jadeval.models.JadevalModel;
 import nl.suriani.jadeval.annotation.Fact;
 import nl.suriani.jadeval.annotation.State;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.io.File;
 
@@ -57,6 +59,32 @@ class WorkflowTest {
 		Assertions.assertEquals(ToDoState.CANCELLED, toDoBoardFacts.state);
 	}
 
+	@Test
+	void testUntilPauseWithConditionalTransactionsOnly() {
+		TransitionAttemptedEventHandler<ToDoBoardFacts> transitionAttemptedEventHandler = Mockito.mock(TransitionAttemptedEventHandler.class);
+		workflowDelegate = new JadevalExecutor(model).workflow(new WorkflowOptionsBuilder<ToDoBoardFacts>()
+				.withExecutionType(WorkflowExecutionType.UNTIL_PAUSE)
+				.withTransitionAttemptedEventHandler(transitionAttemptedEventHandler)
+				.build());
+
+		ToDoBoardFacts toDoBoardFacts = new ToDoBoardFacts("start", ToDoState.TO_DO);
+		workflowDelegate.apply(toDoBoardFacts);
+		Mockito.verify(transitionAttemptedEventHandler, Mockito.times(1)).handle(toDoBoardFacts);
+	}
+
+	@Test
+	void testUntilPauseWithDirectTransaction() {
+		TransitionAttemptedEventHandler<ToDoBoardFacts> transitionAttemptedEventHandler = Mockito.mock(TransitionAttemptedEventHandler.class);
+		workflowDelegate = new JadevalExecutor(model).workflow(new WorkflowOptionsBuilder<ToDoBoardFacts>()
+				.withExecutionType(WorkflowExecutionType.UNTIL_PAUSE)
+				.withTransitionAttemptedEventHandler(transitionAttemptedEventHandler)
+				.build());
+
+		ToDoBoardFacts toDoBoardFacts = new ToDoBoardFacts("delete", ToDoState.TO_DO);
+		workflowDelegate.apply(toDoBoardFacts);
+		Mockito.verify(transitionAttemptedEventHandler, Mockito.times(2)).handle(toDoBoardFacts);
+	}
+
 	private class ToDoBoardFacts {
 		@Fact
 		private String userAction;
@@ -71,6 +99,6 @@ class WorkflowTest {
 	}
 
 	private enum ToDoState {
-		TO_DO, IN_PROGRESS, ON_HOLD, DONE, CANCELLED
+		TO_DO, IN_PROGRESS, ON_HOLD, READY_TO_DELETE, DONE, CANCELLED, DELETED
 	}
 }
