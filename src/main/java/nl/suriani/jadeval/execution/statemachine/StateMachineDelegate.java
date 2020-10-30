@@ -22,11 +22,14 @@ public class StateMachineDelegate<T> {
 		this.options = options;
 	}
 
-	public void apply(T context) {
-		updateState(context);
+	public T apply(T context) {
+		T result = updateState(context);
+		options.getTransitionAttemptedEventHandler().handle(context);
+		return result;
 	}
 
-	private void updateState(T context) {
+	private T updateState(T context) {
+		T currentContext = context;
 		List<String> availableStates = model.getStateSet().getStates();
 		Field stateField = getStateField(context);
 		stateField.setAccessible(true);
@@ -40,15 +43,22 @@ public class StateMachineDelegate<T> {
 		if (!stateName.equals(nextState)) {
 			synchroniseState(stateField, context, nextState);
 			List<OnStateUpdateContextTransformer<T>> eventHandlers = options.getStateUpdateEventHandlers();
-			eventHandlers.stream()
+			final T exitStateEventHandlerContext = currentContext;
+			currentContext = eventHandlers.stream()
 					.filter(eventHandler -> eventHandler.getStateName().equals(stateName))
-					.forEach(eventHandler -> eventHandler.exitState(context));
+					.map(eventHandler -> eventHandler.exitState(context))
+					.reduce((previous, next) -> next)
+					.orElse(currentContext);
 
-			eventHandlers.stream()
+			final T enterStateEventHandlerContext = currentContext;
+			currentContext = eventHandlers.stream()
 					.filter(eventHandler -> eventHandler.getStateName().equals(nextState))
-					.forEach(eventHandler -> eventHandler.enterState(context));
+					.map(eventHandler -> eventHandler.enterState(context))
+					.reduce((previous, next) -> next)
+					.orElse(currentContext);
+			return currentContext;
 		}
-		options.getTransitionAttemptedEventHandler().handle(context);
+		return currentContext;
 	}
 
 	private String getStateName(T context, Field stateField) {

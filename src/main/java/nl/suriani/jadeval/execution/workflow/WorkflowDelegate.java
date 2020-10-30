@@ -23,20 +23,20 @@ public class WorkflowDelegate<T> {
 		this.options = options;
 	}
 
-	public void apply(T context) {
+	public T apply(T context) {
 		switch (options.getExecutionType()) {
 			case ONE_TRANSITION_PER_TIME:
-				updateState(context);
+				T result = updateState(context);
 				options.getTransitionAttemptedEventHandler().handle(context);
-				break;
+				return result;
 
 			case UNTIL_PAUSE:
-				executeUntilPause(context);
-				break;
+				return executeUntilPause(context);
 		}
+		return context;
 	}
 
-	private void executeUntilPause(T context) {
+	private T executeUntilPause(T context) {
 		T currentContext = context;
 		Field stateField = getStateField(context);
 		stateField.setAccessible(true);
@@ -51,6 +51,7 @@ public class WorkflowDelegate<T> {
 			}
 		}
 		stateField.setAccessible(false);
+		return currentContext;
 	}
 
 	private T updateState(T context) {
@@ -76,10 +77,12 @@ public class WorkflowDelegate<T> {
 
 			final T enterStateEventHandlerContext = currentContext;
 			currentContext = eventHandlers.stream()
-					.filter(eventHandler -> eventHandler.getStateName().equals(stateName))
+					.filter(eventHandler -> eventHandler.getStateName().equals(nextState))
 					.map(eventHandler -> eventHandler.enterState(enterStateEventHandlerContext))
 					.reduce((previous, next) -> next)
 					.orElse(currentContext);
+
+			return currentContext;
 		}
 		return currentContext;
 	}
