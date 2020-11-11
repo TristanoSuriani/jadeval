@@ -3,6 +3,7 @@ validations
     constants
         $threshold = 3
         $maximum_rate = 10
+        $available_moves = [ROCK, PAPER, SCISSORS, LIZARD, SPOCK]
 
     rules
         "The amount cannot be greater than the treshold"

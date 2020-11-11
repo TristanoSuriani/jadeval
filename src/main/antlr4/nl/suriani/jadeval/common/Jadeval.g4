@@ -63,7 +63,7 @@ conditionExpression   : conditionExpression AND conditionExpression
             ;
 
 constantsDefinition     : 'constants' constantDefinition+ ;
-constantDefinition      : CONSTANT EQUALS (numericValue | booleanValue | textValue) ;
+constantDefinition      : CONSTANT EQUALS (numericValue | booleanValue | textValue | listValue) ;
 
 listEqualityCondition       : ID ISIN listValue
                             | ID ISNOTIN listValue
