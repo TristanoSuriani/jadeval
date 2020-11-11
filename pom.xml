@@ -4,7 +4,7 @@
 
     <groupId>nl.suriani</groupId>
     <artifactId>jadeval</artifactId>
-    <version>0.4.9-SNAPSHOT</version>
+    <version>0.4.9</version>
     <name>Jadeval</name>
     <description>Just A DEcision and VAlidation Library</description>
 
@@ -17,7 +17,7 @@
         <connection>scm:git:git://github.com/TristanoSuriani/jadeval.git</connection>
         <developerConnection>scm:git:git@github.com:TristanoSuriani/jadeval.git</developerConnection>
         <url>https://github.com/TristanoSuriani/jadeval</url>
-        <tag>HEAD</tag>
+        <tag>jadeval-0.4.9</tag>
     </scm>
 
     <url>https://github.com/TristanoSuriani/jadeval</url>
