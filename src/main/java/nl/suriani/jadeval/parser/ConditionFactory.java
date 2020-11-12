@@ -70,6 +70,8 @@ public class ConditionFactory {
 			return new BooleanEqualityCondition(factName, (BooleanValue) value, equalitySymbolFactory.getBooleanEqualitySymbol(symbolString));
 		} else if (value instanceof TextValue) {
 			return new TextEqualityCondition(factName, (TextValue) value, equalitySymbolFactory.getTextEqualitySymbol(symbolString));
+		} else if (value instanceof ListValue) {
+			return new ListEqualityCondition(factName, (ListValue) value, equalitySymbolFactory.getListEqualitySymbol(symbolString));
 		}
 		else {
 			throw new IllegalStateException("Impossible to instantiate condition with constant " + constantName);
